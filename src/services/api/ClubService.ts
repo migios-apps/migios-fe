@@ -1,0 +1,31 @@
+import ApiService from '@/services/ApiService'
+import { ParamsFilter } from './@types/api'
+import {
+  BulkCreateClubDto,
+  BulkCreateClubResponse,
+  ClubDetailResponse,
+  UserClubListDataResponse,
+} from './@types/club'
+
+export function apiGetUserClubList(params?: ParamsFilter) {
+  return ApiService.fetchDataWithAxios<UserClubListDataResponse>({
+    url: '/club/user-club-list',
+    method: 'get',
+    params,
+  })
+}
+
+export function apiBulkCreateClub(body: BulkCreateClubDto) {
+  return ApiService.fetchDataWithAxios<BulkCreateClubResponse>({
+    url: '/club/bulk-create',
+    method: 'post',
+    data: body as unknown as Record<string, unknown>,
+  })
+}
+
+export function apiGetClubDetail(club_id: number) {
+  return ApiService.fetchDataWithAxios<ClubDetailResponse>({
+    url: `/club/${club_id}/detail`,
+    method: 'get',
+  })
+}

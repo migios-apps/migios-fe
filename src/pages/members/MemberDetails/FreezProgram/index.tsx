@@ -1,0 +1,161 @@
+import { TableQueries } from '@/@types/common'
+import FormFreeze from '@/components/form/member/freeze/FormFreeze'
+import { useTransactionFreezeForm } from '@/components/form/member/freeze/freezeValidation'
+import DataTable, { DataTableColumnDef } from '@/components/shared/DataTable'
+import { Button, Tag } from '@/components/ui'
+import { QUERY_KEY } from '@/constants/queryKeys.constant'
+import { statusColor } from '@/constants/utils'
+import { FreezeProgramDetail, MemberDetail } from '@/services/api/@types/member'
+import { apiGetFreezeProgram } from '@/services/api/MembeService'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { Add } from 'iconsax-react'
+import React from 'react'
+
+interface FreezProgramProps {
+  data: MemberDetail
+}
+
+const FreezProgram: React.FC<FreezProgramProps> = ({ data: member }) => {
+  const [open, setOpen] = React.useState(false)
+  const [tableData, setTableData] = React.useState<TableQueries>({
+    pageIndex: 1,
+    pageSize: 10,
+    query: '',
+    sort: {
+      order: '',
+      key: '',
+    },
+  })
+
+  const formProps = useTransactionFreezeForm()
+
+  const { data, isFetchingNextPage, isLoading, error } = useInfiniteQuery({
+    queryKey: [QUERY_KEY.freezeProgram, tableData, member.code],
+    initialPageParam: 1,
+    queryFn: async () => {
+      const res = await apiGetFreezeProgram(`${member.code}`, {
+        page: tableData.pageIndex,
+        per_page: tableData.pageSize,
+        ...(tableData.sort?.key !== ''
+          ? {
+              sort_column: tableData.sort?.key as string,
+              sort_type: tableData.sort?.order as 'asc' | 'desc',
+            }
+          : {
+              sort: [
+                {
+                  sort_column: 'status',
+                  sort_type: 'asc',
+                },
+              ],
+            }),
+      })
+      return res
+    },
+    getNextPageParam: (lastPage) =>
+      lastPage.data.meta.page !== lastPage.data.meta.total_page
+        ? lastPage.data.meta.page + 1
+        : undefined,
+  })
+
+  const memberPackageList = React.useMemo(
+    () => (data ? data.pages.flatMap((page) => page.data.data) : []),
+    [data]
+  )
+  const total = data?.pages[0]?.data.meta.total
+
+  const columns = React.useMemo<DataTableColumnDef<FreezeProgramDetail>[]>(
+    () => [
+      {
+        accessorKey: 'transaction_code',
+        header: 'Transaction Id',
+        cell: (props) => <div>#{props.row.original.transaction_code}</div>,
+      },
+      {
+        accessorKey: 'start_date',
+        header: 'Start Date',
+      },
+      {
+        accessorKey: 'end_date',
+        header: 'End Date',
+      },
+      {
+        accessorKey: 'ftransaction_amount',
+        header: 'Fee',
+      },
+      {
+        accessorKey: 'notes',
+        header: 'Description',
+      },
+      {
+        header: 'Status',
+        accessorKey: 'status',
+        cell: (props) => {
+          const row = props.row.original
+          return (
+            <div className="flex items-center">
+              <Tag className={statusColor[row.status]}>
+                <span className="capitalize">{row.status}</span>
+              </Tag>
+            </div>
+          )
+        },
+      },
+    ],
+
+    []
+  )
+  return (
+    <div className="flex flex-col gap-4">
+      <DataTable
+        columns={columns}
+        data={memberPackageList}
+        noData={(!isLoading && memberPackageList.length === 0) || !!error}
+        skeletonAvatarColumns={[0]}
+        skeletonAvatarProps={{ width: 28, height: 28 }}
+        loading={isLoading || isFetchingNextPage}
+        pagingData={{
+          total: total as number,
+          pageIndex: tableData.pageIndex as number,
+          pageSize: tableData.pageSize as number,
+        }}
+        onPaginationChange={(val) => {
+          setTableData({
+            ...tableData,
+            pageIndex: val,
+          })
+        }}
+        onSelectChange={(val) => {
+          setTableData({
+            ...tableData,
+            pageSize: val,
+            pageIndex: 1,
+          })
+        }}
+        onSort={(val) => {
+          setTableData({
+            ...tableData,
+            sort: val,
+          })
+        }}
+      />
+
+      <Button
+        variant="solid"
+        className="w-fit absolute bottom-4 right-10 rounded-full max-w-fit h-16 py-4 px-4"
+        onClick={() => setOpen(true)}
+      >
+        <Add size="32" color="currentColor" variant="Outline" />
+      </Button>
+
+      <FormFreeze
+        open={open}
+        type="create"
+        formProps={formProps}
+        onClose={() => setOpen(false)}
+      />
+    </div>
+  )
+}
+
+export default FreezProgram
