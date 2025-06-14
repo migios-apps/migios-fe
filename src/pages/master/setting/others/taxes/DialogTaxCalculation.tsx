@@ -53,7 +53,7 @@ const DialogTaxCalculation: React.FC<DialogTaxCalculationProps> = ({
       onRequestClose={onClose}
     >
       <div className="flex flex-col h-full justify-between">
-        <div className="text-xl font-bold mb-1">Perhitungan Pajak</div>
+        <h6 className="text-xl font-bold mb-1">Perhitungan Pajak</h6>
 
         <div className="flex flex-col gap-8 my-8">
           <div
@@ -76,11 +76,15 @@ const DialogTaxCalculation: React.FC<DialogTaxCalculationProps> = ({
               {taxCalculation === 1 && <FiCheck size={16} />}
             </div>
             <div className="flex-1">
-              <div className="font-semibold">Harga Retail Termasuk Pajak</div>
-              <div>
+              <div className="font-semibold text-gray-900 dark:text-gray-100">
+                Harga Retail Termasuk Pajak
+              </div>
+              <div className="text-gray-900 dark:text-gray-100">
                 Pajak = (Tarif Pajak * Harga retail) / (1 + Tarif Pajak)
               </div>
-              <div>Misalnya: pajak 20% untuk item $10,00 menjadi $1,67</div>
+              <div className="text-gray-900 dark:text-gray-100">
+                Misalnya: pajak 20% untuk item $10,00 menjadi $1,67
+              </div>
             </div>
           </div>
 
@@ -104,11 +108,15 @@ const DialogTaxCalculation: React.FC<DialogTaxCalculationProps> = ({
               {taxCalculation === 2 && <FiCheck size={16} />}
             </div>
             <div className="flex-1">
-              <div className="font-semibold">
+              <div className="font-semibold text-gray-900 dark:text-gray-100">
                 Harga Retail Tidak Termasuk Pajak (Default)
               </div>
-              <div>Pajak = Tarif Pajak * Harga retail</div>
-              <div>Misalnya: pajak 20% untuk item $10,00 menjadi $2,00</div>
+              <div className="text-gray-900 dark:text-gray-100">
+                Pajak = Tarif Pajak * Harga retail
+              </div>
+              <div className="text-gray-900 dark:text-gray-100">
+                Misalnya: pajak 20% untuk item $10,00 menjadi $2,00
+              </div>
             </div>
           </div>
         </div>
