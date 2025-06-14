@@ -11,7 +11,7 @@ import {
 } from '@/services/api/settings/TaxesService'
 import { apiGetSettings } from '@/services/api/settings/settings'
 import { useQuery } from '@tanstack/react-query'
-import { Danger } from 'iconsax-react'
+import { SearchStatus1 } from 'iconsax-react'
 import React, { useState } from 'react'
 import LayoutOtherSetting from '../Layout'
 import DialogFormTax from './DialogFormTax'
@@ -186,9 +186,13 @@ const TaxSetting = () => {
                   </div>
                 ))
               ) : (
-                <div className="flex flex-col items-center justify-center py-10 text-center">
-                  <div className="text-5xl mb-4 text-gray-900 dark:text-gray-200">
-                    <Danger color="currentColor" size="64" variant="Outline" />
+                <div className="flex flex-col items-center justify-center py-10 text-center bg-gray-100 dark:bg-gray-900 rounded-lg">
+                  <div className="text-5xl mb-4 text-gray-500 dark:text-gray-200">
+                    <SearchStatus1
+                      color="currentColor"
+                      size="64"
+                      variant="Outline"
+                    />
                   </div>
                   <p className="text-lg font-medium text-gray-900 dark:text-gray-100">
                     Tidak ada tarif pajak

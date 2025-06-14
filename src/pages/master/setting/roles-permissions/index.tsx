@@ -30,8 +30,6 @@ const RolesPermissions = () => {
       key: '',
     },
   })
-  const [showForm, setShowForm] = React.useState<boolean>(false)
-  const [formType, setFormType] = React.useState<'create' | 'update'>('create')
   const [viewMode, setViewMode] = React.useState<'grid' | 'table'>('grid')
   const [selectedRole, setSelectedRole] = React.useState<Role | null>(null)
   const [showDrawerDetail, setShowDrawerDetail] = React.useState<boolean>(false)
@@ -124,8 +122,6 @@ const RolesPermissions = () => {
                   className={`text-xl cursor-pointer select-none font-semibold`}
                   role="button"
                   onClick={() => {
-                    setShowForm(true)
-                    setFormType('update')
                     setSelectedRole(row.original)
                     setShowDrawerDetail(true)
                   }}

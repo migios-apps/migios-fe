@@ -299,7 +299,7 @@ const New = () => {
   return (
     <>
       <div className="w-full flex justify-between border-b border-gray-300 dark:border-gray-700 items-center gap-4 p-4 shadow-sm">
-        <h5>POS</h5>
+        <h5>Point Of Sale</h5>
         <div className="ltr:right-6 rtl:left-6 top-4.5">
           <div className="flex justify-start gap-4">
             <ModeSwitcher />

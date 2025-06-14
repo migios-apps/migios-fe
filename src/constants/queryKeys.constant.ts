@@ -36,4 +36,5 @@ export const QUERY_KEY = {
   taxList: 'taxList',
   taxDefaultSaleItem: 'taxDefaultSaleItem',
   settings: 'settings',
+  loyaltyList: 'loyaltyList',
 }

@@ -349,12 +349,31 @@ const FormAddItemSale: React.FC<FormProps> = ({
                                   e.target.value === ''
                                     ? 0
                                     : Number(e.target.value)
-                                field.onChange(value)
-                                formProps.setValue(
-                                  'sell_price',
-                                  watchData.price * (value || 0)
-                                )
-                                formProps.setValue('discount', 0)
+                                if (value < 0) {
+                                  field.onChange(0)
+                                  formProps.setValue(
+                                    'sell_price',
+                                    watchData.price
+                                  )
+                                  formProps.setValue('discount', 0)
+                                } else if (
+                                  value > (watchData.product_qty as number)
+                                ) {
+                                  field.onChange(watchData.product_qty)
+                                  formProps.setValue(
+                                    'sell_price',
+                                    watchData.price *
+                                      (watchData.product_qty || 0)
+                                  )
+                                  formProps.setValue('discount', 0)
+                                } else {
+                                  field.onChange(value)
+                                  formProps.setValue(
+                                    'sell_price',
+                                    watchData.price * (value || 0)
+                                  )
+                                  formProps.setValue('discount', 0)
+                                }
                               }}
                             />
                             <Button
@@ -387,7 +406,6 @@ const FormAddItemSale: React.FC<FormProps> = ({
                                   newValue <= (watchData.product_qty as number)
                                 ) {
                                   field.onChange(newValue)
-                                  console.log('newValue', watchData.price)
                                   formProps.setValue(
                                     'sell_price',
                                     watchData.price * newValue
