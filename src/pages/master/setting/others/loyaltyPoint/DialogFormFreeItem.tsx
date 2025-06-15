@@ -79,6 +79,7 @@ const DialogFormFreeItem: React.FC<DialogFormFreeItemProps> = ({
   const watchData = watch()
 
   const handleClose = () => {
+    setShowTab(false)
     resetLoyaltyForm(formProps)
     onClose()
   }
