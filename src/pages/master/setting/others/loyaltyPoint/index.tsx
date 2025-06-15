@@ -223,7 +223,9 @@ const LoyaltyPointSetting = () => {
                           <div>
                             <h5 className="font-medium text-sm">
                               {item.type === 'discount'
-                                ? `Diskon ${item.discount_value}%`
+                                ? item.discount_type === 'percent'
+                                  ? `Diskon ${item.discount_value}%`
+                                  : `Diskon ${item.fdiscount_value}`
                                 : item.name}
                             </h5>
                             <p className="text-xs text-gray-500">
