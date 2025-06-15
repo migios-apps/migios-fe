@@ -252,7 +252,7 @@ const LoyaltyPointSetting = () => {
               </p>
             )}
             {listData.length === 0 && (
-              <div className="flex flex-col items-center justify-center py-10 text-center bg-gray-100 dark:bg-gray-900 rounded-lg">
+              <div className="flex flex-col items-center justify-center py-10 text-center bg-gray-100 dark:bg-gray-950 rounded-lg">
                 <div className="text-5xl mb-4 text-gray-500 dark:text-gray-200">
                   <SearchStatus1
                     color="currentColor"
