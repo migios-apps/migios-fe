@@ -43,10 +43,10 @@ const History = () => {
         ...(tableData.sort?.key !== ''
           ? {
               sort_column: tableData.sort?.key as string,
-              sort_type: tableData.sort?.order as 'asc' | 'desc',
+              sort_type: tableData.sort?.order as 'desc' | 'desc',
             }
           : {
-              sort_column: 'date',
+              sort_column: 'id',
               sort_type: 'desc',
             }),
         search: [

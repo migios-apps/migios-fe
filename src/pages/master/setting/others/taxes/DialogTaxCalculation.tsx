@@ -91,21 +91,21 @@ const DialogTaxCalculation: React.FC<DialogTaxCalculationProps> = ({
           <div
             className={classNames(
               'flex items-start gap-4 p-6 border rounded-lg cursor-pointer',
-              taxCalculation === 2
+              taxCalculation === 0
                 ? 'border-primary bg-primary/5'
                 : 'border-gray-200'
             )}
-            onClick={() => setTaxCalculation(2)}
+            onClick={() => setTaxCalculation(0)}
           >
             <div
               className={classNames(
                 'w-6 h-6 rounded-full flex items-center justify-center',
-                taxCalculation === 2
+                taxCalculation === 0
                   ? 'bg-primary text-white'
                   : 'border border-gray-300'
               )}
             >
-              {taxCalculation === 2 && <FiCheck size={16} />}
+              {taxCalculation === 0 && <FiCheck size={16} />}
             </div>
             <div className="flex-1">
               <div className="font-semibold text-gray-900 dark:text-gray-100">

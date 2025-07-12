@@ -43,7 +43,8 @@ const TAX_TYPES: TaxType[] = [
   { key: 'membership', label: 'Membership' },
   { key: 'pt_program', label: 'PT Program' },
   { key: 'class', label: 'Kelas' },
-  // { key: 'service', label: 'Service' },
+  { key: 'product', label: 'Produk' },
+  { key: 'service', label: 'Jasa' },
 ]
 
 // Data standar pajak
@@ -51,7 +52,7 @@ const DEFAULT_STANDARD_RATES: TaxDefaultSaleItemType[] = [
   { type: 'membership', tax_id: 2 },
   { type: 'pt_program', tax_id: 2 },
   { type: 'class', tax_id: 2 },
-  { type: 'service', tax_id: 2 },
+  { type: 'product', tax_id: 2 },
   { type: 'membership', tax_id: 1 },
   // { type: 'pt_program', tax_id: 1 },
 ]

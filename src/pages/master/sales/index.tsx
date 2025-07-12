@@ -93,12 +93,12 @@ const Sales = () => {
     () => [
       {
         accessorKey: 'code',
-        header: 'Transaction ID',
+        header: 'Faktur',
         enableColumnActions: false,
       },
       {
         accessorKey: 'amount',
-        header: 'Price',
+        header: 'Total',
         size: 10,
         enableColumnActions: false,
         cell: ({ row }) => {
@@ -106,7 +106,7 @@ const Sales = () => {
         },
       },
       {
-        header: 'Total Payment',
+        header: 'Total Bayar',
         size: 10,
         enableColumnActions: false,
         cell: ({ row }) => {
@@ -131,7 +131,7 @@ const Sales = () => {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: 'Aksi',
         size: 10,
         enableColumnActions: false,
         cell: ({ row }) => {
