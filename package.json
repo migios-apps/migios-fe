@@ -8,6 +8,7 @@
     "prebuild": "npm run lint && npm run prettier:fix",
     "build": "vite build",
     "preview": "vite preview",
+    "start": "vite preview",
     "prettier": "npx prettier src --check",
     "prettier:fix": "npx prettier --cache false src --write",
     "lint": "npx eslint src",
