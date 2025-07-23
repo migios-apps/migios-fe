@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import Alert from '@/components/ui/Alert'
 import toast from '@/components/ui/toast'
 import { TickCircle } from 'iconsax-react'

@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import type { AvatarProps } from '@/components/ui/Avatar'
 import Avatar from '@/components/ui/Avatar'
 import Badge from '@/components/ui/Badge'

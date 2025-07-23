@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { TableQueries } from '@/@types/common'
 import { DataTable } from '@/components/shared'
 import { Card } from '@/components/ui'

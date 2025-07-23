@@ -87,6 +87,9 @@ export default tseslint.config(
         'import/no-named-as-default-member': 'off',
         'import/no-duplicates': 'error',
         'import/no-named-as-default': 0,
+        'import/namespace': 'off',
+        'import/named': 'off',
+        'import/no-unresolved': 'off',
         'react/prop-types': 'off',
         'react/jsx-sort-props': [
           'warn',

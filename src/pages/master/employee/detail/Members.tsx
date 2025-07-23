@@ -1,4 +1,3 @@
-/* eslint-disable import/no-unresolved */
 import { TableQueries } from '@/@types/common'
 import { DataTable, DebounceInput } from '@/components/shared'
 import { DataTableColumnDef } from '@/components/shared/DataTable'
