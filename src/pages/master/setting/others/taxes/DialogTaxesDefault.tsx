@@ -52,6 +52,36 @@ const DialogTaxesDefault: React.FC<DialogTaxesDefaultProps> = ({
     }
   }
 
+  // Fungsi untuk select all tipe pajak untuk tax tertentu
+  const handleSelectAllForTax = (taxId: number, checked: boolean) => {
+    if (checked) {
+      // Tambahkan semua tipe untuk tax_id ini
+      const newRates = taxTypes.map((type) => ({
+        type: type.key,
+        tax_id: taxId,
+      }))
+      const existingRates = watchStandardRates.filter(
+        (rate) => rate.tax_id !== taxId
+      )
+      setValue('standardRates', [...existingRates, ...newRates])
+    } else {
+      // Hapus semua tipe untuk tax_id ini
+      const newRates = watchStandardRates.filter(
+        (rate) => rate.tax_id !== taxId
+      )
+      setValue('standardRates', newRates)
+    }
+  }
+
+  // Check apakah semua tipe sudah dipilih untuk tax tertentu
+  const isAllSelectedForTax = (taxId: number) => {
+    return taxTypes.every((type) =>
+      watchStandardRates.some(
+        (rate) => rate.tax_id === taxId && rate.type === type.key
+      )
+    )
+  }
+
   const handleClose = () => {
     resetStandardRateForm(formProps)
     onClose()
@@ -95,6 +125,7 @@ const DialogTaxesDefault: React.FC<DialogTaxesDefaultProps> = ({
           <Table cellBorder>
             <Table.THead>
               <Table.Tr>
+                <Table.Th>All</Table.Th>
                 <Table.Th>Pajak</Table.Th>
                 {taxTypes.map((t) => (
                   <Table.Th key={t.key}>{t.label}</Table.Th>
@@ -107,6 +138,12 @@ const DialogTaxesDefault: React.FC<DialogTaxesDefaultProps> = ({
                   key={idx}
                   className="hover:bg-gray-50 dark:hover:bg-gray-900 text-gray-900 dark:text-gray-100"
                 >
+                  <Table.Td className="text-center">
+                    <Checkbox
+                      checked={isAllSelectedForTax(tax.id)}
+                      onChange={(val) => handleSelectAllForTax(tax.id, val)}
+                    />
+                  </Table.Td>
                   <Table.Td>{tax.name}</Table.Td>
                   {taxTypes.map((t) => (
                     <Table.Td key={t.key} className="text-center">

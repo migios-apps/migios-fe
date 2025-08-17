@@ -34,7 +34,7 @@ const LayoutGymSetting = ({ children }: { children?: React.ReactNode }) => {
 
   return (
     <div className="h-full">
-      <div className="sticky top-16 z-40 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+      <div className="sticky top-16 z-[5] bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <Tabs defaultValue={pathname} onChange={(tab) => navigate(tab)}>
           <TabList ref={tabListRef} className="overflow-x-auto">
             <TabNav
