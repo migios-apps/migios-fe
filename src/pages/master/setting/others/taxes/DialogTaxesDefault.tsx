@@ -133,6 +133,7 @@ const DialogTaxesDefault: React.FC<DialogTaxesDefaultProps> = ({
           <Button
             className="w-1/2"
             variant="solid"
+            loading={create.isPending}
             onClick={handleSubmit(onSubmit)}
           >
             Simpan
