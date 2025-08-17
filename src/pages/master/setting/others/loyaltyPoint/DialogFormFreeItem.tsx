@@ -761,7 +761,12 @@ const DialogFormFreeItem: React.FC<DialogFormFreeItemProps> = ({
                 Batal
               </Button>
             )}
-            <Button className="w-1/2" variant="solid" type="submit">
+            <Button
+              className="w-1/2"
+              variant="solid"
+              type="submit"
+              loading={create.isPending || update.isPending}
+            >
               Simpan
             </Button>
           </div>
