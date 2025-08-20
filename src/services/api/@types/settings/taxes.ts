@@ -30,5 +30,5 @@ export interface CreateTaxDefaultSaleItemType {
 }
 
 export interface CreateTaxCalculateType {
-  tax_calculation: number // 0 = no calculation, 1 = price include tax, 2 = price exclude tax
+  tax_calculation: number //0 = price exclude tax, 1 = price include tax
 }

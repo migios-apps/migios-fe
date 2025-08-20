@@ -1,5 +1,5 @@
-import { lazy } from 'react'
 import type { Routes } from '@/@types/routes'
+import { lazy } from 'react'
 
 export const salesRoute: Routes = [
   {
@@ -9,9 +9,9 @@ export const salesRoute: Routes = [
     authority: [],
   },
   {
-    key: 'newSales',
-    path: '/sales/new',
-    component: lazy(() => import('@/pages/master/sales/New')),
+    key: 'salesOrder',
+    path: '/sales/order',
+    component: lazy(() => import('@/pages/master/sales/Order')),
     authority: [],
     meta: {
       pageBackgroundType: 'plain',

@@ -1,4 +1,5 @@
-import { Avatar, Button, Drawer, Dropdown, FormItem } from '@/components/ui'
+import { ScrollArea } from '@/components/shared/scroll-area'
+import { Avatar, Button, DatePicker, Dropdown, FormItem } from '@/components/ui'
 import AlertConfirm from '@/components/ui/AlertConfirm'
 import InputCurrency from '@/components/ui/InputCurrency'
 import { currencyFormat } from '@/components/ui/InputCurrency/currencyFormat'
@@ -9,83 +10,113 @@ import { QUERY_KEY } from '@/constants/queryKeys.constant'
 import { EmployeeDetail } from '@/services/api/@types/employee'
 import { RekeningDetail } from '@/services/api/@types/finance'
 import { MemberDetail } from '@/services/api/@types/member'
-import {
-  CheckoutRequest,
-  PaymentStatus,
-} from '@/services/api/@types/transaction'
+import { CheckoutRequest, PaymentStatus } from '@/services/api/@types/sales'
 import { apiGetEmployeeList } from '@/services/api/EmployeeService'
 import { apiGetRekeningList } from '@/services/api/FinancialService'
 import { apiGetMemberList } from '@/services/api/MembeService'
-import { apiCreateCheckout } from '@/services/api/TransactionService'
+import { apiCreateCheckout } from '@/services/api/SalesService'
 import { useSessionUser } from '@/store/authStore'
 import classNames from '@/utils/classNames'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { ArrowDown2, Trash, Warning2 } from 'iconsax-react'
-import React from 'react'
+import {
+  ArrowDown2,
+  Calendar,
+  Location,
+  SearchNormal1,
+  Trash,
+  Warning2,
+} from 'iconsax-react'
+import React, { Fragment } from 'react'
 import { Controller, SubmitHandler } from 'react-hook-form'
 import { HiOutlineUser } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
 import type { GroupBase, OptionsOrGroups } from 'react-select'
-import { calculateDetailPayment } from '../utils/calculateDetailPayment'
-import { mergeDuplicateAmounts } from '../utils/mergeDuplicateAmounts'
+import CheckoutItemPackageCard from './components/CheckoutItemPackageCard'
+import CheckoutItemProductCard from './components/CheckoutItemProductCard'
+import { generateCartData } from './utils/generateCartData'
+import { mergeDuplicateAmounts } from './utils/mergeDuplicateAmounts'
 import {
   ReturnTransactionFormSchema,
+  ReturnTransactionItemFormSchema,
   ValidationTransactionSchema,
   defaultValueTransaction,
   resetTransactionForm,
-} from '../validation'
+} from './validation'
 
-type FormProps = {
-  open: boolean
-  formProps: ReturnTransactionFormSchema
-  onClose: () => void
+interface CartDetailProps {
+  formPropsTransaction: ReturnTransactionFormSchema
+  formPropsTransactionItem: ReturnTransactionItemFormSchema
+  onBack: () => void
+  setIndexItem: React.Dispatch<React.SetStateAction<number>>
+  setOpenAddItem: React.Dispatch<React.SetStateAction<boolean>>
+  setFormItemType: React.Dispatch<React.SetStateAction<'create' | 'update'>>
 }
 
-const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
+const CartDetail: React.FC<CartDetailProps> = ({
+  formPropsTransaction,
+  formPropsTransactionItem,
+  onBack,
+  setIndexItem,
+  setOpenAddItem,
+  setFormItemType,
+}) => {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const club = useSessionUser((state) => state.club)
   const [openDropdown, setOpenDropdown] = React.useState(false)
   const [confirmPartPaid, setConfirmPartPaid] = React.useState(false)
+
+  const formPropsItem = formPropsTransactionItem
   const {
     watch,
     control,
     handleSubmit,
     formState: { errors },
-  } = formProps
+  } = formPropsTransaction
   const watchTransaction = watch()
-  const handleClose = () => {
-    onClose()
-  }
 
-  // console.log('watchTransaction', watchTransaction)
-  // console.log('errors', errors)
+  const cartDataGenerated = generateCartData(watchTransaction)
+  const loyalty_point = cartDataGenerated.items.reduce(
+    (acc: any, cur: any) => acc + cur.loyalty_point,
+    0
+  )
 
-  const calculate = calculateDetailPayment({
-    items: watchTransaction.items,
-    discount_type: watchTransaction.discount_type,
-    discount: watchTransaction.discount || 0,
-    tax_rate: 0,
+  console.log('watch', {
+    data: watch(),
+    error: errors,
   })
 
-  React.useEffect(() => {
-    if (open) {
-      const totalPayment = watchTransaction.payments?.reduce(
-        (acc: any, cur: any) => acc + cur.amount,
-        0
-      )
-      formProps.setValue('balance_amount', calculate.totalAmount - totalPayment)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open])
+  // const calculate = calculateDetailPayment({
+  //   items: watchTransaction.items,
+  //   discount_type: watchTransaction.discount_type,
+  //   discount: watchTransaction.discount || 0,
+  //   tax_rate: 0,
+  // })
+
+  // React.useEffect(() => {
+  //   const totalPayment = watchTransaction.payments?.reduce(
+  //     (acc: any, cur: any) => acc + cur.amount,
+  //     0
+  //   )
+  //   formPropsTransaction.setValue(
+  //     'balance_amount',
+  //     calculate.totalAmount - totalPayment
+  //   )
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [calculate.totalAmount])
 
   const getTotal =
-    calculate.totalAmount -
-    watch('payments')?.reduce((acc: any, cur: any) => acc + cur.amount, 0)
+    cartDataGenerated.total_amount -
+    (cartDataGenerated.payments?.reduce(
+      (acc: any, cur: any) => acc + cur.amount,
+      0
+    ) || 0)
   const isPaidOf =
-    watch('payments')?.reduce((acc: any, cur: any) => acc + cur.amount, 0) >=
-    calculate.totalAmount
+    (cartDataGenerated.payments?.reduce(
+      (acc: any, cur: any) => acc + cur.amount,
+      0
+    ) || 0) >= cartDataGenerated.total_amount
 
   const getMemberList = React.useCallback(
     async (
@@ -220,18 +251,18 @@ const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
     []
   )
 
-  const handlePrefecth = () => {
+  const handlePrefecth = (res?: any) => {
+    const data = res?.data?.data
+    console.log('data', data)
     queryClient.invalidateQueries({ queryKey: [QUERY_KEY.sales] })
-    handleClose()
     navigate('/sales')
-    resetTransactionForm(formProps)
+    resetTransactionForm(formPropsTransaction)
     window.localStorage.setItem(
-      'migios_pos',
+      'item_pos',
       JSON.stringify({ ...defaultValueTransaction, _timestamp: Date.now() })
     )
   }
 
-  // Mutations
   const createCheckout = useMutation({
     mutationFn: (data: CheckoutRequest) => apiCreateCheckout(data),
     onError: (error) => {
@@ -251,7 +282,7 @@ const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
       discount_type: data.discount_type,
       discount: data.discount || 0,
       tax_rate: data.tax_rate || 0,
-      due_date: dayjs().format('YYYY-MM-DD'),
+      due_date: dayjs(data.due_date).format('YYYY-MM-DD'),
       items:
         (data.items.map((item) => {
           const {
@@ -260,13 +291,56 @@ const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
             classes,
             instructors,
             trainers,
+            name,
+            sell_price,
+            is_promo,
+            data: itemData,
             ...rest
           } = item
-          return rest
+
+          // Base payload dengan field yang selalu ada
+          const basePayload = {
+            item_type: item.item_type,
+            quantity: item.quantity,
+            price: item.price,
+            discount_type: item.discount_type || 'nominal',
+            discount: item.discount || 0,
+          }
+
+          // Spesifik payload berdasarkan item_type
+          if (item.item_type === 'package') {
+            return {
+              ...basePayload,
+              trainer_id: trainers?.id || null,
+              package_id: item.package_id,
+              extra_session: item.extra_session || 0,
+              extra_day: item.extra_day || 0,
+              start_date: item.start_date || null,
+            }
+          }
+
+          if (item.item_type === 'product') {
+            return {
+              ...basePayload,
+              product_id: item.product_id,
+            }
+          }
+
+          // if (item.item_type === 'freeze') {
+          //   return {
+          //     ...basePayload,
+          //     start_date: item.start_date || null,
+          //     end_date: item.end_date || null,
+          //   }
+          // }
+
+          return basePayload
         }) as CheckoutRequest['items']) || [],
       payments: data.payments,
       refund_from: (data.refund_from as CheckoutRequest['refund_from']) || [],
     }
+
+    // console.log('body', body)
 
     createCheckout.mutate(body)
     setConfirmPartPaid(false)
@@ -278,18 +352,154 @@ const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
 
   return (
     <>
-      <Drawer
-        title="Payment"
-        // width={620}
-        isOpen={open}
-        bodyClass="p-3 md:p-4"
-        drawerContentClassName="!w-full md:!w-[420px]"
-        // placement="bottom"
-        onClose={handleClose}
-        onRequestClose={handleClose}
-      >
-        <div className="flex flex-col h-full justify-between">
-          <div className="w-full flex flex-col mb-4">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] xl:grid-cols-[1fr_500px] items-start h-full">
+        <div className="flex flex-col w-full">
+          <div className="p-4 flex flex-col gap-3">
+            {/* Bagian atas: Lokasi & Tanggal */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+              {/* Lokasi */}
+              <div className="flex items-center gap-2 text-gray-800 font-medium dark:text-gray-200">
+                <Location size="20" color="currentColor" variant="Outline" />
+                <span className="font-semibold text-sm sm:text-base">
+                  {club?.name}
+                </span>
+              </div>
+
+              {/* Tanggal */}
+              <FormItem
+                label=""
+                className="mb-0 w-full sm:w-auto"
+                invalid={Boolean(errors.due_date)}
+                errorMessage={errors.due_date?.message}
+              >
+                <Controller
+                  name="due_date"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      inputFormat="DD-MM-YYYY"
+                      placeholder="Start Date"
+                      {...field}
+                      size="sm"
+                      className="w-full sm:w-auto"
+                      inputPrefix={
+                        <Calendar
+                          size="20"
+                          color="currentColor"
+                          variant="Outline"
+                        />
+                      }
+                      value={field.value ? dayjs(field.value).toDate() : null}
+                    />
+                  )}
+                />
+              </FormItem>
+            </div>
+
+            {/* Search Bar */}
+            <div
+              className="w-full bg-gray-100 rounded-md pl-4 pr-10 py-2.5 sm:py-3 text-gray-500 cursor-pointer relative hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 hover:dark:bg-gray-700 text-sm sm:text-base"
+              onClick={onBack}
+            >
+              Cari item untuk di jual
+              <SearchNormal1
+                size="20"
+                color="currentColor"
+                variant="Outline"
+                className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none"
+              />
+            </div>
+          </div>
+          <ScrollArea className="h-[calc(100vh-200px)]">
+            <div className="flex flex-col gap-3 overflow-y-auto p-4">
+              {cartDataGenerated.items?.map((item, index) => {
+                return (
+                  <Fragment key={index}>
+                    {item.item_type === 'product' ? (
+                      <CheckoutItemProductCard
+                        item={item}
+                        onClick={() => {
+                          formPropsItem.reset(item)
+                          setIndexItem(index)
+                          setOpenAddItem(true)
+                          setFormItemType('update')
+                        }}
+                      />
+                    ) : (
+                      <CheckoutItemPackageCard
+                        item={item}
+                        onClick={() => {
+                          formPropsItem.reset(item)
+                          setIndexItem(index)
+                          setOpenAddItem(true)
+                          setFormItemType('update')
+                        }}
+                      />
+                    )}
+                  </Fragment>
+                )
+              })}
+
+              <div className="flex justify-end mt-4">
+                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 w-full max-w-md">
+                  <h3 className="text-lg font-bold mb-3 text-gray-800 dark:text-gray-200">
+                    Invoice Summary
+                  </h3>
+
+                  {/* Subtotal & Tax */}
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Sub total
+                      </span>
+                      <span className="font-medium">
+                        {cartDataGenerated.fsubtotal}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-primary cursor-pointer hover:underline">
+                        Add discount
+                      </span>
+                      <span className="text-sm text-gray-500">-</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600 dark:text-gray-400">
+                        Tax
+                      </span>
+                      <span className="font-medium">
+                        {cartDataGenerated.ftotal_tax}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Total */}
+                  <div className="border-t border-gray-200 dark:border-gray-600 pt-3 mb-4">
+                    <div className="flex justify-between text-lg font-bold">
+                      <span>Total</span>
+                      <span>{cartDataGenerated.ftotal_amount}</span>
+                    </div>
+                    <div className="flex justify-between text-sm italic text-gray-600 dark:text-gray-400 mt-1">
+                      <span>Potential to earn points</span>
+                      <span>+{loyalty_point} Pts</span>
+                    </div>
+
+                    {/* Remaining Payment */}
+                    {cartDataGenerated.balance_amount > 0 && (
+                      <div className="border-t border-gray-200 dark:border-gray-600 pt-2 mt-2">
+                        <div className="flex justify-between font-semibold text-red-600 dark:text-red-400">
+                          <span>Remaining payment</span>
+                          <span>{cartDataGenerated.fbalance_amount}</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ScrollArea>
+        </div>
+        <div className="border-l border-gray-200 dark:border-gray-700 h-full flex flex-col">
+          <ScrollArea className="h-[calc(100vh-490px)] flex flex-col gap-3 overflow-y-auto p-4 flex-1">
             <FormItem
               asterisk={watchTransaction.items?.some(
                 (item) => item.item_type === 'package'
@@ -311,14 +521,13 @@ const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
                 render={({ field }) => (
                   <SelectAsyncPaginate
                     isClearable
-                    //   isLoading={isLoading}
                     loadOptions={getMemberList as any}
                     additional={{ page: 1 }}
                     placeholder="Select member"
                     value={field.value}
                     cacheUniqs={[watchTransaction.member]}
                     getOptionLabel={(option) => option.name!}
-                    getOptionValue={(option) => option.id?.toString()}
+                    getOptionValue={(option) => `${option.id}`}
                     debounceTimeout={500}
                     formatOptionLabel={({ name, photo }) => {
                       return (
@@ -349,17 +558,18 @@ const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
                 render={({ field }) => (
                   <SelectAsyncPaginate
                     isClearable
-                    // isMulti
-                    // isLoading={isLoading}
                     loadOptions={getEmployeeList as any}
                     additional={{ page: 1 }}
                     placeholder="Select Employee"
-                    value={field.value}
+                    value={field.value as any}
                     cacheUniqs={[watchTransaction.employee]}
-                    getOptionLabel={(option) => option.name!}
-                    getOptionValue={(option) => option.id?.toString()}
+                    getOptionLabel={(option: any) => option.name || ''}
+                    getOptionValue={(option: any) =>
+                      option.id?.toString() || ''
+                    }
                     debounceTimeout={500}
-                    formatOptionLabel={({ name, photo }) => {
+                    formatOptionLabel={(option: any) => {
+                      const { name, photo } = option
                       return (
                         <div className="flex justify-start items-center gap-2">
                           <Avatar
@@ -385,16 +595,25 @@ const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
               <Controller
                 name="balance_amount"
                 control={control}
-                render={({ field }) => (
-                  <InputCurrency
-                    value={field.value}
-                    disabled={isPaidOf}
-                    className="h-[80px] text-2xl text-center font-bold bg-primary-subtle text-primary focus:bg-primary-subtle"
-                    onValueChange={(value, name, values) => {
-                      field.onChange(values?.float)
-                    }}
-                  />
-                )}
+                render={({ field }) => {
+                  // Sinkronkan nilai field dengan cartDataGenerated saat pertama kali render
+                  React.useEffect(() => {
+                    if (field.value !== cartDataGenerated.balance_amount) {
+                      field.onChange(cartDataGenerated.balance_amount)
+                    }
+                    // eslint-disable-next-line react-hooks/exhaustive-deps
+                  }, [cartDataGenerated.balance_amount])
+                  return (
+                    <InputCurrency
+                      value={field.value}
+                      disabled={isPaidOf}
+                      className="h-[80px] text-2xl text-center font-bold bg-primary-subtle text-primary focus:bg-primary-subtle"
+                      onValueChange={(value, name, values) => {
+                        field.onChange(values?.float)
+                      }}
+                    />
+                  )
+                }}
               />
             </FormItem>
             <FormItem
@@ -411,7 +630,6 @@ const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
                   <SelectAsyncPaginate
                     isClearable
                     isMulti
-                    //   isLoading={isLoading}
                     loadOptions={getRekeningList as any}
                     additional={{ page: 1 }}
                     placeholder="Select Payment"
@@ -428,11 +646,11 @@ const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
                     onChange={(val, ctx) => {
                       if (ctx.action === 'clear') {
                         field.onChange([])
-                        formProps.setValue(
+                        formPropsTransaction.setValue(
                           'balance_amount',
-                          calculate.totalAmount
+                          cartDataGenerated.total_amount
                         )
-                        formProps.setError('payments', {
+                        formPropsTransaction.setError('payments', {
                           type: 'custom',
                           message: 'Payment method is required',
                         })
@@ -446,10 +664,10 @@ const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
                               0
                             )
                           )
-                        formProps.setValue(
+                        formPropsTransaction.setValue(
                           'balance_amount',
                           val.length <= 0
-                            ? calculate.totalAmount
+                            ? cartDataGenerated.total_amount
                             : getRemoveTotal
                         )
                       } else if (ctx.action === 'select-option') {
@@ -468,61 +686,63 @@ const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
                         ])
                         field.onChange(merege)
 
-                        formProps.setValue(
+                        formPropsTransaction.setValue(
                           'balance_amount',
-                          getTotal - Number(watch('balance_amount'))
+                          cartDataGenerated.total_amount -
+                            Number(watch('balance_amount'))
                         )
 
-                        formProps.clearErrors('payments')
+                        formPropsTransaction.clearErrors('payments')
                       }
                     }}
                   />
                 )}
               />
             </FormItem>
-          </div>
-          <div className="flex flex-col gap-2">
-            <div className="w-full flex flex-col mb-4">
-              <div className="w-full flex justify-between items-center gap-1">
-                <span className="text-base font-bold">Remaining payment</span>
-                <span className="text-base font-bold">
-                  {currencyFormat(getTotal)}
-                </span>
-              </div>
-              {watchTransaction.payments?.map((item: any, index: number) => (
-                <div
-                  key={index}
-                  className="w-full flex justify-between items-center gap-1"
-                >
-                  <span className="text-base font-bold">{item.name}</span>
-                  <div className="flex items-center gap-1">
-                    <span className="font-semibold">
-                      {currencyFormat(item.amount)}
-                    </span>
-                    <span
-                      className="cursor-pointer text-red-500 rounded-full"
-                      onClick={() => {
-                        formProps.setValue('payments', [
-                          ...watch('payments').filter(
-                            (val: any) => val.id !== item.id
-                          ),
-                        ])
-
-                        const getRemoveTotal =
-                          Number(watch('balance_amount')) + Number(item.amount)
-                        formProps.setValue(
-                          'balance_amount',
-                          getRemoveTotal <= 0 ? 0 : getRemoveTotal
-                        )
-                      }}
-                    >
-                      <Trash color="currentColor" size="15" />
-                    </span>
-                  </div>
+          </ScrollArea>
+          <div className="flex flex-col gap-2.5 border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
+            {/* Payment Details */}
+            {cartDataGenerated.payments &&
+              cartDataGenerated.payments.length > 0 && (
+                <div className="space-y-2">
+                  {cartDataGenerated.payments.map(
+                    (item: any, index: number) => (
+                      <div
+                        key={index}
+                        className="flex justify-between items-center text-sm"
+                      >
+                        <span className="text-gray-600 dark:text-gray-400 font-semibold">
+                          {item.name}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold">
+                            {currencyFormat(item.amount)}
+                          </span>
+                          <span
+                            className="cursor-pointer text-red-500 hover:text-red-700 p-1"
+                            onClick={() => {
+                              formPropsTransaction.setValue('payments', [
+                                ...watch('payments').filter(
+                                  (val: any) => val.id !== item.id
+                                ),
+                              ])
+                              const getRemoveTotal =
+                                Number(watch('balance_amount')) +
+                                Number(item.amount)
+                              formPropsTransaction.setValue(
+                                'balance_amount',
+                                getRemoveTotal <= 0 ? 0 : getRemoveTotal
+                              )
+                            }}
+                          >
+                            <Trash color="currentColor" size="14" />
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  )}
                 </div>
-              ))}
-            </div>
-
+              )}
             <div className="w-full flex flex-col md:flex-row md:justify-between items-start gap-2">
               <Dropdown
                 toggleClassName="w-full md:w-5/12"
@@ -582,7 +802,7 @@ const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
             </div>
           </div>
         </div>
-      </Drawer>
+      </div>
 
       <AlertConfirm
         open={confirmPartPaid}
@@ -597,7 +817,6 @@ const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
             <Warning2 size="70" color="#FF8A65" variant="Bulk" />
           </div>
         }
-        // loading={deleteItem.isPending}
         onRequestClose={() => setConfirmPartPaid(false)}
         onRightClick={handleSubmit((data) => {
           onSubmit({ ...data, isPaid: 2 })
@@ -610,4 +829,4 @@ const FormAddPayment: React.FC<FormProps> = ({ open, formProps, onClose }) => {
   )
 }
 
-export default FormAddPayment
+export default CartDetail

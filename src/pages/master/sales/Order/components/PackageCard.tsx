@@ -77,7 +77,7 @@ const PackageCard = ({
           formProps.setValue('duration_type', item.duration_type)
           formProps.setValue('session_duration', item.session_duration)
           formProps.setValue('classes', item.classes)
-          formProps.setValue('trainers', [])
+          formProps.setValue('trainers', null)
           formProps.setValue('instructors', item.instructors)
           formProps.setValue('allow_all_trainer', item.allow_all_trainer)
           if (item.is_promo) {

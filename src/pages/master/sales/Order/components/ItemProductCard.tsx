@@ -1,12 +1,11 @@
 import { Button, Card } from '@/components/ui'
-import { currencyFormat } from '@/components/ui/InputCurrency/currencyFormat'
 import { Edit } from 'iconsax-react'
 import React from 'react'
-import { TransactionItemSchema } from '../validation'
+import { ProcessedItem } from '../utils/generateCartData'
 
 type ItemProductCardProps = {
-  item: TransactionItemSchema
-  onClick?: (item: TransactionItemSchema) => void
+  item: ProcessedItem
+  onClick?: (item: ProcessedItem) => void
 }
 
 const ItemProductCard: React.FC<ItemProductCardProps> = ({ item, onClick }) => {
@@ -16,7 +15,7 @@ const ItemProductCard: React.FC<ItemProductCardProps> = ({ item, onClick }) => {
         <Button
           variant="plain"
           size="sm"
-          className="w-8 h-8"
+          className="w-8 h-8 hover:bg-primary-subtle"
           icon={<Edit color="currentColor" size={16} />}
           onClick={(e) => {
             e.stopPropagation()
@@ -28,12 +27,10 @@ const ItemProductCard: React.FC<ItemProductCardProps> = ({ item, onClick }) => {
       <div className="flex justify-between items-end w-full z-10">
         <div className="text-left leading-none">
           {item.discount && item.discount > 0 ? (
-            <span className="line-through text-sm">
-              {currencyFormat(item.price ?? 0)}
-            </span>
+            <span className="line-through text-sm">{item.foriginal_price}</span>
           ) : null}
           <span className="font-bold text-lg block -mt-0.5">
-            {currencyFormat(item.sell_price ?? 0)}
+            {item.foriginal_total_amount}
           </span>
         </div>
       </div>

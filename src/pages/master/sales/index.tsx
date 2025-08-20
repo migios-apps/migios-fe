@@ -13,10 +13,11 @@ import Tabs from '@/components/ui/Tabs/Tabs'
 import { QUERY_KEY } from '@/constants/queryKeys.constant'
 import { paymentStatusColor } from '@/constants/utils'
 import { Filter } from '@/services/api/@types/api'
-import { TransactionType } from '@/services/api/@types/transaction'
-import { apiGetTransactionList } from '@/services/api/TransactionService'
+import { SalesType } from '@/services/api/@types/sales'
+import { apiGetSalesList } from '@/services/api/SalesService'
 import { useSessionUser } from '@/store/authStore'
 import { useInfiniteQuery } from '@tanstack/react-query'
+import dayjs from 'dayjs'
 import { Add } from 'iconsax-react'
 import React, { useMemo, useState } from 'react'
 import { GoDotFill } from 'react-icons/go'
@@ -41,7 +42,7 @@ const Sales = () => {
     queryKey: [QUERY_KEY.sales, tableData, club.id, tabName],
     initialPageParam: 1,
     queryFn: async () => {
-      const res = await apiGetTransactionList(Number(club.id), {
+      const res = await apiGetSalesList({
         page: tableData.pageIndex,
         per_page: tableData.pageSize,
         ...(tableData.sort?.key !== ''
@@ -89,12 +90,21 @@ const Sales = () => {
   )
   const total = data?.pages[0]?.data.meta.total
 
-  const columns = useMemo<DataTableColumnDef<TransactionType>[]>(
+  const columns = useMemo<DataTableColumnDef<SalesType>[]>(
     () => [
       {
         accessorKey: 'code',
         header: 'Faktur',
+        size: 10,
         enableColumnActions: false,
+      },
+      {
+        accessorKey: 'due_date',
+        header: 'Due Date',
+        enableColumnActions: false,
+        cell: ({ row }) => {
+          return dayjs(row.original.due_date).format('DD-MM-YYYY')
+        },
       },
       {
         accessorKey: 'amount',
@@ -184,6 +194,15 @@ const Sales = () => {
               onClick={() => navigate('/sales/new')}
             >
               Add new
+            </Button>
+            <Button
+              variant="solid"
+              icon={
+                <Add color="currentColor" size={24} className="w-5 h-5 mr-1" />
+              }
+              onClick={() => navigate('/sales/order')}
+            >
+              Add new checkout
             </Button>
           </div>
           <Tabs defaultValue={tabName} onChange={setTabName}>

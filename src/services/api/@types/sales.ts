@@ -6,14 +6,15 @@ export type DiscountType = 'percent' | 'nominal'
 export type PaymentStatus = 0 | 1 | 2 | 3 // 0 = belum bayar, 1 = bayar semua, 2 = bayar sebagian. 3 = bayar sebagian dan aktifkan member package jika terdapat package
 export type PackageType = 'membership' | 'pt_program' | 'class'
 
-export interface TransactionItem {
+export interface SalesItem {
   item_type: ItemType
+  trainer_id?: number
   package_id?: number
   product_id?: number
-  name: string
+  name?: string
   quantity: number
   price: number
-  sell_price: number
+  sell_price?: number
   discount_type?: DiscountType | null
   discount?: number | null
   duration?: number | null
@@ -21,7 +22,8 @@ export interface TransactionItem {
   session_duration?: number | null
   extra_session?: number | null
   extra_day?: number | null
-  start_date?: Date | null
+  start_date?: string | null
+  end_date?: string | null
   notes?: string | null
 
   // custom fields
@@ -38,7 +40,7 @@ interface Payment {
   //   payment_date: string
 }
 
-interface RefundItem {
+interface RefundFromItem {
   id: number
   amount: number
   //   notes?: string
@@ -53,12 +55,12 @@ export interface CheckoutRequest {
   is_paid: PaymentStatus
   due_date?: string
   notes?: string
-  items: TransactionItem[]
+  items: SalesItem[]
   payments: Payment[]
-  refund_from: RefundItem[]
+  refund_from: RefundFromItem[]
 }
 
-export interface TransactionType {
+export interface SalesType {
   id: number
   code: string
   member_id: number
@@ -93,12 +95,12 @@ export interface TransactionType {
   ftotal_payments: string
 }
 
-export type TransactionTypeListResponse = Omit<ApiTypes, 'data'> & {
-  data: { data: TransactionType[]; meta: MetaApi }
+export type SalesTypeListResponse = Omit<ApiTypes, 'data'> & {
+  data: { data: SalesType[]; meta: MetaApi }
 }
 
-// transaction detail
-export interface TransactionDetailType {
+// sales detail
+export interface SalesDetailType {
   id: number
   code: string
   member_id: number
@@ -150,7 +152,7 @@ export interface TransactionDetailType {
   }
   items: {
     id: number
-    transaction_id: number
+    sales_id: number
     product_id: number | null
     package_id: number | null
     item_type: 'package' | 'product'
@@ -207,7 +209,7 @@ export interface TransactionDetailType {
   }[]
   payments: {
     id: number
-    transaction_id: number
+    sales_id: number
     amount: number
     rekening_id: number
     status: string
@@ -221,7 +223,7 @@ export interface TransactionDetailType {
   }[]
   refunds: {
     id: number
-    transaction_id: number
+    sales_id: number
     amount: number
     rekening_id: number
     status: string
@@ -247,6 +249,36 @@ export interface TransactionDetailType {
   }
 }
 
-export type TransactionDetailResponse = Omit<ApiTypes, 'data'> & {
-  data: TransactionDetailType
+export type SalesDetailResponse = Omit<ApiTypes, 'data'> & {
+  data: SalesDetailType
+}
+
+// Refund types
+export interface RefundItem {
+  trainer_id?: number
+  item_type: ItemType
+  package_id?: number
+  product_id?: number
+  quantity: number
+  price: number
+}
+
+export interface RefundPayment {
+  amount: number
+  id: number
+  reference_no: string
+  notes?: string
+  payment_date: string
+}
+
+export interface RefundRequest {
+  transaction_id: number
+  club_id: number
+  member_id: number
+  employee_id: number
+  is_paid: PaymentStatus
+  due_date: string
+  notes?: string
+  items: RefundItem[]
+  payments: RefundPayment[]
 }

@@ -3,7 +3,7 @@ import {
   DurationType,
   ItemType,
   PackageType,
-} from '@/services/api/@types/transaction'
+} from '@/services/api/@types/sales'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
 import * as Yup from 'yup'
@@ -114,9 +114,16 @@ export const transactionItemSchema = Yup.object().shape({
     otherwise: (schema) => schema.default([]),
   }),
   instructors: Yup.array().default([]),
-  trainers: Yup.array().when(
-    ['item_type', 'package_type', 'allow_all_trainer'],
-    {
+  trainers: Yup.object()
+    .shape({
+      id: Yup.number(),
+      name: Yup.string(),
+      code: Yup.string(),
+      photo: Yup.string().nullable(),
+    })
+    .nullable()
+    .default(null)
+    .when(['item_type', 'package_type', 'allow_all_trainer'], {
       is: (
         item_type: string,
         package_type: string,
@@ -126,18 +133,13 @@ export const transactionItemSchema = Yup.object().shape({
         package_type === 'pt_program' &&
         !allow_all_trainer,
       then: (schema) =>
-        schema
-          .of(
-            Yup.object().shape({
-              id: Yup.number().required('Trainer ID is required.'),
-              name: Yup.string().required('Trainer name is required.'),
-              photo: Yup.string().required('Trainer photo is required.'),
-            })
-          )
-          .min(1, 'At least one trainer is required for PT Program packages.'),
-      otherwise: (schema) => schema.default([]),
-    }
-  ),
+        schema.shape({
+          id: Yup.number().required('Trainer ID is required.'),
+          name: Yup.string().required('Trainer name is required.'),
+          code: Yup.string().required('Trainer code is required.'),
+          photo: Yup.string().nullable(),
+        }),
+    }),
   data: Yup.object().nullable(),
 })
 
@@ -146,7 +148,7 @@ export type ReturnTransactionItemFormSchema = ReturnType<
   typeof useForm<TransactionItemSchema>
 >
 
-const defaultValue = {
+const defaultValueCartItem = {
   discount_type: 'percent',
   discount: 0,
   start_date: new Date(),
@@ -156,7 +158,7 @@ export const useTransactionItemForm = () => {
   return useForm<TransactionItemSchema>({
     resolver: yupResolver(transactionItemSchema),
     defaultValues: {
-      ...defaultValue,
+      ...defaultValueCartItem,
     },
   })
 }
@@ -165,40 +167,63 @@ export const resetTransactionItemForm = (
   form: ReturnTransactionItemFormSchema
 ) => {
   form.reset({
-    ...defaultValue,
+    ...defaultValueCartItem,
   })
 }
 
 export const validationTransactionSchema = Yup.object().shape({
   // club_id: Yup.number().required('Club ID is required.'),
-  employee: Yup.object()
-    .nullable()
-    .shape({
-      id: Yup.number().required('Employee ID is required.'),
-      name: Yup.string().required('Employee name is required.'),
-      photo: Yup.string().nullable(),
-    }),
+  employee: Yup.object().nullable().shape({
+    id: Yup.number().nullable(),
+    name: Yup.string().nullable(),
+    photo: Yup.string().nullable(),
+  }),
   member: Yup.object()
     .nullable()
     .shape({
-      id: Yup.number().required('Member ID is required.'),
-      name: Yup.string().required('Member name is required.'),
+      id: Yup.number().when('$hasPackage', {
+        is: true,
+        then: (schema) => schema.required('Member ID is required.'),
+        otherwise: (schema) => schema.nullable(),
+      }),
+      name: Yup.string().when('$hasPackage', {
+        is: true,
+        then: (schema) => schema.required('Member name is required.'),
+        otherwise: (schema) => schema.nullable(),
+      }),
       photo: Yup.string().nullable(),
     })
     .test(
       'member-required-if-package',
       'Member is required when a package is included.',
       function (value) {
-        const { transaction_items } = this.parent
-        const hasPackageItem = transaction_items?.some(
+        const { items } = this.parent
+        const hasPackageItem = items?.some(
           (item: TransactionItemSchema) => item.item_type === 'package'
         )
-        if (hasPackageItem && (!value || !value.id || !value.name)) {
-          return false
+
+        // Jika tidak ada package item, member tidak wajib
+        if (!hasPackageItem) {
+          return true
         }
-        return true
+
+        // Jika ada package item, member wajib diisi
+        return Boolean(value && value.id && value.name)
       }
     ),
+  tax_calculation: Yup.number().default(0),
+  loyalty_enabled: Yup.number().default(0),
+  taxes: Yup.array()
+    .of(
+      Yup.object().shape({
+        id: Yup.number(),
+        type: Yup.string(),
+        name: Yup.string(),
+        rate: Yup.number(),
+      })
+    )
+    .default([]),
+
   discount_type: Yup.string()
     .oneOf(['percent', 'nominal'] as DiscountType[], 'Invalid discount type.')
     .required('Discount type is required.'),
@@ -213,9 +238,7 @@ export const validationTransactionSchema = Yup.object().shape({
   // is_paid: Yup.number()
   //   .oneOf([0, 1, 2, 3] as PaymentStatus[], 'Invalid payment status.')
   //   .required('Payment status is required.'),
-  // due_date: Yup.date()
-  //   .required('Due date is required.')
-  //   .min(new Date(), 'Due date cannot be in the past.'),
+  due_date: Yup.date().required('Due date is required.'),
   notes: Yup.string().nullable(),
   items: Yup.array()
     .of(transactionItemSchema)
@@ -262,6 +285,7 @@ export const defaultValueTransaction: any = {
   items: [],
   payments: [],
   refund_from: [],
+  due_date: new Date(),
 }
 
 export type ValidationTransactionSchema = Yup.InferType<

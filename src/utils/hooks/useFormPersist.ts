@@ -1,22 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react'
-import { SetFieldValue } from 'react-hook-form'
+import { FieldValues, SetFieldValue } from 'react-hook-form'
 
-interface FormPersistOptions {
+interface FormPersistOptions<T extends FieldValues = any> {
   storage?: Storage
-  exclude?: string[]
-  include?: string | string[]
+  exclude?: (keyof T)[]
+  include?: keyof T | (keyof T)[]
   validate?: boolean
   dirty?: boolean
   timeout?: number | null
-  restore?: (data: any) => void
-  watch: (names?: string | string[]) => Record<string, any>
-  setValue: SetFieldValue<any>
+  restore?: (data: Partial<T>) => void
+  watch: (names?: keyof T | (keyof T)[]) => T
+  setValue: SetFieldValue<T>
   onTimeout?: () => void
-  defaultValue?: Record<string, any>
+  defaultValue?: Partial<T>
 }
 
-const useFormPersist = (
+const useFormPersist = <T extends FieldValues>(
   name: string,
   {
     storage,
@@ -30,23 +30,50 @@ const useFormPersist = (
     setValue,
     onTimeout,
     defaultValue,
-  }: FormPersistOptions
+  }: FormPersistOptions<T>
 ) => {
-  const values = watch(include)
+  const values = watch()
   const getStorage = (): Storage => storage || window.sessionStorage
   const clearStorage = (): void => {
     getStorage().removeItem(name)
   }
 
+  // Filter data berdasarkan include/exclude
+  const filterData = (data: Record<string, any>): Partial<T> => {
+    const filtered: Record<string, any> = {}
+
+    Object.keys(data).forEach((key) => {
+      // Skip timestamp
+      if (key === '_timestamp') return
+
+      // Jika ada include, hanya ambil field yang di-include
+      if (include) {
+        const includeArray = Array.isArray(include) ? include : [include]
+        if (includeArray.includes(key)) {
+          filtered[key] = data[key]
+        }
+        return
+      }
+
+      // Jika tidak ada include, ambil semua kecuali yang di-exclude
+      if (!exclude.includes(key)) {
+        filtered[key] = data[key]
+      }
+    })
+
+    return filtered as Partial<T>
+  }
+
   useEffect(() => {
     const str = getStorage().getItem(name)
     if (!str && defaultValue) {
+      const filteredDefault = filterData(defaultValue)
       if (restore) {
-        restore(defaultValue)
+        restore(filteredDefault)
       }
       getStorage().setItem(
         name,
-        JSON.stringify({ ...defaultValue, _timestamp: Date.now() })
+        JSON.stringify({ ...filteredDefault, _timestamp: Date.now() })
       )
       return
     }
@@ -56,7 +83,6 @@ const useFormPersist = (
         _timestamp?: number
         [key: string]: any
       }
-      const dataRestored: Record<string, any> = {}
       const currTimestamp = Date.now()
 
       if (timeout && currTimestamp - _timestamp! > timeout) {
@@ -65,27 +91,35 @@ const useFormPersist = (
         return
       }
 
-      Object.keys(values).forEach((key) => {
-        const shouldSet = !exclude.includes(key)
-        if (shouldSet) {
-          dataRestored[key] = values[key]
-          setValue(key, values[key], {
-            shouldValidate: validate,
-            shouldDirty: dirty,
-          })
-        }
+      const filteredData = filterData(values)
+
+      // Merge defaultValue dengan data dari localStorage
+      const mergedData = { ...defaultValue, ...filteredData }
+
+      Object.keys(mergedData).forEach((key) => {
+        setValue(key, mergedData[key], {
+          shouldValidate: validate,
+          shouldDirty: dirty,
+        })
       })
 
       if (restore) {
-        restore(dataRestored)
+        restore(filteredData)
       }
     }
   }, [name])
 
   useEffect(() => {
-    if (Object.entries(values).length) {
-      const _timestamp = Date.now()
-      getStorage().setItem(name, JSON.stringify({ ...values, _timestamp }))
+    if (values && Object.keys(values).length > 0) {
+      const filteredValues = filterData(values)
+      // Pastikan ada data yang akan disimpan selain timestamp
+      if (Object.keys(filteredValues).length > 0) {
+        const _timestamp = Date.now()
+        const dataToSave = { ...filteredValues, _timestamp }
+        getStorage().setItem(name, JSON.stringify(dataToSave))
+      } else {
+        console.log('useFormPersist - no data to save after filtering')
+      }
     }
   }, [values])
 

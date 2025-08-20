@@ -11,7 +11,6 @@ import {
 } from '@/components/ui'
 import AlertConfirm from '@/components/ui/AlertConfirm'
 import InputCurrency from '@/components/ui/InputCurrency'
-import { currencyFormat } from '@/components/ui/InputCurrency/currencyFormat'
 import SelectAsyncPaginate, {
   ReturnAsyncSelect,
 } from '@/components/ui/Select/SelectAsync'
@@ -60,22 +59,21 @@ const FormAddItemSale: React.FC<FormProps> = ({
   const watchData = watch()
   const [confirmDelete, setConfirmDelete] = React.useState(false)
 
-  console.log('form', {
-    watchData,
-    errors,
-  })
+  // console.log('form', {
+  //   watchData,
+  //   errors,
+  // })
 
-  const trainers = React.useMemo(
-    () =>
-      [
-        ...(watchData?.instructors ? watchData.instructors : []),
-        // ...(watchData.trainers ? watchData.trainers : []),
-      ]
-        ?.map((item) => item.name)
-        ?.filter((item) => item !== null)
-        ?.slice(0, 3) ?? [],
-    [watchData.instructors]
-  )
+  const trainers = React.useMemo(() => {
+    const instructorNames =
+      watchData?.instructors?.map((item) => item.name) || []
+    const trainerName = watchData?.trainers?.name
+      ? [watchData.trainers.name]
+      : []
+    return [...instructorNames, ...trainerName]
+      .filter((item) => item !== null)
+      .join(', ')
+  }, [watchData?.instructors, watchData.trainers])
 
   const handleClose = () => {
     onClose()
@@ -168,7 +166,7 @@ const FormAddItemSale: React.FC<FormProps> = ({
                       {watchData.duration} {watchData.duration_type}
                     </span>
                   </div>
-                  <div
+                  {/* <div
                     className={classNames('leading-none', {
                       'text-right': watchData.item_type === 'package',
                     })}
@@ -181,7 +179,7 @@ const FormAddItemSale: React.FC<FormProps> = ({
                     <span className="font-bold text-lg block -mt-0.5">
                       {currencyFormat(watchData.price ?? 0)}
                     </span>
-                  </div>
+                  </div> */}
                 </div>
                 {}
                 {watchData.package_type === PackageType.CLASS ? (
@@ -202,7 +200,7 @@ const FormAddItemSale: React.FC<FormProps> = ({
                       <span className="text-sm">
                         {trainers.length === 0
                           ? 'Available with all Instructor'
-                          : trainers?.join(', ')}
+                          : trainers}
                       </span>
                     </div>
                   </>
@@ -255,7 +253,7 @@ const FormAddItemSale: React.FC<FormProps> = ({
                             value={field.value}
                             cacheUniqs={[watchData.trainers]}
                             getOptionLabel={(option) => option.name!}
-                            getOptionValue={(option) => option.code}
+                            getOptionValue={(option) => option.code || ''}
                             debounceTimeout={500}
                             formatOptionLabel={({ name, photo }) => {
                               return (
@@ -269,7 +267,7 @@ const FormAddItemSale: React.FC<FormProps> = ({
                                 </div>
                               )
                             }}
-                            onChange={(option) => field.onChange([option])}
+                            onChange={(option) => field.onChange(option)}
                           />
                         )}
                       />

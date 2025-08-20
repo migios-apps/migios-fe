@@ -3,7 +3,6 @@ import ModeSwitcher from '@/components/template/ThemeConfigurator/ModeSwitcher'
 import { Button, Select, Skeleton, Tabs } from '@/components/ui'
 import AlertConfirm from '@/components/ui/AlertConfirm'
 import CloseButton from '@/components/ui/CloseButton'
-import { currencyFormat } from '@/components/ui/InputCurrency/currencyFormat'
 import { SelectAsyncPaginate } from '@/components/ui/Select'
 import { ReturnAsyncSelect } from '@/components/ui/Select/SelectAsync'
 import { categoryPackage } from '@/constants'
@@ -13,24 +12,30 @@ import { TrainerPackageTypes } from '@/services/api/@types/package'
 import { apiGetPackageList } from '@/services/api/PackageService'
 import { apiGetProductList } from '@/services/api/ProductService'
 import { apiGetTrainerList } from '@/services/api/TrainerService'
+import { apiGetSettings } from '@/services/api/settings/settings'
 import { useSessionUser } from '@/store/authStore'
 import useFormPersist from '@/utils/hooks/useFormPersist'
 import useInfiniteScroll from '@/utils/hooks/useInfiniteScroll'
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { Box, DocumentFilter, Warning2 } from 'iconsax-react'
 import React, { Fragment } from 'react'
 import { useFieldArray } from 'react-hook-form'
 import { TbSearch } from 'react-icons/tb'
 import { useNavigate } from 'react-router-dom'
 import type { GroupBase, OptionsOrGroups } from 'react-select'
+import CartDetail from './CartDetail'
 import FormAddItemSale from './components/FormAddItemSale'
-import FormAddPayment from './components/FormAddPayment'
 import ItemPackageCard from './components/ItemPackageCard'
 import ItemProductCard from './components/ItemProductCard'
 import PackageCard from './components/PackageCard'
 import ProductCard from './components/ProductCard'
-import { calculateDetailPayment } from './utils/calculateDetailPayment'
+import { generateCartData } from './utils/generateCartData'
 import {
+  ValidationTransactionSchema,
   defaultValueTransaction,
   resetTransactionForm,
   useTransactionForm,
@@ -39,7 +44,7 @@ import {
 
 const { TabNav, TabList, TabContent } = Tabs
 
-const New = () => {
+const PointOfSales = () => {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
   const club = useSessionUser((state) => state.club)
@@ -53,30 +58,45 @@ const New = () => {
     'create'
   )
   const [indexItem, setIndexItem] = React.useState(0)
-  const [openAddPayment, setOpenAddPayment] = React.useState(false)
   const [confirmClose, setConfirmClose] = React.useState(false)
+  const [showCartDetail, setShowCartDetail] = React.useState(false)
 
-  const formPropsItem = useTransactionItemForm()
   const transactionSchema = useTransactionForm()
+  const formPropsItem = useTransactionItemForm()
   const watchTransaction = transactionSchema.watch()
 
   // console.log('transactionSchema', transactionSchema.watch())
   // console.log('error transaction', transactionSchema.formState.errors)
 
-  useFormPersist('migios_pos', {
+  useFormPersist<ValidationTransactionSchema>('item_pos', {
     defaultValue: defaultValueTransaction,
     watch: transactionSchema.watch,
     setValue: transactionSchema.setValue,
     storage: window.localStorage,
-    restore: (data: any) => {
-      Object.keys(data).forEach((key: any) => {
-        return transactionSchema.setValue(key, data[key], {
-          shouldValidate: true,
-          shouldDirty: true,
-        })
+    include: ['items', 'member'], // Hanya persist field items
+    restore: (data) => {
+      // console.log('Data restored from localStorage:', data)
+      Object.keys(data).forEach((key) => {
+        // console.log(`Setting ${key}:`, data[key])
+        return transactionSchema.setValue(
+          key as keyof ValidationTransactionSchema,
+          data[key as keyof ValidationTransactionSchema],
+          {
+            shouldValidate: true,
+            shouldDirty: true,
+          }
+        )
       })
     },
   })
+
+  // Generate cart data untuk API
+  const cartDataGenerated = generateCartData(watchTransaction)
+
+  // Debug: Log current transaction dan cart data
+  // console.log('Current in form:', watchTransaction)
+  // console.log('Generated cart data:', cartDataGenerated)
+  // console.log('watchTransaction', watchTransaction)
 
   const {
     // fields: items,
@@ -88,14 +108,24 @@ const New = () => {
     name: 'items',
   })
 
-  const calculate = calculateDetailPayment({
-    items: watchTransaction.items,
-    discount_type: watchTransaction.discount_type,
-    discount: watchTransaction.discount || 0,
-    tax_rate: 0,
-  })
+  // const calculate = calculateDetailPayment({
+  //   items: watchTransaction.items,
+  //   discount_type: watchTransaction.discount_type,
+  //   discount: watchTransaction.discount || 0,
+  //   tax_rate: 0,
+  // })
 
-  // console.log('items', items)
+  useQuery({
+    queryKey: [QUERY_KEY.settings],
+    queryFn: async () => {
+      const res = await apiGetSettings()
+      const data = res.data
+      transactionSchema.setValue('tax_calculation', data.tax_calculation)
+      transactionSchema.setValue('loyalty_enabled', data.loyalty_enabled)
+      transactionSchema.setValue('taxes', data.taxes)
+      return res
+    },
+  })
 
   const {
     data: packages,
@@ -315,229 +345,234 @@ const New = () => {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] xl:grid-cols-[1fr_500px] items-start h-full">
-        <Tabs value={tab} onChange={(tab) => setTab(tab)}>
-          <TabList>
-            <TabNav
-              value="package"
-              icon={
-                <DocumentFilter color="currentColor" size={24} variant="Bulk" />
-              }
-            >
-              Package Plan
-            </TabNav>
-            <TabNav
-              value="product"
-              icon={<Box color="currentColor" size={24} variant="Bulk" />}
-            >
-              Product
-            </TabNav>
-          </TabList>
-          <TabContent value="package">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 p-4">
-              <Select
-                isClearable
-                isSearchable={false}
-                placeholder="Filter by category"
-                className="md:max-w-[200px] w-full"
-                value={categoryPackage.filter(
-                  (option) => option.value === packageCategory
-                )}
-                options={categoryPackage}
-                onChange={(option) => setPackageCategory(option?.value || '')}
-              />
-              <SelectAsyncPaginate
-                isClearable
-                isLoading={isFetchingNextPagePackages}
-                loadOptions={getTrainerList as any}
-                additional={{ page: 1 }}
-                placeholder="Filter by trainer"
-                className="md:max-w-[200px] w-full"
-                value={trainer}
-                getOptionLabel={(option) => option.name!}
-                getOptionValue={(option) => option.id.toString()}
-                debounceTimeout={500}
-                onChange={(option) => setTrainer(option!)}
-              />
-              <DebounceInput
-                defaultValue={searchPackage}
-                placeholder="Search name..."
-                suffix={<TbSearch className="text-lg" />}
-                handleOnchange={(value) => {
-                  setSearchPackage(value)
-                  queryClient.invalidateQueries({
-                    queryKey: [QUERY_KEY.packages],
-                  })
-                }}
-              />
-            </div>
-            <div
-              ref={containerRefPackage}
-              className="overflow-y-auto p-4"
-              style={{ height: 'calc(100vh - 195px)' }}
-            >
-              <div
-                className="grid gap-4 mb-4"
-                style={{
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                }}
+      {showCartDetail ? (
+        <CartDetail
+          formPropsTransaction={transactionSchema}
+          formPropsTransactionItem={formPropsItem}
+          setIndexItem={setIndexItem}
+          setOpenAddItem={setOpenAddItem}
+          setFormItemType={setFormItemType}
+          onBack={() => setShowCartDetail(false)}
+        />
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] xl:grid-cols-[1fr_500px] items-start h-full">
+          <Tabs value={tab} onChange={(tab) => setTab(tab)}>
+            <TabList>
+              <TabNav
+                value="package"
+                icon={
+                  <DocumentFilter
+                    color="currentColor"
+                    size={24}
+                    variant="Bulk"
+                  />
+                }
               >
-                {packages?.pages.map((page, pageIndex) => (
-                  <React.Fragment key={pageIndex}>
-                    {page.data.data.map((item, index: number) => (
-                      <PackageCard
-                        key={index}
-                        disabled={watchTransaction.items
-                          ?.map((trx) => trx.package_id)
-                          ?.includes(item.id)}
-                        item={item}
-                        formProps={formPropsItem}
-                        onClick={() => {
-                          setOpenAddItem(true)
-                          setFormItemType('create')
-                        }}
-                      />
-                    ))}
-                  </React.Fragment>
-                ))}
-                {isFetchingNextPagePackages &&
-                  Array.from({ length: 12 }, (_, i) => i + 1).map((_, i) => (
-                    <Skeleton key={i} height={120} className="rounded-xl" />
-                  ))}
-              </div>
-              {totalPackage === listPackages.length && (
-                <p className="col-span-full text-center text-gray-300 dark:text-gray-500">
-                  No more items to load
-                </p>
-              )}
-            </div>
-          </TabContent>
-          <TabContent value="product">
-            <div className="p-4">
-              <DebounceInput
-                defaultValue={searchProduct}
-                placeholder="Search name..."
-                suffix={<TbSearch className="text-lg" />}
-                handleOnchange={(value) => {
-                  setSearchProduct(value)
-                  queryClient.invalidateQueries({
-                    queryKey: [QUERY_KEY.products],
-                  })
-                }}
-              />
-            </div>
-            <div
-              ref={containerRefProduct}
-              className="overflow-y-auto p-4"
-              style={{ height: 'calc(100vh - 195px)' }}
-            >
-              <div
-                className="grid gap-4 mb-4"
-                style={{
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
-                }}
+                Package Plan
+              </TabNav>
+              <TabNav
+                value="product"
+                icon={<Box color="currentColor" size={24} variant="Bulk" />}
               >
-                {products?.pages.map((page, pageIndex) => (
-                  <React.Fragment key={pageIndex}>
-                    {page.data.data.map((item, index: number) => (
-                      <ProductCard
-                        key={index}
-                        item={item}
-                        disabled={
-                          item.quantity === 0 ||
-                          watchTransaction.items
-                            ?.map((trx) => trx.product_id)
-                            ?.includes(item.id)
-                        }
-                        formProps={formPropsItem}
-                        onClick={() => {
-                          setOpenAddItem(true)
-                          setFormItemType('create')
-                        }}
-                      />
-                    ))}
-                  </React.Fragment>
-                ))}
-                {isFetchingNextPageProducts &&
-                  Array.from({ length: 12 }, (_, i) => i + 1).map((_, i) => (
-                    <Skeleton key={i} height={120} className="rounded-xl" />
-                  ))}
-              </div>
-              {totalProduct === listProducts.length && (
-                <p className="col-span-full text-center text-gray-300 dark:text-gray-500">
-                  No more items to load
-                </p>
-              )}
-            </div>
-          </TabContent>
-        </Tabs>
-        <div className="border-l border-gray-200 dark:border-gray-700 h-full">
-          <div
-            className="flex flex-col gap-3 overflow-y-auto p-4"
-            style={{ height: 'calc(100vh - 280px)' }}
-          >
-            {watchTransaction.items?.map((item, index) => {
-              return (
-                <Fragment key={index}>
-                  {item.item_type === 'product' ? (
-                    <ItemProductCard
-                      item={item}
-                      onClick={() => {
-                        formPropsItem.reset(item)
-                        setIndexItem(index)
-                        setOpenAddItem(true)
-                        setFormItemType('update')
-                      }}
-                    />
-                  ) : (
-                    <ItemPackageCard
-                      item={item}
-                      onClick={() => {
-                        formPropsItem.reset(item)
-                        setIndexItem(index)
-                        setOpenAddItem(true)
-                        setFormItemType('update')
-                      }}
-                    />
+                Product
+              </TabNav>
+            </TabList>
+            <TabContent value="package">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2 p-4">
+                <Select
+                  isClearable
+                  isSearchable={false}
+                  placeholder="Filter by category"
+                  className="md:max-w-[200px] w-full"
+                  value={categoryPackage.filter(
+                    (option) => option.value === packageCategory
                   )}
-                </Fragment>
-              )
-            })}
-          </div>
-          <div className="h-[210px] flex flex-col justify-between p-4 pb-0 text-base">
-            <div className="flex flex-col">
-              <div className="flex justify-between">
-                <span className="font-bold">Sub total</span>
-                <span>{currencyFormat(calculate.subtotal)}</span>
+                  options={categoryPackage}
+                  onChange={(option) => setPackageCategory(option?.value || '')}
+                />
+                <SelectAsyncPaginate
+                  isClearable
+                  isLoading={isFetchingNextPagePackages}
+                  loadOptions={getTrainerList as any}
+                  additional={{ page: 1 }}
+                  placeholder="Filter by trainer"
+                  className="md:max-w-[200px] w-full"
+                  value={trainer}
+                  getOptionLabel={(option) => option.name!}
+                  getOptionValue={(option) => option.id.toString()}
+                  debounceTimeout={500}
+                  onChange={(option) => setTrainer(option!)}
+                />
+                <DebounceInput
+                  defaultValue={searchPackage}
+                  placeholder="Search name..."
+                  suffix={<TbSearch className="text-lg" />}
+                  handleOnchange={(value) => {
+                    setSearchPackage(value)
+                    queryClient.invalidateQueries({
+                      queryKey: [QUERY_KEY.packages],
+                    })
+                  }}
+                />
               </div>
-              <span className="text-primary cursor-pointer">Add discount</span>
-              <div className="flex justify-between">
-                <span className="font-bold">Tax</span>
-                <span>{currencyFormat(calculate.taxAmount)}</span>
+              <div
+                ref={containerRefPackage}
+                className="overflow-y-auto p-4"
+                style={{ height: 'calc(100vh - 200px)' }}
+              >
+                <div
+                  className="grid gap-4 mb-4"
+                  style={{
+                    gridTemplateColumns:
+                      'repeat(auto-fill, minmax(280px, 1fr))',
+                  }}
+                >
+                  {packages?.pages.map((page, pageIndex) => (
+                    <React.Fragment key={pageIndex}>
+                      {page.data.data.map((item, index: number) => (
+                        <PackageCard
+                          key={index}
+                          disabled={watchTransaction.items
+                            ?.map((trx) => trx.package_id)
+                            ?.includes(item.id)}
+                          item={item}
+                          formProps={formPropsItem}
+                          onClick={() => {
+                            setOpenAddItem(true)
+                            setFormItemType('create')
+                          }}
+                        />
+                      ))}
+                    </React.Fragment>
+                  ))}
+                  {isFetchingNextPagePackages &&
+                    Array.from({ length: 12 }, (_, i) => i + 1).map((_, i) => (
+                      <Skeleton key={i} height={120} className="rounded-xl" />
+                    ))}
+                </div>
+                {totalPackage === listPackages.length && (
+                  <p className="col-span-full text-center text-gray-300 dark:text-gray-500">
+                    No more items to load
+                  </p>
+                )}
               </div>
-            </div>
-            <div className="flex flex-col">
-              <div className="flex justify-between font-bold">
-                <span>Total</span>
-                <span>{currencyFormat(calculate.totalAmount)}</span>
+            </TabContent>
+            <TabContent value="product">
+              <div className="p-4">
+                <DebounceInput
+                  defaultValue={searchProduct}
+                  placeholder="Search name..."
+                  suffix={<TbSearch className="text-lg" />}
+                  handleOnchange={(value) => {
+                    setSearchProduct(value)
+                    queryClient.invalidateQueries({
+                      queryKey: [QUERY_KEY.products],
+                    })
+                  }}
+                />
               </div>
-              <div className="flex justify-between italic">
-                <span>Potential to earn points</span>
-                <span>+{calculate.loyalty_point} Pts</span>
+              <div
+                ref={containerRefProduct}
+                className="overflow-y-auto p-4"
+                style={{ height: 'calc(100vh - 175px)' }}
+              >
+                <div
+                  className="grid gap-4 mb-4"
+                  style={{
+                    gridTemplateColumns:
+                      'repeat(auto-fill, minmax(280px, 1fr))',
+                  }}
+                >
+                  {products?.pages.map((page, pageIndex) => (
+                    <React.Fragment key={pageIndex}>
+                      {page.data.data.map((item, index: number) => (
+                        <ProductCard
+                          key={index}
+                          item={item}
+                          disabled={
+                            item.quantity === 0 ||
+                            watchTransaction.items
+                              ?.map((trx) => trx.product_id)
+                              ?.includes(item.id)
+                          }
+                          formProps={formPropsItem}
+                          onClick={() => {
+                            setOpenAddItem(true)
+                            setFormItemType('create')
+                          }}
+                        />
+                      ))}
+                    </React.Fragment>
+                  ))}
+                  {isFetchingNextPageProducts &&
+                    Array.from({ length: 12 }, (_, i) => i + 1).map((_, i) => (
+                      <Skeleton key={i} height={120} className="rounded-xl" />
+                    ))}
+                </div>
+                {totalProduct === listProducts.length && (
+                  <p className="col-span-full text-center text-gray-300 dark:text-gray-500">
+                    No more items to load
+                  </p>
+                )}
               </div>
-            </div>
-
-            <Button
-              className="rounded-full"
-              variant="solid"
-              disabled={watchTransaction.items?.length === 0}
-              onClick={() => setOpenAddPayment(true)}
+            </TabContent>
+          </Tabs>
+          <div className="border-l border-gray-200 dark:border-gray-700 h-full">
+            <div
+              className="flex flex-col gap-3 overflow-y-auto p-4"
+              style={{ height: 'calc(100vh - 190px)' }}
             >
-              Pay now
-            </Button>
+              {cartDataGenerated.items?.map((item, index) => {
+                return (
+                  <Fragment key={index}>
+                    {item.item_type === 'product' ? (
+                      <ItemProductCard
+                        item={item}
+                        onClick={() => {
+                          formPropsItem.reset(item)
+                          setIndexItem(index)
+                          setOpenAddItem(true)
+                          setFormItemType('update')
+                        }}
+                      />
+                    ) : (
+                      <ItemPackageCard
+                        item={item}
+                        onClick={() => {
+                          formPropsItem.reset(item)
+                          setIndexItem(index)
+                          setOpenAddItem(true)
+                          setFormItemType('update')
+                        }}
+                      />
+                    )}
+                  </Fragment>
+                )
+              })}
+            </div>
+            <div className="h-[110px] flex flex-col justify-between p-4 text-base gap-3">
+              <div className="flex flex-col">
+                <div className="flex justify-between">
+                  <span className="font-bold">Sub total</span>
+                  <span>{cartDataGenerated.foriginal_subtotal}</span>
+                </div>
+                <span className="text-xs italic text-right">
+                  Sub total belum dikenakan tarif
+                </span>
+              </div>
+
+              <Button
+                className="rounded-full"
+                variant="solid"
+                disabled={watchTransaction.items?.length === 0}
+                onClick={() => setShowCartDetail(true)}
+              >
+                Checkout
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <FormAddItemSale
         open={openAddItem}
@@ -555,12 +590,6 @@ const New = () => {
           removeTransactionItem(index || indexItem)
         }}
         onClose={() => setOpenAddItem(false)}
-      />
-
-      <FormAddPayment
-        open={openAddPayment}
-        formProps={transactionSchema}
-        onClose={() => setOpenAddPayment(false)}
       />
 
       <AlertConfirm
@@ -583,7 +612,7 @@ const New = () => {
         onRightClick={() => {
           resetTransactionForm(transactionSchema)
           window.localStorage.setItem(
-            'migios_pos',
+            'item_pos',
             JSON.stringify({
               ...defaultValueTransaction,
               _timestamp: Date.now(),
@@ -597,4 +626,4 @@ const New = () => {
   )
 }
 
-export default New
+export default PointOfSales

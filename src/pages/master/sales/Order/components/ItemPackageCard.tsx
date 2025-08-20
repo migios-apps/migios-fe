@@ -1,13 +1,12 @@
 import { Button, Card } from '@/components/ui'
-import { currencyFormat } from '@/components/ui/InputCurrency/currencyFormat'
 import { PackageType, categoryPackage } from '@/constants'
 import { Edit } from 'iconsax-react'
 import React from 'react'
-import { TransactionItemSchema } from '../validation'
+import { ProcessedItem } from '../utils/generateCartData'
 
 type ItemPackageCardProps = {
-  item: TransactionItemSchema
-  onClick?: (item: TransactionItemSchema) => void
+  item: ProcessedItem
+  onClick?: (item: ProcessedItem) => void
 }
 
 const ItemPackageCard: React.FC<ItemPackageCardProps> = ({ item, onClick }) => {
@@ -17,7 +16,7 @@ const ItemPackageCard: React.FC<ItemPackageCardProps> = ({ item, onClick }) => {
         <Button
           variant="plain"
           size="sm"
-          className="w-8 h-8"
+          className="w-8 h-8 hover:bg-primary-subtle"
           icon={<Edit color="currentColor" size={16} />}
           onClick={(e) => {
             e.stopPropagation()
@@ -43,12 +42,10 @@ const ItemPackageCard: React.FC<ItemPackageCardProps> = ({ item, onClick }) => {
         </div>
         <div className="text-right leading-none">
           {item.discount && item.discount > 0 ? (
-            <span className="line-through text-sm">
-              {currencyFormat(item.price ?? 0)}
-            </span>
+            <span className="line-through text-sm">{item.foriginal_price}</span>
           ) : null}
           <span className="font-bold text-lg block -mt-0.5">
-            {currencyFormat(item.sell_price ?? 0)}
+            {item.foriginal_total_amount}
           </span>
         </div>
       </div>
@@ -82,7 +79,7 @@ const ItemPackageCard: React.FC<ItemPackageCardProps> = ({ item, onClick }) => {
           <span className="text-sm">
             {[
               ...(item?.instructors ? item.instructors : []),
-              ...(item.trainers ? item.trainers : []),
+              ...(item.trainers ? [item.trainers] : []),
             ]
               ?.map((item) => item.name)
               ?.slice(0, 3)
