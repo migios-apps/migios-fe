@@ -2,7 +2,7 @@ import ModeSwitcher from '@/components/template/ThemeConfigurator/ModeSwitcher'
 import { Tabs } from '@/components/ui'
 import CloseButton from '@/components/ui/CloseButton'
 import { QUERY_KEY } from '@/constants/queryKeys.constant'
-import { apiGetTransaction } from '@/services/api/TransactionService'
+import { apiGetSales } from '@/services/api/SalesService'
 import { useQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { Printer, ReceiptText } from 'iconsax-react'
@@ -20,7 +20,7 @@ const SaleDetail = () => {
     // error,
   } = useQuery({
     queryKey: [QUERY_KEY.sales, id],
-    queryFn: () => apiGetTransaction(id as string),
+    queryFn: () => apiGetSales(id as string),
     select: (res) => res.data,
     enabled: !!id,
   })
