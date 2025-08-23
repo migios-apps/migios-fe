@@ -29,7 +29,7 @@ import {
   ReturnTransactionItemFormSchema,
   TransactionItemSchema,
   resetTransactionItemForm,
-} from '../validation'
+} from '../utils/validation'
 
 type FormProps = {
   open: boolean
@@ -81,7 +81,7 @@ const FormAddItemSale: React.FC<FormProps> = ({
   }
 
   const onSubmit: SubmitHandler<TransactionItemSchema> = (data) => {
-    // console.log('data', data)
+    console.log('data', data)
     onChange(data, type)
     handleClose()
   }

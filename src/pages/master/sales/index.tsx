@@ -18,7 +18,7 @@ import { apiGetSalesList } from '@/services/api/SalesService'
 import { useSessionUser } from '@/store/authStore'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { Add } from 'iconsax-react'
+import { Add, Edit } from 'iconsax-react'
 import React, { useMemo, useState } from 'react'
 import { GoDotFill } from 'react-icons/go'
 import { TbEye, TbSearch } from 'react-icons/tb'
@@ -158,6 +158,17 @@ const Sales = () => {
                   <TbEye />
                 </div>
               </Tooltip>
+              <Tooltip title="Edit">
+                <div
+                  className={`text-xl cursor-pointer select-none font-semibold`}
+                  role="button"
+                  onClick={() => {
+                    navigate(`/sales/${row.original.code}/edit`)
+                  }}
+                >
+                  <Edit color="currentColor" size={24} />
+                </div>
+              </Tooltip>
             </div>
           )
         },
@@ -191,18 +202,9 @@ const Sales = () => {
               icon={
                 <Add color="currentColor" size={24} className="w-5 h-5 mr-1" />
               }
-              onClick={() => navigate('/sales/new')}
-            >
-              Add new
-            </Button>
-            <Button
-              variant="solid"
-              icon={
-                <Add color="currentColor" size={24} className="w-5 h-5 mr-1" />
-              }
               onClick={() => navigate('/sales/order')}
             >
-              Add new checkout
+              Add new
             </Button>
           </div>
           <Tabs defaultValue={tabName} onChange={setTabName}>

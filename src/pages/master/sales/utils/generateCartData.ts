@@ -2,7 +2,7 @@ import { currencyFormat } from '@/components/ui/InputCurrency/currencyFormat'
 import {
   TransactionItemSchema,
   ValidationTransactionSchema,
-} from '../validation'
+} from './validation'
 
 export interface TaxItem {
   id: number

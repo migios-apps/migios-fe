@@ -32,17 +32,17 @@ import { Controller, SubmitHandler } from 'react-hook-form'
 import { HiOutlineUser } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
 import type { GroupBase, OptionsOrGroups } from 'react-select'
-import CheckoutItemPackageCard from './components/CheckoutItemPackageCard'
-import CheckoutItemProductCard from './components/CheckoutItemProductCard'
-import { generateCartData } from './utils/generateCartData'
-import { mergeDuplicateAmounts } from './utils/mergeDuplicateAmounts'
+import CheckoutItemPackageCard from '../components/CheckoutItemPackageCard'
+import CheckoutItemProductCard from '../components/CheckoutItemProductCard'
+import { generateCartData } from '../utils/generateCartData'
+import { mergeDuplicateAmounts } from '../utils/mergeDuplicateAmounts'
 import {
   ReturnTransactionFormSchema,
   ReturnTransactionItemFormSchema,
   ValidationTransactionSchema,
   defaultValueTransaction,
   resetTransactionForm,
-} from './validation'
+} from '../utils/validation'
 
 interface CartDetailProps {
   formPropsTransaction: ReturnTransactionFormSchema

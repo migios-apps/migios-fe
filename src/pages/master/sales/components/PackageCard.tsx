@@ -9,7 +9,7 @@ import { PackageDetail } from '@/services/api/@types/package'
 import classNames from '@/utils/classNames'
 import { Profile, Profile2User } from 'iconsax-react'
 import { FaUsers } from 'react-icons/fa'
-import { ReturnTransactionItemFormSchema } from '../validation'
+import { ReturnTransactionItemFormSchema } from '../utils/validation'
 
 type PackageCardProps = {
   item: PackageDetail

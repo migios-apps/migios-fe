@@ -103,19 +103,24 @@ export type SalesTypeListResponse = Omit<ApiTypes, 'data'> & {
 export interface SalesDetailType {
   id: number
   code: string
-  member_id: number
+  member_id: number | null
   club_id: number
+  employee_id: number | null
   type: string
-  sale_type: string | null
   subtotal: number
   discount_type: string
   discount_amount: number
   discount: number
-  tax_rate: number
   tax_amount: number
   amount: number
+  gross_amount: number
+  total_discount: number
+  total_tax: number
+  total_amount: number
+  ballance_amount: number
   status: string
   is_paid: number
+  is_void: number
   is_refunded: number
   flag: string | null
   due_date: string
@@ -124,22 +129,22 @@ export interface SalesDetailType {
   shipping_address: string | null
   created_at: string
   updated_at: string
-  invoice_id: number
-  invoice_code: string
-  total_payments: number
-  total_refunds: number
-  outstanding_amount: number
-  return_amount: number
-  grand_total: number
-  fsubtotal: string
-  famount: string
-  fgrand_total: string
+  void_status: string | null
+  void_date: string | null
+  void_notes: string | null
+  void_processed_by: number | null
+  void_processed_at: string | null
+  refund_status: string | null
+  refund_date: string | null
+  refund_notes: string | null
+  refund_processed_by: number | null
+  refund_processed_at: string | null
+  fstatus: string
   fdiscount: string
-  ftax_amount: string
-  ftotal_payments: string
-  ftotal_refunds: string
-  foutstanding_amount: string
-  freturn_amount: string
+  fgross_amount: string
+  ftotal_tax: string
+  ftotal_discount: string
+  ftotal_amount: string
   member: {
     id: number
     code: string
@@ -149,44 +154,57 @@ export interface SalesDetailType {
     phone: string
     photo: string | null
     email: string
-  }
+  } | null
+  employee?: {
+    id: number
+    name: string
+    photo: string | null
+  } | null
   items: {
     id: number
-    sales_id: number
+    transaction_id: number
     product_id: number | null
     package_id: number | null
+    freeze_id: number | null
     item_type: 'package' | 'product'
     name: string
     description: string | null
     quantity: number
+    qty_refund: number
     price: number
     subtotal: number
     discount_type: string
     discount: number
     total: number
-    notes: string
-    trs_discount_type: string
-    trs_discount: number
-    trs_tax_rate: number
-    trs_tax_amount: number
-    trs_amount: number
+    notes: string | null
+    gross_amount: number
+    discount_amount: number
+    net_amount: number
+    total_tax_amount: number
+    total_amount: number
+    duration_type: string | null
+    duration: number
+    session_duration: number
+    extra_session: number
+    extra_day: number
+    start_date: string
+    end_date: string | null
     created_at: string
     updated_at: string
-    duration: number
-    duration_type: string
-    extra_day: number
-    extra_session: number
-    session_duration: number
-    fprice: string
-    fsubtotal: string
+    taxes: {
+      id: number
+      name: string
+      rate: number
+      amount: number
+      frate: number
+      famount: string
+    }[]
     fdiscount: string
-    ftotal: string
-    ftrs_discount: string
-    ftrs_tax_amount: string
-    ftrs_amount: string
-    fduration: string
-    start_date: string
-    end_date: string
+    fgross_amount: string
+    fdiscount_amount: string
+    fnet_amount: string
+    ftotal_tax_amount: string
+    ftotal_amount: string
     product?: {
       id: number
       name: string
@@ -204,12 +222,13 @@ export interface SalesDetailType {
     trainer?: {
       id: number
       name: string
-      photo: string
+      photo: string | null
     } | null
+    freeze?: any | null
   }[]
   payments: {
     id: number
-    sales_id: number
+    transaction_id: number
     amount: number
     rekening_id: number
     status: string
@@ -223,7 +242,7 @@ export interface SalesDetailType {
   }[]
   refunds: {
     id: number
-    sales_id: number
+    transaction_id: number
     amount: number
     rekening_id: number
     status: string
@@ -232,6 +251,8 @@ export interface SalesDetailType {
     date: string
     created_at: string
     updated_at: string
+    rekening_name?: string
+    famount?: string
   }[]
   club: {
     name: string

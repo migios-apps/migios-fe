@@ -21,6 +21,18 @@ export const salesRoute: Routes = [
     },
   },
   {
+    key: 'salesEdit',
+    path: '/sales/:id/edit',
+    component: lazy(() => import('@/pages/master/sales/Edit')),
+    authority: [],
+    meta: {
+      pageBackgroundType: 'plain',
+      pageContainerType: 'gutterless',
+      layout: 'blank',
+      footer: false,
+    },
+  },
+  {
     key: 'detailSales',
     path: '/sales/:id',
     component: lazy(() => import('@/pages/master/sales/Detail')),

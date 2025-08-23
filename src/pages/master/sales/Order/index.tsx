@@ -27,20 +27,20 @@ import { useFieldArray } from 'react-hook-form'
 import { TbSearch } from 'react-icons/tb'
 import { useNavigate } from 'react-router-dom'
 import type { GroupBase, OptionsOrGroups } from 'react-select'
-import CartDetail from './CartDetail'
-import FormAddItemSale from './components/FormAddItemSale'
-import ItemPackageCard from './components/ItemPackageCard'
-import ItemProductCard from './components/ItemProductCard'
-import PackageCard from './components/PackageCard'
-import ProductCard from './components/ProductCard'
-import { generateCartData } from './utils/generateCartData'
+import FormAddItemSale from '../components/FormAddItemSale'
+import ItemPackageCard from '../components/ItemPackageCard'
+import ItemProductCard from '../components/ItemProductCard'
+import PackageCard from '../components/PackageCard'
+import ProductCard from '../components/ProductCard'
+import { generateCartData } from '../utils/generateCartData'
 import {
   ValidationTransactionSchema,
   defaultValueTransaction,
   resetTransactionForm,
   useTransactionForm,
   useTransactionItemForm,
-} from './validation'
+} from '../utils/validation'
+import CartDetail from './CartDetail'
 
 const { TabNav, TabList, TabContent } = Tabs
 

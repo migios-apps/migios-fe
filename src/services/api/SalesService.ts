@@ -38,6 +38,17 @@ export async function apiCreateRefund(data: RefundRequest) {
   })
 }
 
+export async function apiUpdateSales(
+  id: number | string,
+  data: CheckoutRequest
+) {
+  return ApiService.fetchDataWithAxios({
+    url: `/sales/update/${id}`,
+    method: 'PUT',
+    data: data as unknown as Record<string, unknown>,
+  })
+}
+
 export async function apiVoidSales(id: number | string) {
   return ApiService.fetchDataWithAxios({
     url: `/sales/void/${id}`,

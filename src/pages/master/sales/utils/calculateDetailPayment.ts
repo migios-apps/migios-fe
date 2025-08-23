@@ -1,4 +1,4 @@
-import { TransactionItemSchema } from '../validation'
+import { TransactionItemSchema } from './validation'
 
 interface calculateDetailPaymentProps {
   items: TransactionItemSchema[]

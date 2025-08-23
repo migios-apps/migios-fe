@@ -123,22 +123,19 @@ export const transactionItemSchema = Yup.object().shape({
     })
     .nullable()
     .default(null)
-    .when(['item_type', 'package_type', 'allow_all_trainer'], {
-      is: (
-        item_type: string,
-        package_type: string,
-        allow_all_trainer: boolean
-      ) =>
-        item_type === 'package' &&
-        package_type === 'pt_program' &&
-        !allow_all_trainer,
+    .when(['item_type', 'package_type'], {
+      is: (item_type: string, package_type: string) =>
+        item_type === 'package' && package_type === 'pt_program',
       then: (schema) =>
-        schema.shape({
-          id: Yup.number().required('Trainer ID is required.'),
-          name: Yup.string().required('Trainer name is required.'),
-          code: Yup.string().required('Trainer code is required.'),
-          photo: Yup.string().nullable(),
-        }),
+        schema
+          .shape({
+            id: Yup.number().required('Trainer ID is required.'),
+            name: Yup.string().required('Trainer name is required.'),
+            code: Yup.string().required('Trainer code is required.'),
+            photo: Yup.string().nullable(),
+          })
+          .required('Trainer is required for PT Program.'),
+      otherwise: (schema) => schema.nullable(),
     }),
   data: Yup.object().nullable(),
 })

@@ -2,7 +2,7 @@ import { Card } from '@/components/ui'
 import { ProductDetail } from '@/services/api/@types/product'
 import classNames from '@/utils/classNames'
 import { Box } from 'iconsax-react'
-import { ReturnTransactionItemFormSchema } from '../validation'
+import { ReturnTransactionItemFormSchema } from '../utils/validation'
 
 type ProductCardProps = {
   item: ProductDetail
