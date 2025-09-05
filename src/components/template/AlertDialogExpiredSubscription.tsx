@@ -38,7 +38,7 @@ const AlertDialogExpiredSubscription: React.FC<
   return (
     <>
       <Dialog
-        isOpen={true}
+        isOpen={open}
         closable={false}
         shouldCloseOnOverlayClick={false}
         shouldCloseOnEsc={false}
