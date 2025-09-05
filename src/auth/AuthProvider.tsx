@@ -1,3 +1,4 @@
+import AlertDialogExpiredSubscription from '@/components/template/AlertDialogExpiredSubscription'
 import appConfig from '@/configs/app.config'
 import {
   REFRESH_TOKEN_NAME_IN_STORAGE,
@@ -28,7 +29,7 @@ import { useSessionUser, useToken } from '@/store/authStore'
 import cookiesStorage from '@/utils/cookiesStorage'
 import { useQueries } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
-import { forwardRef, useImperativeHandle, useRef } from 'react'
+import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import type { NavigateFunction } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import AuthContext from './AuthContext'
@@ -54,6 +55,7 @@ const IsolatedNavigator = forwardRef<IsolatedNavigatorRef>((_, ref) => {
 })
 
 function AuthProvider({ children }: AuthProviderProps) {
+  const [isActiveSubscription, setIsActiveSubscription] = useState(true)
   const {
     session: { signedIn },
     user,
@@ -229,6 +231,9 @@ function AuthProvider({ children }: AuthProviderProps) {
         queryKey: [QUERY_KEY.clubDetail],
         queryFn: async () => {
           const res = await apiGetClubDetail(club!.id!)
+          if (res.data.subscription_status === 'active') {
+            setIsActiveSubscription(true)
+          }
           setClub(res.data)
           return res
         },
@@ -279,6 +284,10 @@ function AuthProvider({ children }: AuthProviderProps) {
       }}
     >
       {children}
+      <AlertDialogExpiredSubscription
+        open={!isActiveSubscription}
+        onOpenChange={() => {}}
+      />
       <IsolatedNavigator ref={navigatorRef} />
     </AuthContext.Provider>
   )

@@ -29,3 +29,18 @@ export function apiGetClubDetail(club_id: number) {
     method: 'get',
   })
 }
+
+export interface CreateNewSubscriptionDto {
+  club_id: number
+  duration: number
+  duration_type: 'day' | 'week' | 'month' | 'year' | 'forever'
+  plan_type: 'free' | 'basic' | 'pro' | 'growth' | 'enterprise'
+}
+
+export function apiCreateNewSubscription(body: CreateNewSubscriptionDto) {
+  return ApiService.fetchDataWithAxios({
+    url: `/subscriptions/create`,
+    method: 'post',
+    data: body as unknown as Record<string, unknown>,
+  })
+}
