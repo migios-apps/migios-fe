@@ -46,7 +46,7 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       outDir: 'build',
-      chunkSizeWarningLimit: 5000,
+      chunkSizeWarningLimit: 10000,
       // build jadi 1 file
       rollupOptions: {
         output: {

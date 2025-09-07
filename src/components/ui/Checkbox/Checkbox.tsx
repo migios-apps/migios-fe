@@ -1,15 +1,16 @@
-import { useContext, useCallback, useState } from 'react'
 import classNames from 'classnames'
-import CheckboxGroupContext from './context'
+import type { ChangeEvent, Ref } from 'react'
+import { useCallback, useContext, useState } from 'react'
 import type { CommonProps } from '../@types/common'
 import type { CheckboxValue } from './context'
-import type { ChangeEvent, Ref } from 'react'
+import CheckboxGroupContext from './context'
 
 export interface CheckboxProps extends CommonProps {
   checked?: boolean
   checkboxClass?: string
   defaultChecked?: boolean
   disabled?: boolean
+  indeterminate?: boolean
   labelRef?: Ref<HTMLLabelElement>
   name?: string
   onChange?: (values: boolean, e: ChangeEvent<HTMLInputElement>) => void
@@ -33,6 +34,7 @@ const Checkbox = (props: CheckboxProps) => {
     onChange,
     children,
     disabled,
+    indeterminate = false,
     readOnly,
     name = nameContext,
     defaultChecked,
@@ -119,7 +121,7 @@ const Checkbox = (props: CheckboxProps) => {
 
   return (
     <label ref={labelRef} className={labelClass}>
-      <span className="checkbox-wrapper h-5 relative">
+      <span className="checkbox-wrapper relative">
         <input
           ref={ref}
           className={classNames(checkboxDefaultClass, checkboxColorClass)}
@@ -137,11 +139,19 @@ const Checkbox = (props: CheckboxProps) => {
             className="h-3.5 w-3.5 stroke-neutral fill-neutral opacity-0 transition-opacity peer-checked:opacity-100 pointer-events-none absolute top-2/4 left-2/4 -translate-y-2/4 -translate-x-2/4 mt-[1.25px]"
             viewBox="0 0 20 20"
           >
-            <path
-              fillRule="evenodd"
-              d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z"
-              clipRule="evenodd"
-            />
+            {indeterminate ? (
+              <path
+                fillRule="evenodd"
+                d="M5 10a1 1 0 0 1 1-1h8a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z"
+                clipRule="evenodd"
+              />
+            ) : (
+              <path
+                fillRule="evenodd"
+                d="M16.707 5.293a1 1 0 0 1 0 1.414l-8 8a1 1 0 0 1-1.414 0l-4-4a1 1 0 0 1 1.414-1.414L8 12.586l7.293-7.293a1 1 0 0 1 1.414 0z"
+                clipRule="evenodd"
+              />
+            )}
           </svg>
         </>
       </span>

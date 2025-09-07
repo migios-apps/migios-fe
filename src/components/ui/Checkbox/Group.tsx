@@ -1,12 +1,12 @@
-import { useState, useCallback, useMemo, useEffect } from 'react'
-import classNames from '../utils/classNames'
-import { CheckboxGroupContextProvider } from './context'
 import cloneDeep from 'lodash/cloneDeep'
 import remove from 'lodash/remove'
-import shallowEqual from '../utils/shallowEqual'
+import type { Ref, SyntheticEvent } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { CommonProps } from '../@types/common'
+import classNames from '../utils/classNames'
+import shallowEqual from '../utils/shallowEqual'
 import type { CheckboxGroupValue, CheckboxValue } from './context'
-import type { SyntheticEvent, Ref } from 'react'
+import { CheckboxGroupContextProvider } from './context'
 
 export interface CheckboxGroupProps extends CommonProps {
   checkboxClass?: string

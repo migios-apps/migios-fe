@@ -132,7 +132,7 @@ const Sales = () => {
           const status = row.original
           return (
             <div className="flex items-center">
-              <Tag className={paymentStatusColor[status.fstatus]}>
+              <Tag className={paymentStatusColor[status.status]}>
                 <span className="capitalize">{status.fstatus}</span>
               </Tag>
             </div>

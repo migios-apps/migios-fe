@@ -14,7 +14,7 @@ import { CheckoutRequest, PaymentStatus } from '@/services/api/@types/sales'
 import { apiGetEmployeeList } from '@/services/api/EmployeeService'
 import { apiGetRekeningList } from '@/services/api/FinancialService'
 import { apiGetMemberList } from '@/services/api/MembeService'
-import { apiCreateCheckout } from '@/services/api/SalesService'
+import { apiUpdateSales } from '@/services/api/SalesService'
 import { useSessionUser } from '@/store/authStore'
 import classNames from '@/utils/classNames'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -40,7 +40,6 @@ import {
   ReturnTransactionFormSchema,
   ReturnTransactionItemFormSchema,
   ValidationTransactionSchema,
-  defaultValueTransaction,
   resetTransactionForm,
 } from '../utils/validation'
 
@@ -51,6 +50,7 @@ interface CartDetailProps {
   setIndexItem: React.Dispatch<React.SetStateAction<number>>
   setOpenAddItem: React.Dispatch<React.SetStateAction<boolean>>
   setFormItemType: React.Dispatch<React.SetStateAction<'create' | 'update'>>
+  salesId: string
 }
 
 const CartDetail: React.FC<CartDetailProps> = ({
@@ -60,6 +60,7 @@ const CartDetail: React.FC<CartDetailProps> = ({
   setIndexItem,
   setOpenAddItem,
   setFormItemType,
+  salesId,
 }) => {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -81,31 +82,6 @@ const CartDetail: React.FC<CartDetailProps> = ({
     (acc: any, cur: any) => acc + cur.loyalty_point,
     0
   )
-
-  console.log('watch', {
-    data: watch(),
-    error: errors,
-  })
-  console.log('cartDataGenerated', cartDataGenerated)
-
-  // const calculate = calculateDetailPayment({
-  //   items: watchTransaction.items,
-  //   discount_type: watchTransaction.discount_type,
-  //   discount: watchTransaction.discount || 0,
-  //   tax_rate: 0,
-  // })
-
-  // React.useEffect(() => {
-  //   const totalPayment = watchTransaction.payments?.reduce(
-  //     (acc: any, cur: any) => acc + cur.amount,
-  //     0
-  //   )
-  //   formPropsTransaction.setValue(
-  //     'balance_amount',
-  //     calculate.totalAmount - totalPayment
-  //   )
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [calculate.totalAmount])
 
   const getTotal =
     cartDataGenerated.total_amount -
@@ -258,16 +234,13 @@ const CartDetail: React.FC<CartDetailProps> = ({
     queryClient.invalidateQueries({ queryKey: [QUERY_KEY.sales] })
     navigate('/sales')
     resetTransactionForm(formPropsTransaction)
-    window.localStorage.setItem(
-      'item_pos',
-      JSON.stringify({ ...defaultValueTransaction, _timestamp: Date.now() })
-    )
+    window.localStorage.removeItem('item_edit_pos')
   }
 
-  const createCheckout = useMutation({
-    mutationFn: (data: CheckoutRequest) => apiCreateCheckout(data),
+  const updateSales = useMutation({
+    mutationFn: (data: CheckoutRequest) => apiUpdateSales(salesId, data),
     onError: (error) => {
-      console.log('error create', error)
+      console.log('error update', error)
     },
     onSuccess: handlePrefecth,
   })
@@ -326,23 +299,13 @@ const CartDetail: React.FC<CartDetailProps> = ({
             }
           }
 
-          // if (item.item_type === 'freeze') {
-          //   return {
-          //     ...basePayload,
-          //     start_date: item.start_date || null,
-          //     end_date: item.end_date || null,
-          //   }
-          // }
-
           return basePayload
         }) as CheckoutRequest['items']) || [],
       payments: data.payments,
       refund_from: (data.refund_from as CheckoutRequest['refund_from']) || [],
     }
 
-    // console.log('body', body)
-
-    createCheckout.mutate(body)
+    updateSales.mutate(body)
     setConfirmPartPaid(false)
   }
 
@@ -596,7 +559,6 @@ const CartDetail: React.FC<CartDetailProps> = ({
                 name="balance_amount"
                 control={control}
                 render={({ field }) => {
-                  // Sinkronkan nilai field dengan cartDataGenerated saat pertama kali render
                   React.useEffect(() => {
                     if (field.value !== cartDataGenerated.balance_amount) {
                       field.onChange(cartDataGenerated.balance_amount)
@@ -791,13 +753,13 @@ const CartDetail: React.FC<CartDetailProps> = ({
               <Button
                 className="rounded-full w-full"
                 variant="solid"
-                loading={createCheckout.isPending}
+                loading={updateSales.isPending}
                 disabled={getTotal > 0}
                 onClick={handleSubmit((data) =>
                   onSubmit({ ...data, isPaid: 1 })
                 )}
               >
-                Pay now
+                Update Pesanan
               </Button>
             </div>
           </div>

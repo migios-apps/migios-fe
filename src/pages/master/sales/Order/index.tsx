@@ -445,10 +445,17 @@ const PointOfSales = () => {
                       ))}
                     </React.Fragment>
                   ))}
-                  {isFetchingNextPagePackages &&
-                    Array.from({ length: 12 }, (_, i) => i + 1).map((_, i) => (
-                      <Skeleton key={i} height={120} className="rounded-xl" />
-                    ))}
+                  {isFetchingNextPagePackages
+                    ? Array.from({ length: 12 }, (_, i) => i + 1).map(
+                        (_, i) => (
+                          <Skeleton
+                            key={i}
+                            height={120}
+                            className="rounded-xl"
+                          />
+                        )
+                      )
+                    : null}
                 </div>
                 {totalPackage === listPackages.length && (
                   <p className="col-span-full text-center text-gray-300 dark:text-gray-500">
@@ -504,10 +511,17 @@ const PointOfSales = () => {
                       ))}
                     </React.Fragment>
                   ))}
-                  {isFetchingNextPageProducts &&
-                    Array.from({ length: 12 }, (_, i) => i + 1).map((_, i) => (
-                      <Skeleton key={i} height={120} className="rounded-xl" />
-                    ))}
+                  {isFetchingNextPageProducts
+                    ? Array.from({ length: 12 }, (_, i) => i + 1).map(
+                        (_, i) => (
+                          <Skeleton
+                            key={i}
+                            height={120}
+                            className="rounded-xl"
+                          />
+                        )
+                      )
+                    : null}
                 </div>
                 {totalProduct === listProducts.length && (
                   <p className="col-span-full text-center text-gray-300 dark:text-gray-500">

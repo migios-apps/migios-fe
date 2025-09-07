@@ -1,0 +1,174 @@
+import { currencyFormat } from '@/components/ui/InputCurrency/currencyFormat'
+import { SalesDetailType } from '@/services/api/@types/sales'
+import classNames from '@/utils/classNames'
+import dayjs from 'dayjs'
+
+interface InvoiceReceiptProps {
+  detail: SalesDetailType
+}
+
+const InvoiceReceipt = ({ detail }: InvoiceReceiptProps) => {
+  return (
+    <div className="p-6 flex justify-center">
+      <div className="w-80 border border-gray-100 shadow-xl mb-24">
+        {/* Receipt Header */}
+        <div className="p-4 text-center border-b border-gray-300">
+          <h2 className="text-lg font-bold">{detail?.club.name}</h2>
+          <p className="text-xs mt-1">{detail?.club.address}</p>
+          <p className="text-xs">{detail?.club.phone}</p>
+          <div className="border-t border-gray-300 mt-2 pt-2">
+            <p className="text-sm font-semibold">Faktur {detail?.code}</p>
+            <p className="text-xs">
+              {dayjs(detail?.due_date).format('DD MMM YYYY')}
+            </p>
+          </div>
+        </div>
+
+        {/* Receipt Content */}
+        <div className="p-4 text-sm">
+          {/* Items */}
+          <div className="mb-4">
+            {detail?.items.map((item, index) => {
+              const formatDuration = `${item.duration} ${item.duration_type}`
+              const dateRange =
+                item.start_date && item.end_date
+                  ? `${dayjs(item.start_date).format('DD MMM YYYY')} - ${dayjs(item.end_date).format('DD MMM YYYY')}`
+                  : null
+
+              return (
+                <div
+                  key={index}
+                  className={classNames('', {
+                    'mb-3 pb-2 border-b border-dashed border-gray-300':
+                      index < detail.items.length - 1,
+                  })}
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1 pr-2">
+                      <p className="font-medium text-xs">
+                        {item.quantity} x {item.name}
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        @ {currencyFormat(item.price)}
+                      </p>
+                      {item.discount_amount > 0 ? (
+                        <p className="text-xs text-red-600">
+                          Diskon: -{currencyFormat(item.discount_amount)}
+                        </p>
+                      ) : null}
+                      {item.taxes && item.taxes.length > 0 ? (
+                        <div className="text-xs text-gray-600 mt-1">
+                          {item.taxes.map((tax) => (
+                            <p key={tax.id}>
+                              {tax.name} {tax.rate}%: {tax.famount}
+                            </p>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                    <div className="text-right text-xs">
+                      <p className="font-medium">
+                        {currencyFormat(item.total_amount)}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+
+          {/* Totals */}
+          <div className="border-t border-gray-300 pt-3 mb-4">
+            <div className="flex justify-between text-xs mb-1">
+              <span className="font-semibold">Subtotal</span>
+              <span>{currencyFormat(detail?.gross_amount || 0)}</span>
+            </div>
+            {detail?.total_discount && detail.total_discount > 0 ? (
+              <div className="flex justify-between text-xs mb-1">
+                <span className="font-semibold">Total Diskon</span>
+                <span>-{currencyFormat(detail.total_discount)}</span>
+              </div>
+            ) : null}
+            {detail?.total_tax && detail.total_tax > 0 ? (
+              <div className="flex justify-between text-xs mb-1">
+                <span className="font-semibold">Total Pajak</span>
+                <span>{currencyFormat(detail.total_tax)}</span>
+              </div>
+            ) : null}
+            <div className="border-t border-gray-300 pt-2 mt-2">
+              <div className="flex justify-between font-bold">
+                <span className="font-semibold">Total Bayar</span>
+                <span>{currencyFormat(detail?.total_amount || 0)}</span>
+              </div>
+            </div>
+            {detail?.ballance_amount && detail.ballance_amount > 0 ? (
+              <div className="flex justify-between text-xs mt-1 text-red-600">
+                <span className="font-semibold">Sisa Tagihan</span>
+                <span>{currencyFormat(detail.ballance_amount)}</span>
+              </div>
+            ) : null}
+          </div>
+
+          {/* Payment Info */}
+          {detail?.payments && detail.payments.length > 0 ? (
+            <div className="mb-4 border-t border-gray-300 pt-3">
+              <p className="text-xs font-semibold mb-2">Pembayaran:</p>
+              {detail.payments.map((payment, index) => (
+                <div key={index} className="flex justify-between text-xs mb-1">
+                  <span>{payment.rekening_name}</span>
+                  <span>{currencyFormat(payment.amount)}</span>
+                </div>
+              ))}
+              {detail.payments.reduce(
+                (total, payment) => total + payment.amount,
+                0
+              ) > (detail?.total_amount || 0) ? (
+                <div className="flex justify-between text-xs mt-2 pt-2 border-t border-dashed border-gray-300 font-semibold">
+                  <span>Kembalian</span>
+                  <span>
+                    {currencyFormat(
+                      detail.payments.reduce(
+                        (total, payment) => total + payment.amount,
+                        0
+                      ) - (detail?.total_amount || 0)
+                    )}
+                  </span>
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+
+          {/* Additional Info */}
+          <div className="text-xs space-y-1">
+            <div className="flex justify-between">
+              <span>Saldo sebelumnya</span>
+              <span>0.00</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Point Diperoleh</span>
+              <span>0.00</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Digunakan</span>
+              <span>0.00</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Pengembalian</span>
+              <span>0.00</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Total point dibatalkan</span>
+              <span>0.00</span>
+            </div>
+            <div className="flex justify-between font-semibold">
+              <span>Total Point</span>
+              <span>0.00</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default InvoiceReceipt

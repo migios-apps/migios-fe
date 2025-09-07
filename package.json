@@ -30,11 +30,6 @@
     "@tanstack/react-query": "^5.67.1",
     "@tanstack/react-query-devtools": "^5.67.1",
     "@tanstack/react-table": "^8.20.5",
-    "@tanstack/react-virtual": "^3.11.2",
-    "@tiptap/pm": "^2.10.4",
-    "@tiptap/react": "^2.10.4",
-    "@tiptap/starter-kit": "^2.10.4",
-    "@visx/pattern": "^3.13.0-alpha.0",
     "@yudiel/react-qr-scanner": "^2.2.1",
     "axios": "^1.7.7",
     "classnames": "^2.5.1",
@@ -43,7 +38,6 @@
     "iconsax-react": "^0.0.8",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
-    "marked": "^15.0.3",
     "react": "19.0.0",
     "react-apexcharts": "^1.7.0",
     "react-currency-input-field": "^3.10.0",
@@ -62,7 +56,6 @@
     "react-select-async-paginate": "^0.7.9",
     "react-tooltip": "^5.28.0",
     "simplebar-react": "^3.3.0",
-    "swr": "^2.3.0",
     "yet-another-react-lightbox": "^3.21.7",
     "yup": "^1.6.1",
     "zod": "^3.23.8",
@@ -111,14 +104,6 @@
     "vite-plugin-eslint": "^1.8.1"
   },
   "overrides": {
-    "gantt-task-react": {
-      "react": "19.0.0",
-      "react-dom": "19.0.0"
-    },
-    "react-simple-maps": {
-      "react": "19.0.0",
-      "react-dom": "19.0.0"
-    },
     "iconsax-react": {
       "react": "19.0.0",
       "react-dom": "19.0.0"

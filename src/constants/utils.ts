@@ -6,6 +6,13 @@ export const statusColor: Record<string, string> = {
   freeze: 'w-fit bg-blue-500 dark:bg-blue-500 text-white dark:text-white',
 }
 
+export const statusColorText: Record<string, string> = {
+  active: 'text-gray-900 dark:text-gray-900',
+  inactive: 'text-white dark:text-white',
+  expired: 'text-white dark:text-white',
+  freeze: 'text-white dark:text-white',
+}
+
 export const paymentStatusColor: Record<string, string> = {
   paid: 'w-fit bg-emerald-200 dark:bg-emerald-200 text-gray-900 dark:text-gray-900',
   part_paid:
@@ -18,4 +25,15 @@ export const paymentStatusColor: Record<string, string> = {
     'w-fit bg-yellow-200 dark:bg-yellow-200 text-gray-900 dark:text-gray-900',
   completed:
     'w-fit bg-emerald-200 dark:bg-emerald-200 text-gray-900 dark:text-gray-900',
+}
+
+export const paymentStatusColorText: Record<string, string> = {
+  paid: 'text-gray-900 dark:text-gray-900',
+  part_paid: 'text-gray-900 dark:text-gray-900',
+  unpaid: 'text-white dark:text-white',
+  overdue: 'text-white dark:text-white',
+  refunded: 'text-gray-900 dark:text-gray-900',
+  void: 'text-white dark:text-white',
+  pending: 'text-gray-900 dark:text-gray-900',
+  completed: 'text-gray-900 dark:text-gray-900',
 }

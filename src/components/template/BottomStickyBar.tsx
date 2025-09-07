@@ -1,7 +1,7 @@
-import classNames from '@/utils/classNames'
-import useLayout from '@/utils/hooks/useLayout'
 import type { CommonProps } from '@/@types/common'
 import { LAYOUT_CONTENT_OVERLAY } from '@/constants/theme.constant'
+import classNames from '@/utils/classNames'
+import useLayout from '@/utils/hooks/useLayout'
 
 export type BottomStickyBarProps = CommonProps
 

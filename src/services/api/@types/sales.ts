@@ -208,7 +208,10 @@ export interface SalesDetailType {
     product?: {
       id: number
       name: string
-      photo: string | null
+      description: string
+      price: number
+      photo: string
+      quantity: number
     } | null
     package?: {
       id: number
@@ -216,13 +219,25 @@ export interface SalesDetailType {
       duration_type: string
       duration: number
       session_duration: number
-      photo: string | null
-      type: PackageType
+      photo: any
+      type: string
+      is_promo: number
+      discount_type: string
+      discount: number
+      price: number
+      sell_price: number
+      max_member: any
+      allow_all_trainer: boolean
     } | null
     trainer?: {
       id: number
+      type: string
+      code: string
       name: string
+      phone: string
+      email: string
       photo: string | null
+      gender: string
     } | null
     freeze?: any | null
   }[]

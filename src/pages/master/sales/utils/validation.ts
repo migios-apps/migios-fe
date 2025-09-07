@@ -228,10 +228,6 @@ export const validationTransactionSchema = Yup.object().shape({
     .transform((value) => (isNaN(value) ? undefined : value))
     .min(0, 'Discount cannot be negative.')
     .nullable(),
-  tax_rate: Yup.number()
-    .transform((value) => (isNaN(value) ? undefined : value))
-    .min(0, 'Tax rate cannot be negative.')
-    .nullable(),
   // is_paid: Yup.number()
   //   .oneOf([0, 1, 2, 3] as PaymentStatus[], 'Invalid payment status.')
   //   .required('Payment status is required.'),
@@ -276,7 +272,6 @@ export const validationTransactionSchema = Yup.object().shape({
 export const defaultValueTransaction: any = {
   discount_type: 'nominal',
   discount: 0,
-  tax_rate: 0,
   is_paid: 0,
   notes: null,
   items: [],
