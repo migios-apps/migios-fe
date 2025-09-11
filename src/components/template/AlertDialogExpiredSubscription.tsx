@@ -1,19 +1,19 @@
 import { Button } from '@/components/ui/button'
 import { Dialog } from '@/components/ui/dialog'
 import { apiCreateNewSubscription } from '@/services/api/ClubService'
-import { useSessionUser } from '@/store/authStore'
 import { useMutation } from '@tanstack/react-query'
 import React from 'react'
 
 type AlertDialogExpiredSubscriptionProps = {
+  clubId?: number
   open: boolean
   onOpenChange: (open: boolean) => void
+  showCloseButton?: boolean
 }
 
 const AlertDialogExpiredSubscription: React.FC<
   AlertDialogExpiredSubscriptionProps
-> = ({ open, onOpenChange }) => {
-  const club = useSessionUser((state) => state.club)
+> = ({ open, onOpenChange, clubId, showCloseButton = false }) => {
   const newSubscription = useMutation({
     mutationFn: apiCreateNewSubscription,
     onSuccess: () => {
@@ -25,10 +25,10 @@ const AlertDialogExpiredSubscription: React.FC<
   })
 
   const handleCreateNewSubscription = () => {
-    if (!club?.id) return
+    if (!clubId) return
 
     newSubscription.mutate({
-      club_id: club?.id,
+      club_id: clubId,
       duration: 7,
       duration_type: 'day',
       plan_type: 'free',
@@ -39,9 +39,9 @@ const AlertDialogExpiredSubscription: React.FC<
     <>
       <Dialog
         isOpen={open}
-        closable={false}
-        shouldCloseOnOverlayClick={false}
-        shouldCloseOnEsc={false}
+        closable={showCloseButton}
+        shouldCloseOnOverlayClick={showCloseButton}
+        shouldCloseOnEsc={showCloseButton}
         onClose={() => onOpenChange(false)}
         onRequestClose={() => onOpenChange(false)}
       >
@@ -64,12 +64,12 @@ const AlertDialogExpiredSubscription: React.FC<
           </div>
 
           {/* Title */}
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
             Langganan Tidak Aktif
           </h3>
 
           {/* Message */}
-          <div className="text-gray-600 mb-6 space-y-2">
+          <div className="text-gray-600 dark:text-gray-300 mb-6 space-y-2">
             <p className="text-sm text-left max-w-sm mx-auto space-y-1">
               Maaf, langganan Anda saat ini tidak aktif dan tidak dapat
               mengakses fitur ini. Hal ini dapat terjadi karena:
@@ -103,10 +103,10 @@ const AlertDialogExpiredSubscription: React.FC<
           </div>
 
           {/* Contact Support */}
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <p className="text-xs text-gray-500">
+          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               Butuh bantuan?
-              <button className="text-blue-600 hover:text-blue-700 ml-1 underline">
+              <button className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 ml-1 underline">
                 Hubungi Support
               </button>
             </p>

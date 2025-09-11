@@ -286,6 +286,7 @@ function AuthProvider({ children }: AuthProviderProps) {
       {children}
       <AlertDialogExpiredSubscription
         open={!isActiveSubscription}
+        clubId={club?.id}
         onOpenChange={() => {}}
       />
       <IsolatedNavigator ref={navigatorRef} />

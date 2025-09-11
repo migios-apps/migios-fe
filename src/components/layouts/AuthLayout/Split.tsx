@@ -9,7 +9,7 @@ interface SplitProps extends CommonProps {
 
 const Split = ({ children, content, type = 'auth', ...rest }: SplitProps) => {
   return (
-    <div className="grid lg:grid-cols-2 h-full p-6 bg-white dark:bg-gray-800">
+    <div className="grid lg:grid-cols-2 h-full p-6 bg-white dark:bg-gray-900">
       <div className="bg-no-repeat bg-cover py-6 px-16 flex-col justify-center items-center hidden lg:flex bg-primary rounded-3xl">
         <div className="flex flex-col items-center gap-12">
           <img
