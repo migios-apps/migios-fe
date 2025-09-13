@@ -247,6 +247,8 @@ export const validationTransactionSchema = Yup.object().shape({
           .transform((value) => (isNaN(value) ? undefined : value))
           .required('Payment amount is required.')
           .min(1, 'Payment amount must be at least 1.'),
+        date: Yup.string().optional(),
+        isDefault: Yup.boolean().optional().default(false),
         // reference_no: Yup.string().required('Reference number is required.'),
         // payment_date: Yup.date()
         //   .required('Payment date is required.')
@@ -264,6 +266,8 @@ export const validationTransactionSchema = Yup.object().shape({
           .required('Refund amount is required.')
           .min(0, 'Refund amount cannot be negative.'),
         notes: Yup.string().nullable(),
+        date: Yup.string().optional(),
+        isDefault: Yup.boolean().optional().default(false),
       })
     )
     .min(0, 'At least one refund is required.'),

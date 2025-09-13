@@ -5,6 +5,15 @@ export type DurationType = 'day' | 'month' | 'year'
 export type DiscountType = 'percent' | 'nominal'
 export type PaymentStatus = 0 | 1 | 2 | 3 // 0 = belum bayar, 1 = bayar semua, 2 = bayar sebagian. 3 = bayar sebagian dan aktifkan member package jika terdapat package
 export type PackageType = 'membership' | 'pt_program' | 'class'
+export type TransactionStatus =
+  | 'unpaid'
+  | 'paid'
+  | 'part_paid'
+  | 'overdue'
+  | 'refunded'
+  | 'void'
+  | 'pending'
+  | 'completed'
 
 export interface SalesItem {
   item_type: ItemType
@@ -47,6 +56,7 @@ interface RefundFromItem {
 }
 
 export interface CheckoutRequest {
+  transaction_id?: number
   club_id: number
   member_id?: number
   discount_type: DiscountType
@@ -58,6 +68,40 @@ export interface CheckoutRequest {
   items: SalesItem[]
   payments: Payment[]
   refund_from: RefundFromItem[]
+}
+
+export interface UpdateSalesPaymentDto {
+  transaction_id: number
+  is_paid: number
+  balance: number
+  payments: {
+    id: number
+    amount: number
+    payment_date: string
+  }[]
+}
+
+export interface RefundSalesDto {
+  transaction_id: number
+  club_id: number
+  member_id: number
+  employee_id: number
+  is_paid: number
+  due_date: string
+  notes: string
+  items: {
+    trainer_id: number
+    item_type: string
+    package_id?: number
+    product_id?: number
+    quantity: number
+    price: number
+  }[]
+  payments: {
+    id: number
+    amount: number
+    payment_date: string
+  }[]
 }
 
 export interface SalesType {
@@ -118,8 +162,8 @@ export interface SalesDetailType {
   total_tax: number
   total_amount: number
   ballance_amount: number
-  status: string
-  is_paid: number
+  status: TransactionStatus
+  is_paid: PaymentStatus
   is_void: number
   is_refunded: number
   flag: string | null

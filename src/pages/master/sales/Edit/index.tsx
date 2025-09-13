@@ -1,11 +1,12 @@
 import { DebounceInput } from '@/components/shared'
 import ModeSwitcher from '@/components/template/ThemeConfigurator/ModeSwitcher'
-import { Button, Select, Skeleton, Tabs } from '@/components/ui'
+import { Button, Select, Skeleton, Tabs, Tag } from '@/components/ui'
 import CloseButton from '@/components/ui/CloseButton'
 import { SelectAsyncPaginate } from '@/components/ui/Select'
 import { ReturnAsyncSelect } from '@/components/ui/Select/SelectAsync'
 import { categoryPackage } from '@/constants'
 import { QUERY_KEY } from '@/constants/queryKeys.constant'
+import { paymentStatusColor } from '@/constants/utils'
 import { Filter } from '@/services/api/@types/api'
 import { TrainerPackageTypes } from '@/services/api/@types/package'
 import { apiGetPackageList } from '@/services/api/PackageService'
@@ -26,6 +27,7 @@ import { useFieldArray } from 'react-hook-form'
 import { TbSearch } from 'react-icons/tb'
 import { useNavigate, useParams } from 'react-router-dom'
 import type { GroupBase, OptionsOrGroups } from 'react-select'
+import CartDetail from '../components/CartDetail'
 import CartDetailSkeleton from '../components/CartDetailSkeleton'
 import FormAddItemSale from '../components/FormAddItemSale'
 import ItemPackageCard from '../components/ItemPackageCard'
@@ -38,7 +40,6 @@ import {
   useTransactionForm,
   useTransactionItemForm,
 } from '../utils/validation'
-import CartDetail from './CartDetail'
 
 const { TabNav, TabList, TabContent } = Tabs
 
@@ -76,7 +77,7 @@ const EditSales = () => {
     },
   })
 
-  const { data: settingsData } = useQuery({
+  const { data: settingsData, isLoading: isLoadingSettings } = useQuery({
     queryKey: [QUERY_KEY.settings],
     queryFn: async () => {
       const res = await apiGetSettings()
@@ -130,16 +131,20 @@ const EditSales = () => {
             data: item,
           })) || [],
         payments:
-          salesData.payments?.map((payment: any) => ({
-            id: payment.rekening_id,
-            name: payment.rekening_name,
-            amount: payment.amount,
+          salesData.payments?.map((item) => ({
+            id: item.rekening_id,
+            name: item.rekening_name,
+            amount: item.amount,
+            date: item.date,
+            isDefault: true,
           })) || [],
         refund_from:
-          salesData.refunds?.map((refund: any) => ({
-            id: refund.rekening_id,
-            amount: refund.amount,
-            notes: refund.notes,
+          salesData.refunds?.map((item) => ({
+            id: item.rekening_id,
+            amount: item.amount,
+            notes: item.notes,
+            date: item.date,
+            isDefault: true,
           })) || [],
       }
 
@@ -371,7 +376,12 @@ const EditSales = () => {
   return (
     <>
       <div className="w-full flex justify-between border-b border-gray-300 dark:border-gray-700 items-center gap-4 p-4 shadow-sm">
-        <h5>Edit Pesanan #{id}</h5>
+        <div className="flex items-center gap-4">
+          <h5>Edit Pesanan #{id}</h5>
+          <Tag className={paymentStatusColor[salesData?.fstatus || 'unpaid']}>
+            <span className="capitalize">{salesData?.fstatus}</span>
+          </Tag>
+        </div>
         <div className="ltr:right-6 rtl:left-6 top-4.5">
           <div className="flex justify-start gap-4">
             <ModeSwitcher />
@@ -384,18 +394,21 @@ const EditSales = () => {
           </div>
         </div>
       </div>
-      {isLoadingSales ? (
+      {isLoadingSales || isLoadingSettings ? (
         <CartDetailSkeleton />
       ) : (
         <>
           {showCartDetail ? (
             <CartDetail
+              type="update"
+              detail={salesData}
               formPropsTransaction={transactionSchema}
               formPropsTransactionItem={formPropsItem}
               setIndexItem={setIndexItem}
               setOpenAddItem={setOpenAddItem}
               setFormItemType={setFormItemType}
-              salesId={id!}
+              transactionId={salesData?.id}
+              isPaid={salesData?.is_paid || 0}
               onBack={() => setShowCartDetail(false)}
             />
           ) : (

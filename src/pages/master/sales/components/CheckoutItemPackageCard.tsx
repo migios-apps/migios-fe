@@ -6,27 +6,31 @@ import { ProcessedItem } from '../utils/generateCartData'
 
 type CheckoutItemPackageCardProps = {
   item: ProcessedItem
+  showEdit?: boolean
   onClick?: (item: ProcessedItem) => void
 }
 
 const CheckoutItemPackageCard: React.FC<CheckoutItemPackageCardProps> = ({
   item,
+  showEdit = true,
   onClick,
 }) => {
   return (
     <Card bodyClass="p-4 relative z-10">
-      <div className="absolute bottom-0 right-0 z-20 bg-gray-300 dark:bg-gray-700 hover:bg-primary-subtle rounded-br-lg rounded-tl-lg">
-        <Button
-          variant="plain"
-          size="sm"
-          className="w-8 h-8 hover:bg-primary-subtle"
-          icon={<Edit color="currentColor" size={16} />}
-          onClick={(e) => {
-            e.stopPropagation()
-            onClick?.(item)
-          }}
-        />
-      </div>
+      {showEdit ? (
+        <div className="absolute bottom-0 right-0 z-20 bg-gray-300 dark:bg-gray-700 hover:bg-primary-subtle rounded-br-lg rounded-tl-lg">
+          <Button
+            variant="plain"
+            size="sm"
+            className="w-8 h-8 hover:bg-primary-subtle"
+            icon={<Edit color="currentColor" size={16} />}
+            onClick={(e) => {
+              e.stopPropagation()
+              onClick?.(item)
+            }}
+          />
+        </div>
+      ) : null}
 
       <div className="flex flex-col lg:grid lg:grid-cols-[1fr_auto] gap-4 lg:items-start">
         <div className="space-y-3">

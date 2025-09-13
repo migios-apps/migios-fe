@@ -116,7 +116,7 @@ const SaleDetail = () => {
         /> */}
       {/* </div> */}
       <BottomStickyPayment
-        detail={detail}
+        detail={detail || null}
         isPending={updateSales.isPending}
         onSubmit={onSubmit}
       />

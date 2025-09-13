@@ -44,4 +44,16 @@ export const salesRoute: Routes = [
       footer: false,
     },
   },
+  {
+    key: 'refundSales',
+    path: '/sales/:id/refund',
+    component: lazy(() => import('@/pages/master/sales/Refund')),
+    authority: [],
+    meta: {
+      pageBackgroundType: 'plain',
+      pageContainerType: 'gutterless',
+      layout: 'blank',
+      footer: false,
+    },
+  },
 ]

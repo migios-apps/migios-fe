@@ -27,6 +27,7 @@ import { useFieldArray } from 'react-hook-form'
 import { TbSearch } from 'react-icons/tb'
 import { useNavigate } from 'react-router-dom'
 import type { GroupBase, OptionsOrGroups } from 'react-select'
+import CartDetail from '../components/CartDetail'
 import FormAddItemSale from '../components/FormAddItemSale'
 import ItemPackageCard from '../components/ItemPackageCard'
 import ItemProductCard from '../components/ItemProductCard'
@@ -40,7 +41,6 @@ import {
   useTransactionForm,
   useTransactionItemForm,
 } from '../utils/validation'
-import CartDetail from './CartDetail'
 
 const { TabNav, TabList, TabContent } = Tabs
 
@@ -347,6 +347,7 @@ const PointOfSales = () => {
       </div>
       {showCartDetail ? (
         <CartDetail
+          type="create"
           formPropsTransaction={transactionSchema}
           formPropsTransactionItem={formPropsItem}
           setIndexItem={setIndexItem}

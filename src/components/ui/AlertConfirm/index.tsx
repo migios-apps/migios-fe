@@ -20,8 +20,8 @@ interface AlertConfirmProps {
   closable?: boolean
   className?: string
   onClose?: () => void
-  onLeftClick: () => void
-  onRightClick: () => void
+  onLeftClick?: () => void
+  onRightClick?: () => void
   onRequestClose?: ReactModal.Props['onRequestClose']
 }
 
@@ -65,30 +65,34 @@ const AlertConfirm: React.FC<AlertConfirmProps> = ({
         <p className="text-center text-base">{description}</p>
         {/* <div className="flex justify-between items-center mt-6 gap-4 w-full"> */}
         <div className="w-full flex flex-col md:flex-row md:justify-between mt-6 items-start gap-4">
-          <Button
-            className={classNames(
-              'w-full',
-              // type === 'confirm' ? 'border-red-500 text-red-500' : '',
-              type === 'delete' ? 'border-primary text-primary' : '',
-              leftButtonClassName
-            )}
-            variant="default"
-            onClick={onLeftClick}
-          >
-            {leftTitle}
-          </Button>
-          <Button
-            className={classNames(
-              'w-full',
-              type === 'delete' ? 'bg-red-500 text-white' : '',
-              rightButtonClassName
-            )}
-            variant="solid"
-            loading={loading}
-            onClick={onRightClick}
-          >
-            {rightTitle}
-          </Button>
+          {onLeftClick && (
+            <Button
+              className={classNames(
+                'w-full',
+                // type === 'confirm' ? 'border-red-500 text-red-500' : '',
+                type === 'delete' ? 'border-primary text-primary' : '',
+                leftButtonClassName
+              )}
+              variant="default"
+              onClick={onLeftClick}
+            >
+              {leftTitle}
+            </Button>
+          )}
+          {onRightClick && (
+            <Button
+              className={classNames(
+                'w-full',
+                type === 'delete' ? 'bg-red-500 text-white' : '',
+                rightButtonClassName
+              )}
+              variant="solid"
+              loading={loading}
+              onClick={onRightClick}
+            >
+              {rightTitle}
+            </Button>
+          )}
         </div>
       </div>
     </Dialog>

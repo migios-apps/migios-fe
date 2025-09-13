@@ -1,13 +1,14 @@
 import { Container } from '@/components/shared'
 import { Button, Dropdown } from '@/components/ui'
+import { SalesDetailType } from '@/services/api/@types/sales'
 import classNames from '@/utils/classNames'
 import { ArrowDown2 } from 'iconsax-react'
 import React from 'react'
-import { useWatch } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 import { usePaymentForm } from './validation'
 
 interface BottomStickyPaymentProps {
-  detail: any
+  detail: SalesDetailType | null
   onSubmit: (data: any) => void
   isPending: boolean
 }
@@ -15,20 +16,12 @@ interface BottomStickyPaymentProps {
 const BottomStickyPayment: React.FC<BottomStickyPaymentProps> = ({
   detail,
   onSubmit,
-  isPending,
 }) => {
+  const navigate = useNavigate()
   const [openDropdown, setOpenDropdown] = React.useState(false)
 
   // Menggunakan form validasi payment
-  const {
-    control,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-    clearErrors,
-    setError,
-  } = usePaymentForm()
+  const { handleSubmit, setValue } = usePaymentForm()
 
   // Inisialisasi form dengan data dari API saat detail berubah
   React.useEffect(() => {
@@ -47,26 +40,6 @@ const BottomStickyPayment: React.FC<BottomStickyPaymentProps> = ({
     }
   }, [detail, setValue])
 
-  const getTotal = detail
-    ? (detail.total_amount || 0) -
-      (detail.payments?.reduce((acc: any, cur: any) => acc + cur.amount, 0) ||
-        0)
-    : 0
-  const isPaidOf = detail
-    ? (detail.payments?.reduce((acc: any, cur: any) => acc + cur.amount, 0) ||
-        0) >= (detail.total_amount || 0)
-    : false
-
-  // Handler untuk check part paid
-  const handleCheck = (data: any) => {
-    onSubmit({ ...data, isPaid: 2 })
-  }
-
-  // Watch untuk payments
-  const watchPayments = useWatch({
-    control,
-    name: 'payments',
-  })
   return (
     <>
       <div className="w-full bg-white dark:bg-gray-800 fixed bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
@@ -74,61 +47,79 @@ const BottomStickyPayment: React.FC<BottomStickyPaymentProps> = ({
           <div className="flex items-center justify-between px-8">
             <div></div>
             <div className="flex flex-col md:flex-row md:justify-between items-start gap-2">
-              <Dropdown
-                toggleClassName="w-full md:w-5/12"
-                renderTitle={
-                  <Button
-                    className={classNames('rounded-full w-full', {
-                      'text-primary border-primary': openDropdown,
-                    })}
-                    variant="default"
-                    icon={
-                      <ArrowDown2
-                        color="currentColor"
-                        size={16}
-                        className={classNames(
-                          'ml-1 transition-transform duration-300',
-                          {
-                            'rotate-180': openDropdown,
-                          }
-                        )}
-                      />
+              {detail ? (
+                <>
+                  <Dropdown
+                    toggleClassName="w-full"
+                    renderTitle={
+                      <Button
+                        className={classNames('rounded-full w-full', {
+                          'text-primary border-primary': openDropdown,
+                        })}
+                        variant="default"
+                        icon={
+                          <ArrowDown2
+                            color="currentColor"
+                            size={16}
+                            className={classNames(
+                              'ml-1 transition-transform duration-300',
+                              {
+                                'rotate-180': openDropdown,
+                              }
+                            )}
+                          />
+                        }
+                        iconAlignment="end"
+                      >
+                        Lainnya
+                      </Button>
                     }
-                    iconAlignment="end"
+                    onOpen={setOpenDropdown}
                   >
-                    Lainnya
-                  </Button>
-                }
-                onOpen={setOpenDropdown}
-              >
-                {watch('payments')?.length > 0 && !isPaidOf ? (
-                  <Dropdown.Item
-                    eventKey="part_paid"
-                    onClick={handleSubmit(handleCheck)}
-                  >
-                    Simpan sebagai Part Paid
-                  </Dropdown.Item>
-                ) : null}
-                <Dropdown.Item
-                  eventKey="unpaid"
-                  onClick={handleSubmit((data) => {
-                    onSubmit({ ...data, isPaid: 0, payments: [] })
-                  })}
-                >
-                  Simpan tanpa bayar
-                </Dropdown.Item>
-              </Dropdown>
-              <Button
-                className="rounded-full"
-                variant="solid"
-                loading={isPending}
-                disabled={getTotal > 0}
-                onClick={handleSubmit((data) =>
-                  onSubmit({ ...data, isPaid: 1 })
-                )}
-              >
-                Update Pesanan
-              </Button>
+                    {/* {[0].includes(detail?.is_paid) ? (
+                      <Dropdown.Item
+                        eventKey="change_unpaid"
+                        className="text-green-500"
+                        onClick={() => navigate(`/sales/${detail?.code}/edit`)}
+                      >
+                        Ubah unpaid faktur
+                      </Dropdown.Item>
+                    ) : null} */}
+                    {[1].includes(detail?.is_paid) ? (
+                      <Dropdown.Item
+                        eventKey="canceled"
+                        className="text-red-500"
+                        onClick={() => navigate(`/sales/${detail?.id}/refund`)}
+                      >
+                        Pengembalian
+                      </Dropdown.Item>
+                    ) : null}
+                    {[0, 1, 2, 3].includes(detail?.is_paid) ||
+                    detail?.is_refunded ? (
+                      <Dropdown.Item
+                        eventKey="canceled"
+                        className="text-red-500"
+                        onClick={handleSubmit((data) => {
+                          onSubmit({ ...data, isPaid: 0, payments: [] })
+                        })}
+                      >
+                        Batalkan Pesanan
+                      </Dropdown.Item>
+                    ) : null}
+                  </Dropdown>
+                  {[0, 2, 3].includes(detail?.is_paid) ? (
+                    <Button
+                      className="rounded-full"
+                      variant="solid"
+                      onClick={() => {
+                        navigate(`/sales/${detail?.code}/edit`)
+                      }}
+                    >
+                      Bayar sekarang
+                    </Button>
+                  ) : null}
+                </>
+              ) : null}
             </div>
           </div>
         </Container>

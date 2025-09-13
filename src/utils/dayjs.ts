@@ -9,8 +9,8 @@ globalDayjs.locale('id')
 globalDayjs.extend(dayjsRelativeTime)
 
 export const dayjs = (date?: string | Date | Dayjs) => {
-  if (typeof date === 'string') {
-    return globalDayjs(date, 'DD-MM-YYYY')
-  }
+  // if (typeof date === 'string') {
+  //   return globalDayjs(date, 'DD-MM-YYYY')
+  // }
   return globalDayjs(date)
 }

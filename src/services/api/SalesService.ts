@@ -3,8 +3,10 @@ import { ParamsFilter } from './@types/api'
 import {
   CheckoutRequest,
   RefundRequest,
+  RefundSalesDto,
   SalesDetailResponse,
   SalesTypeListResponse,
+  UpdateSalesPaymentDto,
 } from './@types/sales'
 
 export async function apiCreateCheckout(data: CheckoutRequest) {
@@ -38,13 +40,18 @@ export async function apiCreateRefund(data: RefundRequest) {
   })
 }
 
-export async function apiUpdateSales(
-  id: number | string,
-  data: CheckoutRequest
-) {
+export async function apiUpdateSales(data: CheckoutRequest) {
   return ApiService.fetchDataWithAxios({
-    url: `/sales/update/${id}`,
-    method: 'PUT',
+    url: `/sales/update`,
+    method: 'PATCH',
+    data: data as unknown as Record<string, unknown>,
+  })
+}
+
+export async function apiUpdateSalesPayment(data: UpdateSalesPaymentDto) {
+  return ApiService.fetchDataWithAxios({
+    url: `/sales/update-payment`,
+    method: 'PATCH',
     data: data as unknown as Record<string, unknown>,
   })
 }
@@ -53,5 +60,13 @@ export async function apiVoidSales(id: number | string) {
   return ApiService.fetchDataWithAxios({
     url: `/sales/void/${id}`,
     method: 'DELETE',
+  })
+}
+
+export async function apiRefundSales(data: RefundSalesDto) {
+  return ApiService.fetchDataWithAxios({
+    url: `/sales/refund`,
+    method: 'POST',
+    data: data as unknown as Record<string, unknown>,
   })
 }
