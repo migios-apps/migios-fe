@@ -1,8 +1,7 @@
-import { Button } from '@/components/ui/button'
-import { Dialog } from '@/components/ui/dialog'
 import { apiCreateNewSubscription } from '@/services/api/ClubService'
 import { useMutation } from '@tanstack/react-query'
 import React from 'react'
+import { Button, Dialog } from '../ui'
 
 type AlertDialogExpiredSubscriptionProps = {
   clubId?: number
