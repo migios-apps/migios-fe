@@ -64,6 +64,7 @@ type FormPaymentProps = {
   formPropsTransactionItem: ReturnTransactionItemFormSchema
   transactionId?: number
   isPaid?: PaymentStatus
+  onClose?: () => void
 }
 
 const FormPayment: React.FC<FormPaymentProps> = ({
@@ -80,6 +81,14 @@ const FormPayment: React.FC<FormPaymentProps> = ({
   const [openDropdown, setOpenDropdown] = React.useState(false)
   const [confirmPartPaid, setConfirmPartPaid] = React.useState(false)
   const [confirmVoid, setConfirmVoid] = React.useState(false)
+
+  const handleBack = () => {
+    if (window.history.state && window.history.state.idx > 0) {
+      navigate(-1)
+    } else {
+      navigate('/sales')
+    }
+  }
 
   const formPropsItem = formPropsTransactionItem
   const {
@@ -680,88 +689,100 @@ const FormPayment: React.FC<FormPaymentProps> = ({
             </div>
           ) : null}
           <div className="w-full flex flex-col md:flex-row md:justify-between items-start gap-2">
-            <Dropdown
-              toggleClassName="w-full md:w-5/12"
-              renderTitle={
-                <Button
-                  className={classNames('rounded-full w-full', {
-                    'text-primary border-primary': openDropdown,
-                  })}
-                  variant="default"
-                  icon={
-                    <ArrowDown2
-                      color="currentColor"
-                      size={16}
-                      className={classNames(
-                        'ml-1 transition-transform duration-300',
-                        {
-                          'rotate-180': openDropdown,
-                        }
-                      )}
-                    />
+            {detail?.status !== 'void' ? (
+              <>
+                <Dropdown
+                  toggleClassName="w-full md:w-5/12"
+                  renderTitle={
+                    <Button
+                      className={classNames('rounded-full w-full', {
+                        'text-primary border-primary': openDropdown,
+                      })}
+                      variant="default"
+                      icon={
+                        <ArrowDown2
+                          color="currentColor"
+                          size={16}
+                          className={classNames(
+                            'ml-1 transition-transform duration-300',
+                            {
+                              'rotate-180': openDropdown,
+                            }
+                          )}
+                        />
+                      }
+                      iconAlignment="end"
+                    >
+                      Lainnya
+                    </Button>
                   }
-                  iconAlignment="end"
+                  onOpen={setOpenDropdown}
                 >
-                  Lainnya
-                </Button>
-              }
-              onOpen={setOpenDropdown}
-            >
-              {type === 'update' && [1].includes(isPaid) ? (
-                <Dropdown.Item
-                  eventKey="canceled"
-                  className="text-red-500"
-                  onClick={() => navigate(`/sales/${detail?.id}/refund`)}
-                >
-                  Pengembalian
-                </Dropdown.Item>
-              ) : null}
-              {(type === 'update' && [0, 1, 2, 3].includes(isPaid)) ||
-              detail?.is_refunded ? (
-                <Dropdown.Item
-                  eventKey="canceled"
-                  className="text-red-500"
-                  onClick={() => setConfirmVoid(true)}
-                >
-                  Dibatalkan
-                </Dropdown.Item>
-              ) : null}
-              {!isPaidOf &&
-              watch('payments')?.filter((item) => item.isDefault === false)
-                ?.length > 0 ? (
-                <Dropdown.Item
-                  eventKey="part_paid"
-                  onClick={handleSubmit(handleCheck)}
-                >
-                  Simpan Dibayar Sebagian
-                </Dropdown.Item>
-              ) : null}
-              {type === 'create' ? (
-                <Dropdown.Item
-                  eventKey="unpaid"
-                  onClick={handleSubmit((data) => {
-                    onSubmit({ ...data, isPaid: 0, payments: [] })
-                  })}
-                >
-                  Simpan Belum Dibayar
-                </Dropdown.Item>
-              ) : null}
-            </Dropdown>
-            {isPaid === 1 ? null : (
+                  {type === 'update' && [1].includes(isPaid) ? (
+                    <Dropdown.Item
+                      eventKey="canceled"
+                      className="text-red-500"
+                      onClick={() => navigate(`/sales/${detail?.id}/refund`)}
+                    >
+                      Pengembalian
+                    </Dropdown.Item>
+                  ) : null}
+                  {(type === 'update' && [0, 1, 2, 3].includes(isPaid)) ||
+                  detail?.is_refunded ? (
+                    <Dropdown.Item
+                      eventKey="canceled"
+                      className="text-red-500"
+                      onClick={() => setConfirmVoid(true)}
+                    >
+                      Dibatalkan
+                    </Dropdown.Item>
+                  ) : null}
+                  {!isPaidOf &&
+                  watch('payments')?.filter((item) => item.isDefault === false)
+                    ?.length > 0 ? (
+                    <Dropdown.Item
+                      eventKey="part_paid"
+                      onClick={handleSubmit(handleCheck)}
+                    >
+                      Simpan Dibayar Sebagian
+                    </Dropdown.Item>
+                  ) : null}
+                  {type === 'create' ? (
+                    <Dropdown.Item
+                      eventKey="unpaid"
+                      onClick={handleSubmit((data) => {
+                        onSubmit({ ...data, isPaid: 0, payments: [] })
+                      })}
+                    >
+                      Simpan Belum Dibayar
+                    </Dropdown.Item>
+                  ) : null}
+                </Dropdown>
+                {isPaid === 1 ? null : (
+                  <Button
+                    className="rounded-full w-full"
+                    variant="solid"
+                    loading={
+                      createCheckout.isPending ||
+                      updateSales.isPending ||
+                      updateSalesPayment.isPending
+                    }
+                    disabled={getTotal > 0}
+                    onClick={handleSubmit((data) =>
+                      onSubmit({ ...data, isPaid: 1 })
+                    )}
+                  >
+                    {type === 'create' ? 'Bayar sekarang' : 'Perbarui pesanan'}
+                  </Button>
+                )}
+              </>
+            ) : (
               <Button
                 className="rounded-full w-full"
                 variant="solid"
-                loading={
-                  createCheckout.isPending ||
-                  updateSales.isPending ||
-                  updateSalesPayment.isPending
-                }
-                disabled={getTotal > 0}
-                onClick={handleSubmit((data) =>
-                  onSubmit({ ...data, isPaid: 1 })
-                )}
+                onClick={handleBack}
               >
-                {type === 'create' ? 'Bayar sekarang' : 'Perbarui pesanan'}
+                Tutup
               </Button>
             )}
           </div>

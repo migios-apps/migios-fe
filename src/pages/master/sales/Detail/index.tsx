@@ -4,8 +4,8 @@ import { Button, Skeleton, Tabs, Tag } from '@/components/ui'
 import CloseButton from '@/components/ui/CloseButton'
 import { QUERY_KEY } from '@/constants/queryKeys.constant'
 import { paymentStatusColor } from '@/constants/utils'
-import { apiGetSales, apiUpdateSales } from '@/services/api/SalesService'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { apiGetSales } from '@/services/api/SalesService'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { DocumentDownload, Printer, ReceiptText } from 'iconsax-react'
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -30,20 +30,6 @@ const SaleDetail = () => {
     enabled: !!id,
   })
 
-  // Mutation untuk update sales
-  const updateSales = useMutation({
-    mutationFn: (data: any) => apiUpdateSales(id as string, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY.sales] })
-      navigate('/sales')
-    },
-  })
-
-  // Handler untuk submit form
-  const onSubmit = (data: any) => {
-    updateSales.mutate(data)
-  }
-
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -60,7 +46,7 @@ const SaleDetail = () => {
       <div className="w-full flex justify-between border-b border-gray-300 dark:border-gray-700 items-center gap-4 p-4 shadow-sm">
         <div className="flex items-center gap-4">
           <h5>INVOICE #{detail?.code}</h5>
-          <Tag className={paymentStatusColor[detail?.fstatus || 'unpaid']}>
+          <Tag className={paymentStatusColor[detail?.status || 'unpaid']}>
             <span className="capitalize">{detail?.fstatus}</span>
           </Tag>
         </div>
@@ -115,11 +101,9 @@ const SaleDetail = () => {
           onSubmit={onSubmit}
         /> */}
       {/* </div> */}
-      <BottomStickyPayment
-        detail={detail || null}
-        isPending={updateSales.isPending}
-        onSubmit={onSubmit}
-      />
+      {detail?.status !== 'void' && (
+        <BottomStickyPayment detail={detail || null} />
+      )}
     </>
   )
 }

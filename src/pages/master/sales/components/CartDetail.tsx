@@ -171,12 +171,12 @@ const CartDetail: React.FC<CartDetailProps> = ({
                         {cartDataGenerated.fsubtotal}
                       </span>
                     </div>
-                    <div className="flex justify-between text-sm">
+                    {/* <div className="flex justify-between text-sm">
                       <span className="text-primary cursor-pointer hover:underline">
                         Tambah diskon
                       </span>
                       <span className="text-sm text-gray-500">-</span>
-                    </div>
+                    </div> */}
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-600 dark:text-gray-400">
                         Pajak

@@ -65,7 +65,11 @@ const EditSales = () => {
   const watchTransaction = transactionSchema.watch()
 
   // Load existing sales data
-  const { data: salesData, isLoading: isLoadingSales } = useQuery({
+  const {
+    data: salesData,
+    isLoading: isLoadingSales,
+    isPending: isPendingSales,
+  } = useQuery({
     queryKey: [QUERY_KEY.sales, id],
     enabled: !!id,
     queryFn: async () => {
@@ -77,7 +81,11 @@ const EditSales = () => {
     },
   })
 
-  const { data: settingsData, isLoading: isLoadingSettings } = useQuery({
+  const {
+    data: settingsData,
+    isLoading: isLoadingSettings,
+    isPending: isPendingSettings,
+  } = useQuery({
     queryKey: [QUERY_KEY.settings],
     queryFn: async () => {
       const res = await apiGetSettings()
@@ -378,7 +386,7 @@ const EditSales = () => {
       <div className="w-full flex justify-between border-b border-gray-300 dark:border-gray-700 items-center gap-4 p-4 shadow-sm">
         <div className="flex items-center gap-4">
           <h5>Edit Pesanan #{id}</h5>
-          <Tag className={paymentStatusColor[salesData?.fstatus || 'unpaid']}>
+          <Tag className={paymentStatusColor[salesData?.status || 'unpaid']}>
             <span className="capitalize">{salesData?.fstatus}</span>
           </Tag>
         </div>
@@ -394,7 +402,10 @@ const EditSales = () => {
           </div>
         </div>
       </div>
-      {isLoadingSales || isLoadingSettings ? (
+      {isLoadingSales ||
+      isLoadingSettings ||
+      isPendingSales ||
+      isPendingSettings ? (
         <CartDetailSkeleton />
       ) : (
         <>

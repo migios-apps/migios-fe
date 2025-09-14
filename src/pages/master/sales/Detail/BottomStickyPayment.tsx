@@ -9,19 +9,16 @@ import { usePaymentForm } from './validation'
 
 interface BottomStickyPaymentProps {
   detail: SalesDetailType | null
-  onSubmit: (data: any) => void
-  isPending: boolean
 }
 
 const BottomStickyPayment: React.FC<BottomStickyPaymentProps> = ({
   detail,
-  onSubmit,
 }) => {
   const navigate = useNavigate()
   const [openDropdown, setOpenDropdown] = React.useState(false)
 
   // Menggunakan form validasi payment
-  const { handleSubmit, setValue } = usePaymentForm()
+  const { setValue } = usePaymentForm()
 
   // Inisialisasi form dengan data dari API saat detail berubah
   React.useEffect(() => {
@@ -92,18 +89,6 @@ const BottomStickyPayment: React.FC<BottomStickyPaymentProps> = ({
                         onClick={() => navigate(`/sales/${detail?.id}/refund`)}
                       >
                         Pengembalian
-                      </Dropdown.Item>
-                    ) : null}
-                    {[0, 1, 2, 3].includes(detail?.is_paid) ||
-                    detail?.is_refunded ? (
-                      <Dropdown.Item
-                        eventKey="canceled"
-                        className="text-red-500"
-                        onClick={handleSubmit((data) => {
-                          onSubmit({ ...data, isPaid: 0, payments: [] })
-                        })}
-                      >
-                        Batalkan Pesanan
                       </Dropdown.Item>
                     ) : null}
                   </Dropdown>
