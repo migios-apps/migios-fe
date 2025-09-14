@@ -4,9 +4,9 @@ import {
   resetPackagePtTrainerForm,
   usePackagePtTrainerForm,
 } from '@/components/form/package/package'
-import { DataTable, DebounceInput, UsersAvatarGroup } from '@/components/shared'
+import { DataTable, DebounceInput } from '@/components/shared'
 import { DataTableColumnDef } from '@/components/shared/DataTable'
-import { Button, Tag, Tooltip } from '@/components/ui'
+import { Avatar, Button, Tag, Tooltip } from '@/components/ui'
 import { PackageType } from '@/constants'
 import { QUERY_KEY } from '@/constants/queryKeys.constant'
 import { statusColor } from '@/constants/utils'
@@ -150,16 +150,22 @@ const PTtrainer = () => {
             )
           } else {
             return (
-              <UsersAvatarGroup
-                avatarProps={{
-                  className: '-mr-2 border-2 border-white dark:border-500',
-                  // size: 28,
-                }}
-                imgKey="photo"
-                avatarGroupProps={{ maxCount: 3 }}
-                chained={false}
-                users={row.original.trainers as any[]}
-              />
+              <Avatar.Group
+                chained
+                omittedAvatarTooltip
+                maxCount={3}
+                omittedAvatarProps={{ shape: 'circle' }}
+              >
+                {row.original.trainers.map((elm, index) => (
+                  <Tooltip
+                    key={elm.id + index}
+                    wrapperClass="flex"
+                    title={elm.name}
+                  >
+                    <Avatar src={elm.photo || ''} />
+                  </Tooltip>
+                ))}
+              </Avatar.Group>
             )
           }
         },
