@@ -20,6 +20,6 @@
       "@services/*": ["./src/services/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "generate-build-version.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

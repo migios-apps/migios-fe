@@ -2,6 +2,7 @@ import appConfig from '@/configs/app.config'
 import { REDIRECT_URL_KEY } from '@/constants/app.constant'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '@/auth'
+import { UpdateNotificationDialog, useUpdateNotification } from '@/buildVersion'
 
 const {
   unAuthenticatedEntryPath,
@@ -11,12 +12,18 @@ const {
 
 const ProtectedRoute = () => {
   const { authenticated, authDashboard, user } = useAuth()
+  const { isUpdateAvailable, markVersionAsDismissed } = useUpdateNotification()
   const total_user_clubs = user?.total_user_clubs ?? 0
 
   const { pathname } = useLocation()
 
   const getPathName =
     pathname === '/' ? '' : `?${REDIRECT_URL_KEY}=${location.pathname}`
+
+  const onRefresh = async () => {
+    await markVersionAsDismissed()
+    window.location.reload()
+  }
 
   if (
     authenticated &&
@@ -36,7 +43,16 @@ const ProtectedRoute = () => {
     return <Navigate replace to={`${unAuthenticatedEntryPath}${getPathName}`} />
   }
 
-  return <Outlet />
+  return (
+    <>
+      <Outlet />
+      <UpdateNotificationDialog
+        isOpen={isUpdateAvailable}
+        onClose={() => markVersionAsDismissed()}
+        onRefresh={onRefresh}
+      />
+    </>
+  )
 }
 
 export default ProtectedRoute
