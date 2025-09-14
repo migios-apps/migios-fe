@@ -33,6 +33,7 @@ export default defineConfig(({ mode }) => {
         '@': path.join(__dirname, 'src'),
       },
     },
+    base: '/',
     server: {
       host: true,
       port: 5123,
