@@ -716,7 +716,8 @@ const FormPayment: React.FC<FormPaymentProps> = ({
                   Pengembalian
                 </Dropdown.Item>
               ) : null}
-              {[0, 1, 2, 3].includes(isPaid) || detail?.is_refunded ? (
+              {(type === 'update' && [0, 1, 2, 3].includes(isPaid)) ||
+              detail?.is_refunded ? (
                 <Dropdown.Item
                   eventKey="canceled"
                   className="text-red-500"
