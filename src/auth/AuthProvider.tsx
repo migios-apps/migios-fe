@@ -33,6 +33,7 @@ import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import type { NavigateFunction } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import AuthContext from './AuthContext'
+import { useUpdateNotification } from '@/buildVersion'
 
 type AuthProviderProps = { children: ReactNode }
 
@@ -56,6 +57,7 @@ const IsolatedNavigator = forwardRef<IsolatedNavigatorRef>((_, ref) => {
 
 function AuthProvider({ children }: AuthProviderProps) {
   const [isActiveSubscription, setIsActiveSubscription] = useState(true)
+  const { markVersionAsDismissed } = useUpdateNotification()
   const {
     session: { signedIn },
     user,
@@ -128,6 +130,8 @@ function AuthProvider({ children }: AuthProviderProps) {
           },
           resp.data.data
         )
+        // Menandai versi sebagai dismissed setelah login berhasil
+        await markVersionAsDismissed()
         return { status: 'success', message: '' }
       }
       return { status: 'failed', message: 'Unable to sign in' }
