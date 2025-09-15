@@ -1,3 +1,4 @@
+import { useUpdateNotification } from '@/buildVersion'
 import AlertDialogExpiredSubscription from '@/components/template/AlertDialogExpiredSubscription'
 import appConfig from '@/configs/app.config'
 import {
@@ -33,7 +34,6 @@ import { forwardRef, useImperativeHandle, useRef, useState } from 'react'
 import type { NavigateFunction } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import AuthContext from './AuthContext'
-import { useUpdateNotification } from '@/buildVersion'
 
 type AuthProviderProps = { children: ReactNode }
 
@@ -130,8 +130,11 @@ function AuthProvider({ children }: AuthProviderProps) {
           },
           resp.data.data
         )
-        // Menandai versi sebagai dismissed setelah login berhasil
-        await markVersionAsDismissed()
+        // Menandai versi sebagai dismissed hanya saat pertama kali login (key belum ada)
+        const existingVersion = localStorage.getItem('currentVersion') || ''
+        if (!existingVersion) {
+          await markVersionAsDismissed()
+        }
         return { status: 'success', message: '' }
       }
       return { status: 'failed', message: 'Unable to sign in' }

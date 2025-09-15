@@ -38,8 +38,17 @@ class UpdateServiceImpl implements UpdateService {
 
   async checkForUpdates(): Promise<boolean> {
     try {
-      const latestVersion = await this.getLatestBuildVersion()
       const dismissedVersion = this.getDismissedVersion()
+
+      // Skip cek update jika currentVersion belum pernah diset (mis. sebelum login pertama)
+      if (dismissedVersion === '') {
+        console.log(
+          'Skip update check: CURRENT_VERSION_KEY belum ada di localStorage.'
+        )
+        return false
+      }
+
+      const latestVersion = await this.getLatestBuildVersion()
 
       const hasUpdate =
         latestVersion !== '' && latestVersion !== dismissedVersion
