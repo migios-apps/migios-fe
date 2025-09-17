@@ -1,4 +1,3 @@
-import { currencyFormat } from '@/components/ui/InputCurrency/currencyFormat'
 import { SalesDetailType } from '@/services/api/@types/sales'
 import dayjs from 'dayjs'
 
@@ -36,7 +35,7 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
             </div>
             <div className="text-right">
               <h2 className="font-bold mb-2 text-white" style={invoiceStyle}>
-                INVOICE
+                FAKTUR
               </h2>
               <div className="bg-white/20 rounded-lg p-3">
                 <p className="font-bold" style={invoiceStyle}>
@@ -59,7 +58,7 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
                 className="font-bold text-gray-800 dark:text-gray-200 mb-3"
                 style={invoiceStyle}
               >
-                Bill To:
+                Tagihan Ke:
               </h3>
               <div className="space-y-1 text-gray-600 dark:text-gray-300">
                 <p className="font-semibold text-gray-800 dark:text-gray-200">
@@ -76,7 +75,7 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
                   className="font-bold text-gray-800 dark:text-gray-200 mb-3"
                   style={invoiceStyle}
                 >
-                  Sales Person:
+                  Penjualan Dari:
                 </h3>
                 <div className="space-y-1 text-gray-600 dark:text-gray-300">
                   <p className="font-semibold text-gray-800 dark:text-gray-200">
@@ -99,10 +98,10 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
                     Qty
                   </th>
                   <th className="border border-gray-300 dark:border-gray-600 py-3 px-1 text-right font-semibold text-gray-800 dark:text-gray-200 align-top">
-                    Price
+                    Harga
                   </th>
                   <th className="border border-gray-300 dark:border-gray-600 py-3 px-1 text-right font-semibold text-gray-800 dark:text-gray-200 align-top">
-                    Discount
+                    Diskon
                   </th>
                   <th className="border border-gray-300 dark:border-gray-600 py-3 px-1 text-right font-semibold text-gray-800 dark:text-gray-200 align-top">
                     Tarif pajak
@@ -133,14 +132,14 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
                           {item.item_type === 'package' ? (
                             <div className="mt-2 space-y-1">
                               <div className="text-gray-500 dark:text-gray-400">
-                                Duration: {formatDuration}
+                                Durasi: {formatDuration}
                                 {item.session_duration > 0
                                   ? ` • Sessions: ${item.session_duration}`
                                   : null}
                               </div>
                               {dateRange ? (
                                 <div className="text-gray-500 dark:text-gray-400">
-                                  Period: {dateRange}
+                                  Periode: {dateRange}
                                 </div>
                               ) : null}
                               {item.package?.type === 'pt_program' &&
@@ -175,7 +174,7 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
                         </ul>
                       </td>
                       <td className="border border-gray-300 dark:border-gray-600 py-2 px-1 text-right font-semibold align-top">
-                        {item.ftotal_amount}
+                        {item.fnet_amount}
                       </td>
                     </tr>
                   )
@@ -193,7 +192,7 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
                   className="font-bold text-gray-800 dark:text-gray-200 mb-3"
                   style={invoiceStyle}
                 >
-                  Payment Information
+                  Pembayaran
                 </h6>
                 {detail?.payments && detail.payments.length > 0 ? (
                   <div className="space-y-2">
@@ -206,9 +205,7 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
                         <span className="text-gray-600 dark:text-gray-400">
                           {payment.rekening_name}:
                         </span>
-                        <span className="font-medium">
-                          {currencyFormat(payment.amount)}
-                        </span>
+                        <span className="font-medium">{payment.famount}</span>
                       </div>
                     ))}
                   </div>
@@ -217,7 +214,7 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
                     className="text-gray-500 dark:text-gray-400"
                     style={invoiceStyle}
                   >
-                    No payments recorded
+                    Tidak ada pembayaran
                   </p>
                 )}
               </div>
@@ -235,24 +232,22 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
                       Subtotal:
                     </span>
                     <span className="font-medium">
-                      {currencyFormat(detail?.gross_amount || 0)}
+                      {detail?.fsubtotal_net_amount}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">
-                      Discount:
+                      Diskon:
                     </span>
                     <span className="font-medium">
-                      -{currencyFormat(detail?.total_discount || 0)}
+                      -{detail?.ftotal_discount}
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">
-                      Tax:
+                      Pajak:
                     </span>
-                    <span className="font-medium">
-                      {currencyFormat(detail?.total_tax || 0)}
-                    </span>
+                    <span className="font-medium">{detail?.ftotal_tax}</span>
                   </div>
                   <div className="border-t border-gray-300 dark:border-gray-600 pt-3">
                     <div
@@ -261,15 +256,15 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
                     >
                       <span>Total:</span>
                       <span className="text-blue-600 dark:text-blue-400">
-                        {currencyFormat(detail?.total_amount || 0)}
+                        {detail?.ftotal_amount}
                       </span>
                     </div>
                   </div>
                   {detail?.ballance_amount && detail.ballance_amount > 0 ? (
                     <div className="flex justify-between text-red-600 dark:text-red-400">
-                      <span>Outstanding:</span>
+                      <span>Sisa Pembayaran:</span>
                       <span className="font-medium">
-                        {currencyFormat(detail.ballance_amount)}
+                        {detail.fballance_amount}
                       </span>
                     </div>
                   ) : null}
@@ -288,7 +283,7 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
             </div>
             <div className="text-center">
               <p className="font-semibold mb-24" style={invoiceStyle}>
-                Sales Person
+                Tenaga Penjualan
               </p>
               <div className="border-b border-gray-400"></div>
               <p
@@ -300,7 +295,7 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
             </div>
             <div className="text-center">
               <p className="font-semibold mb-24" style={invoiceStyle}>
-                Customer
+                Member
               </p>
               <div className="border-b border-gray-400"></div>
               <p
@@ -318,7 +313,7 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
               className="font-bold text-gray-800 dark:text-gray-200 mb-3"
               style={invoiceStyle}
             >
-              Terms & Conditions:
+              Syarat & Ketentuan:
             </h3>
             <ol
               className="list-decimal ml-5 text-gray-600 dark:text-gray-400 space-y-1"
@@ -348,7 +343,7 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
               className="text-gray-500 dark:text-gray-400"
               style={invoiceStyle}
             >
-              Thank you for your business! Have a great day!
+              Terima kasih atas kunjungan Anda! Semoga harimu menyenangkan!
             </p>
           </div>
         </div>

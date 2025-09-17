@@ -109,34 +109,51 @@ export interface SalesType {
   code: string
   member_id: number
   club_id: number
+  employee_id: number
   type: string
-  sale_type?: string | null
-  subtotal: number
   discount_type: string
-  discount_amount: number
   discount: number
-  tax_rate: number
-  tax_amount: number
-  amount: number
+  total_tax: number
+  total_discount: number
+  total_amount: number
   status: string
-  flag?: string | null
-  due_date?: string | null
-  notes: string
-  billing_address?: string | null
-  shipping_address?: string | null
+  is_paid: number
+  is_refunded: number
+  flag: any
+  due_date: string
+  notes: any
+  billing_address: any
+  shipping_address: any
   created_at: string
   updated_at: string
+  is_void: number
+  ballance_amount: number
+  return_amount: number
+  subtotal: number
   member: {
     id: number
+    code: string
     name: string
+    photo: string
+    email: string
+  }
+  employee: {
+    id: number
+    code: string
+    name: string
+    photo: string
+    email: string
   }
   fstatus: string
+  fdiscount: string
   fsubtotal: string
-  fdiscount_amount: string
-  ftax_amount: string
-  famount: string
+  ftotal_tax: string
+  ftotal_discount: string
+  ftotal_amount: string
   total_payments: number
   ftotal_payments: string
+  freturn_amount: string
+  fballance_amount: string
 }
 
 export type SalesTypeListResponse = Omit<ApiTypes, 'data'> & {
@@ -147,32 +164,29 @@ export type SalesTypeListResponse = Omit<ApiTypes, 'data'> & {
 export interface SalesDetailType {
   id: number
   code: string
-  member_id: number | null
+  member_id: number
   club_id: number
-  employee_id: number | null
+  employee_id: number
   type: string
-  subtotal: number
   discount_type: string
-  discount_amount: number
   discount: number
-  tax_amount: number
-  amount: number
-  gross_amount: number
-  total_discount: number
   total_tax: number
+  total_discount: number
   total_amount: number
-  ballance_amount: number
-  status: TransactionStatus
-  is_paid: PaymentStatus
-  is_void: number
+  status: string
+  is_paid: number
   is_refunded: number
   flag: string | null
   due_date: string
-  notes: string | null
-  billing_address: string | null
-  shipping_address: string | null
+  notes: string
+  billing_address: string
+  shipping_address: string
   created_at: string
   updated_at: string
+  is_void: number
+  ballance_amount: number
+  return_amount: number
+  subtotal: number
   void_status: string | null
   void_date: string | null
   void_notes: string | null
@@ -185,10 +199,15 @@ export interface SalesDetailType {
   refund_processed_at: string | null
   fstatus: string
   fdiscount: string
-  fgross_amount: string
+  fsubtotal: string
   ftotal_tax: string
   ftotal_discount: string
   ftotal_amount: string
+  freturn_amount: string
+  fballance_amount: string
+  subtotal_net_amount: number
+  fsubtotal_net_amount: string
+
   member: {
     id: number
     code: string
@@ -243,12 +262,15 @@ export interface SalesDetailType {
       frate: number
       famount: string
     }[]
+    fprice: string
     fdiscount: string
     fgross_amount: string
     fdiscount_amount: string
     fnet_amount: string
     ftotal_tax_amount: string
     ftotal_amount: string
+    subtotal_net_amount: number
+    fsubtotal_net_amount: string
     product?: {
       id: number
       name: string

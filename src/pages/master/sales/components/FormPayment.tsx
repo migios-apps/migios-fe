@@ -503,7 +503,7 @@ const FormPayment: React.FC<FormPaymentProps> = ({
               )}
             />
           </FormItem>
-          {isPaid === 1 ? null : (
+          {isPaid === 1 || detail?.is_void === 1 ? null : (
             <FormItem
               asterisk
               label="Payment"
@@ -537,7 +537,16 @@ const FormPayment: React.FC<FormPaymentProps> = ({
 
           {/* Payment Method grid */}
           <div className="mt-4">
-            {isPaid === 1 ? (
+            {isPaid === 1 && detail?.is_void === 0 ? (
+              <div className="col-span-2 flex flex-col items-center justify-center py-8 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
+                <div className="text-gray-400 dark:text-gray-500 mb-2">
+                  <WalletCheck color="currentColor" size="50" />
+                </div>
+                <h1 className="text-3xl font-bold text-gray-400 dark:text-gray-500 uppercase">
+                  {detail?.status?.split('_').join(' ')}
+                </h1>
+              </div>
+            ) : detail?.is_void === 1 ? (
               <div className="col-span-2 flex flex-col items-center justify-center py-8 px-4 bg-gray-50 dark:bg-gray-800 rounded-xl">
                 <div className="text-gray-400 dark:text-gray-500 mb-2">
                   <WalletCheck color="currentColor" size="50" />

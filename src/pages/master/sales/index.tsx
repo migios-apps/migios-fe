@@ -18,7 +18,7 @@ import { apiGetSalesList } from '@/services/api/SalesService'
 import { useSessionUser } from '@/store/authStore'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { Add, Edit } from 'iconsax-react'
+import { Add } from 'iconsax-react'
 import React, { useMemo, useState } from 'react'
 import { GoDotFill } from 'react-icons/go'
 import { TbEye, TbSearch } from 'react-icons/tb'
@@ -100,7 +100,7 @@ const Sales = () => {
       },
       {
         accessorKey: 'due_date',
-        header: 'Due Date',
+        header: 'Tanggal',
         enableColumnActions: false,
         cell: ({ row }) => {
           return dayjs(row.original.due_date).format('DD-MM-YYYY')
@@ -112,7 +112,7 @@ const Sales = () => {
         size: 10,
         enableColumnActions: false,
         cell: ({ row }) => {
-          return row.original.famount
+          return row.original.ftotal_amount
         },
       },
       {
@@ -133,7 +133,9 @@ const Sales = () => {
           return (
             <div className="flex items-center">
               <Tag className={paymentStatusColor[status.status]}>
-                <span className="capitalize">{status.fstatus}</span>
+                <span className="capitalize">
+                  {status.fstatus?.split('_').join(' ')}
+                </span>
               </Tag>
             </div>
           )
@@ -158,7 +160,7 @@ const Sales = () => {
                   <TbEye />
                 </div>
               </Tooltip>
-              <Tooltip title="Edit">
+              {/* <Tooltip title="Edit">
                 <div
                   className={`text-xl cursor-pointer select-none font-semibold`}
                   role="button"
@@ -168,7 +170,7 @@ const Sales = () => {
                 >
                   <Edit color="currentColor" size={24} />
                 </div>
-              </Tooltip>
+              </Tooltip> */}
             </div>
           )
         },
@@ -183,7 +185,7 @@ const Sales = () => {
       <AdaptiveCard>
         <div className="flex flex-col gap-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-            <h3>Sales</h3>
+            <h3>Penjualan</h3>
           </div>
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
             <DebounceInput
@@ -223,7 +225,7 @@ const Sales = () => {
               </TabNav>
               <TabNav value="part_paid">
                 <GoDotFill className="text-yellow-500 w-6 h-6" />
-                Outstanding
+                Part-paid
               </TabNav>
               <TabNav value="void">
                 <GoDotFill className="text-red-500 w-6 h-6" />

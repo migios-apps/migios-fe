@@ -45,7 +45,7 @@ const SaleDetail = () => {
     <>
       <div className="w-full flex justify-between border-b border-gray-300 dark:border-gray-700 items-center gap-4 p-4 shadow-sm">
         <div className="flex items-center gap-4">
-          <h5>INVOICE #{detail?.code}</h5>
+          <h5>FAKTUR #{detail?.code}</h5>
           <Tag className={paymentStatusColor[detail?.status || 'unpaid']}>
             <span className="capitalize">{detail?.fstatus}</span>
           </Tag>

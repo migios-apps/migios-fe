@@ -46,34 +46,35 @@ const BottomStickyPayment: React.FC<BottomStickyPaymentProps> = ({
             <div className="flex flex-col md:flex-row md:justify-between items-start gap-2">
               {detail ? (
                 <>
-                  <Dropdown
-                    toggleClassName="w-full"
-                    renderTitle={
-                      <Button
-                        className={classNames('rounded-full w-full', {
-                          'text-primary border-primary': openDropdown,
-                        })}
-                        variant="default"
-                        icon={
-                          <ArrowDown2
-                            color="currentColor"
-                            size={16}
-                            className={classNames(
-                              'ml-1 transition-transform duration-300',
-                              {
-                                'rotate-180': openDropdown,
-                              }
-                            )}
-                          />
-                        }
-                        iconAlignment="end"
-                      >
-                        Lainnya
-                      </Button>
-                    }
-                    onOpen={setOpenDropdown}
-                  >
-                    {/* {[0].includes(detail?.is_paid) ? (
+                  {[1].includes(detail?.is_paid) ? (
+                    <Dropdown
+                      toggleClassName="w-full"
+                      renderTitle={
+                        <Button
+                          className={classNames('rounded-full w-full', {
+                            'text-primary border-primary': openDropdown,
+                          })}
+                          variant="default"
+                          icon={
+                            <ArrowDown2
+                              color="currentColor"
+                              size={16}
+                              className={classNames(
+                                'ml-1 transition-transform duration-300',
+                                {
+                                  'rotate-180': openDropdown,
+                                }
+                              )}
+                            />
+                          }
+                          iconAlignment="end"
+                        >
+                          Lainnya
+                        </Button>
+                      }
+                      onOpen={setOpenDropdown}
+                    >
+                      {/* {[0].includes(detail?.is_paid) ? (
                       <Dropdown.Item
                         eventKey="change_unpaid"
                         className="text-green-500"
@@ -82,7 +83,6 @@ const BottomStickyPayment: React.FC<BottomStickyPaymentProps> = ({
                         Ubah unpaid faktur
                       </Dropdown.Item>
                     ) : null} */}
-                    {[1].includes(detail?.is_paid) ? (
                       <Dropdown.Item
                         eventKey="canceled"
                         className="text-red-500"
@@ -90,8 +90,8 @@ const BottomStickyPayment: React.FC<BottomStickyPaymentProps> = ({
                       >
                         Pengembalian
                       </Dropdown.Item>
-                    ) : null}
-                  </Dropdown>
+                    </Dropdown>
+                  ) : null}
                   {[0, 2, 3].includes(detail?.is_paid) ? (
                     <Button
                       className="rounded-full"

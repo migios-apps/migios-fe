@@ -1,4 +1,3 @@
-import { currencyFormat } from '@/components/ui/InputCurrency/currencyFormat'
 import { SalesDetailType } from '@/services/api/@types/sales'
 import classNames from '@/utils/classNames'
 import dayjs from 'dayjs'
@@ -48,12 +47,10 @@ const InvoiceReceipt = ({ detail }: InvoiceReceiptProps) => {
                       <p className="font-medium text-xs">
                         {item.quantity} x {item.name}
                       </p>
-                      <p className="text-xs text-gray-600">
-                        @ {currencyFormat(item.price)}
-                      </p>
+                      <p className="text-xs text-gray-600">@ {item.fprice}</p>
                       {item.discount_amount > 0 ? (
                         <p className="text-xs text-red-600">
-                          Diskon: -{currencyFormat(item.discount_amount)}
+                          Diskon: -{item.fdiscount_amount}
                         </p>
                       ) : null}
                       {item.taxes && item.taxes.length > 0 ? (
@@ -67,9 +64,7 @@ const InvoiceReceipt = ({ detail }: InvoiceReceiptProps) => {
                       ) : null}
                     </div>
                     <div className="text-right text-xs">
-                      <p className="font-medium">
-                        {currencyFormat(item.total_amount)}
-                      </p>
+                      <p className="font-medium">{item.ftotal_amount}</p>
                     </div>
                   </div>
                 </div>
@@ -78,65 +73,48 @@ const InvoiceReceipt = ({ detail }: InvoiceReceiptProps) => {
           </div>
 
           {/* Totals */}
-          <div className="border-t border-gray-300 pt-3 mb-4">
+          <div className="border-t border-gray-300 py-3">
             <div className="flex justify-between text-xs mb-1">
               <span className="font-semibold">Subtotal</span>
-              <span>{currencyFormat(detail?.gross_amount || 0)}</span>
+              <span>{detail?.fsubtotal_net_amount}</span>
             </div>
             {detail?.total_discount && detail.total_discount > 0 ? (
               <div className="flex justify-between text-xs mb-1">
                 <span className="font-semibold">Total Diskon</span>
-                <span>-{currencyFormat(detail.total_discount)}</span>
+                <span>-{detail.fdiscount}</span>
               </div>
             ) : null}
             {detail?.total_tax && detail.total_tax > 0 ? (
               <div className="flex justify-between text-xs mb-1">
                 <span className="font-semibold">Total Pajak</span>
-                <span>{currencyFormat(detail.total_tax)}</span>
+                <span>{detail.ftotal_tax}</span>
               </div>
             ) : null}
             <div className="border-t border-gray-300 pt-2 mt-2">
               <div className="flex justify-between font-bold">
                 <span className="font-semibold">Total Bayar</span>
-                <span>{currencyFormat(detail?.total_amount || 0)}</span>
+                <span>{detail.ftotal_amount}</span>
               </div>
             </div>
+
+            {/* Payment Info */}
+            {detail.payments.map((payment, index) => (
+              <div key={index} className="flex justify-between text-xs">
+                <div className="flex gap-1">
+                  <span className="font-semibold">{payment.rekening_name}</span>
+                  <span>{dayjs(payment.date).format('DD MMM YYYY')}</span>
+                </div>
+                <span>{payment.famount}</span>
+              </div>
+            ))}
             {detail?.ballance_amount && detail.ballance_amount > 0 ? (
               <div className="flex justify-between text-xs mt-1 text-red-600">
-                <span className="font-semibold">Sisa Tagihan</span>
-                <span>{currencyFormat(detail.ballance_amount)}</span>
+                <span className="font-semibold">Sisa Pembayaran</span>
+                <span>{detail.fballance_amount}</span>
               </div>
             ) : null}
           </div>
-
-          {/* Payment Info */}
-          {detail?.payments && detail.payments.length > 0 ? (
-            <div className="mb-4 border-t border-gray-300 pt-3">
-              <p className="text-xs font-semibold mb-2">Pembayaran:</p>
-              {detail.payments.map((payment, index) => (
-                <div key={index} className="flex justify-between text-xs mb-1">
-                  <span>{payment.rekening_name}</span>
-                  <span>{currencyFormat(payment.amount)}</span>
-                </div>
-              ))}
-              {detail.payments.reduce(
-                (total, payment) => total + payment.amount,
-                0
-              ) > (detail?.total_amount || 0) ? (
-                <div className="flex justify-between text-xs mt-2 pt-2 border-t border-dashed border-gray-300 font-semibold">
-                  <span>Kembalian</span>
-                  <span>
-                    {currencyFormat(
-                      detail.payments.reduce(
-                        (total, payment) => total + payment.amount,
-                        0
-                      ) - (detail?.total_amount || 0)
-                    )}
-                  </span>
-                </div>
-              ) : null}
-            </div>
-          ) : null}
+          <div className="mb-4 border-t border-gray-300"></div>
 
           {/* Additional Info */}
           <div className="text-xs space-y-1">
@@ -154,7 +132,7 @@ const InvoiceReceipt = ({ detail }: InvoiceReceiptProps) => {
             </div>
             <div className="flex justify-between">
               <span>Pengembalian</span>
-              <span>0.00</span>
+              <span>{detail.freturn_amount}</span>
             </div>
             <div className="flex justify-between">
               <span>Total point dibatalkan</span>
