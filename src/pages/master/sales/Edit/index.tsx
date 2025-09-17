@@ -9,6 +9,7 @@ import { QUERY_KEY } from '@/constants/queryKeys.constant'
 import { paymentStatusColor } from '@/constants/utils'
 import { Filter } from '@/services/api/@types/api'
 import { TrainerPackageTypes } from '@/services/api/@types/package'
+import { PaymentStatus } from '@/services/api/@types/sales'
 import { apiGetPackageList } from '@/services/api/PackageService'
 import { apiGetProductList } from '@/services/api/ProductService'
 import { apiGetSales } from '@/services/api/SalesService'
@@ -419,7 +420,7 @@ const EditSales = () => {
               setOpenAddItem={setOpenAddItem}
               setFormItemType={setFormItemType}
               transactionId={salesData?.id}
-              isPaid={salesData?.is_paid || 0}
+              isPaid={salesData?.is_paid as PaymentStatus}
               onBack={() => setShowCartDetail(false)}
             />
           ) : (
