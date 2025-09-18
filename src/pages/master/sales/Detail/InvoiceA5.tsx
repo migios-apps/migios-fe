@@ -159,7 +159,7 @@ const InvoiceA5 = ({ detail }: InvoiceA5Props) => {
                         {item.quantity}
                       </td>
                       <td className="border border-gray-300 dark:border-gray-600 py-2 px-1 text-right align-top">
-                        {item.fgross_amount}
+                        {item.fprice}
                       </td>
                       <td className="border border-gray-300 dark:border-gray-600 py-2 px-1 text-right align-top">
                         {item.fdiscount_amount}

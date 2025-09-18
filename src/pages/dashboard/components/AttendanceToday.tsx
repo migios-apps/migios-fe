@@ -25,12 +25,12 @@ const orderStatusColor: Record<
   { label: string; dotClass: string; textClass: string }
 > = {
   checkin: {
-    label: 'Checked In',
+    label: 'Clock In',
     dotClass: 'bg-emerald-500',
     textClass: 'text-emerald-500',
   },
   checkout: {
-    label: 'Checked Out',
+    label: 'Clock Out',
     dotClass: 'bg-red-500',
     textClass: 'text-red-500',
   },

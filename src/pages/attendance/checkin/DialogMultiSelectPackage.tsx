@@ -25,9 +25,9 @@ const DialogMultiSelectPackage: React.FC<DialogMultiSelectPackageProps> = ({
   data,
   onSubmit,
 }) => {
-  const [selectedId, setSelectedId] = React.useState<CheckInPayload['package']>(
-    []
-  )
+  const [selectedId, setSelectedId] = React.useState<
+    (CheckInPayload['package'][0] & { id: number })[]
+  >([])
   const [tableData, setTableData] = React.useState<TableQueries>({
     pageIndex: 1,
     pageSize: 10,
@@ -148,6 +148,7 @@ const DialogMultiSelectPackage: React.FC<DialogMultiSelectPackageProps> = ({
                 setSelectedId(
                   value
                     ? memberPackageList.map((item) => ({
+                        id: item.id,
                         member_package_id: item.id as number,
                         member_class_id: item.class_id,
                       }))
@@ -162,9 +163,8 @@ const DialogMultiSelectPackage: React.FC<DialogMultiSelectPackageProps> = ({
                 key={item.id}
                 className={cn(
                   'flex justify-between items-center gap-3 border border-gray-200 dark:border-gray-600 rounded-lg p-4',
-                  selectedId.some(
-                    (selected) => selected.member_package_id === item.id
-                  ) && 'bg-primary-subtle border-primary dark:border-primary'
+                  selectedId.some((selected) => selected.id === item.id) &&
+                    'bg-primary-subtle border-primary dark:border-primary'
                 )}
               >
                 <div className="flex-1">
@@ -177,7 +177,7 @@ const DialogMultiSelectPackage: React.FC<DialogMultiSelectPackageProps> = ({
                 </div>
                 <Checkbox
                   checked={selectedId.some(
-                    (selected) => selected.member_package_id === item.id
+                    (selected) => selected.id === item.id
                   )}
                   onChange={(
                     value: boolean,
@@ -188,12 +188,13 @@ const DialogMultiSelectPackage: React.FC<DialogMultiSelectPackageProps> = ({
                         ? [
                             ...selectedId,
                             {
-                              member_package_id: item.id as number,
+                              id: item.id,
+                              member_package_id: item.package_id as number,
                               member_class_id: item.class_id,
                             },
                           ]
                         : selectedId.filter(
-                            (selected) => selected.member_package_id !== item.id
+                            (selected) => selected.id !== item.id
                           )
                     )
                   }}
@@ -223,7 +224,12 @@ const DialogMultiSelectPackage: React.FC<DialogMultiSelectPackageProps> = ({
             variant="solid"
             className="rounded-full"
             onClick={() => {
-              onSubmit(selectedId)
+              onSubmit(
+                selectedId.map((item) => ({
+                  member_package_id: item.member_package_id,
+                  member_class_id: item.member_class_id,
+                }))
+              )
               onClose()
               setSelectedId([])
             }}
