@@ -20,7 +20,7 @@ const NewMember = () => {
 
   const handleView = useCallback(
     (code: string) => {
-      navigate(`/members/member-details/${code}`)
+      navigate(`/members/details/${code}`)
     },
     [navigate]
   )

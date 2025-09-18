@@ -40,7 +40,7 @@ const OrderColumn = ({ row }: { row: MemberAttendanceLogType }) => {
   const navigate = useNavigate()
 
   const handleView = useCallback(() => {
-    navigate(`/members/member-details/${row.code}`)
+    navigate(`/members/details/${row.code}`)
   }, [navigate, row])
 
   return (
