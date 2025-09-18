@@ -14,7 +14,11 @@ const Layout = ({
   layout,
   routeKey,
   activeMenuKey,
-}: CommonProps & { layout?: LayoutType; routeKey: string; activeMenuKey?: string }) => {
+}: CommonProps & {
+  layout?: LayoutType
+  routeKey: string
+  activeMenuKey?: string
+}) => {
   const location = useLocation()
   // const layoutType = useThemeStore((state) => state.layout.type)
 
