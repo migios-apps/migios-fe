@@ -142,7 +142,7 @@ const FreezProgram: React.FC<FreezProgramProps> = ({ data: member }) => {
 
       <Button
         variant="solid"
-        className="w-fit absolute bottom-4 right-10 rounded-full max-w-fit h-16 py-4 px-4"
+        className="w-fit fixed bottom-4 right-10 rounded-full max-w-fit h-16 py-4 px-4"
         onClick={() => setOpen(true)}
       >
         <Add size="32" color="currentColor" variant="Outline" />

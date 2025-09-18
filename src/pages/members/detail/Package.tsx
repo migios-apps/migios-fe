@@ -6,16 +6,15 @@ import { QUERY_KEY } from '@/constants/queryKeys.constant'
 import { statusColor } from '@/constants/utils'
 import { MemberDetail, MemberPackageTypes } from '@/services/api/@types/member'
 import { apiGetMemberPackages } from '@/services/api/MembeService'
+import { dayjs } from '@/utils/dayjs'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import dayjs from 'dayjs'
 import React from 'react'
 import { TbSearch } from 'react-icons/tb'
 
-interface MemberPackageProps {
-  data: MemberDetail
+interface PackageProps {
+  member: MemberDetail | null
 }
-
-const MemberPackage: React.FC<MemberPackageProps> = ({ data: member }) => {
+const Package: React.FC<PackageProps> = ({ member }) => {
   const [tableData, setTableData] = React.useState<TableQueries>({
     pageIndex: 1,
     pageSize: 10,
@@ -27,10 +26,10 @@ const MemberPackage: React.FC<MemberPackageProps> = ({ data: member }) => {
   })
 
   const { data, isFetchingNextPage, isLoading, error } = useInfiniteQuery({
-    queryKey: [QUERY_KEY.memberPackages, tableData, member.code],
+    queryKey: [QUERY_KEY.memberPackages, tableData, member?.code],
     initialPageParam: 1,
     queryFn: async () => {
-      const res = await apiGetMemberPackages(`${member.code}`, {
+      const res = await apiGetMemberPackages(`${member?.code}`, {
         page: tableData.pageIndex,
         per_page: tableData.pageSize,
         ...(tableData.sort?.key !== ''
@@ -218,4 +217,4 @@ const MemberPackage: React.FC<MemberPackageProps> = ({ data: member }) => {
   )
 }
 
-export default MemberPackage
+export default Package

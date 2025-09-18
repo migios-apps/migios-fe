@@ -97,7 +97,7 @@ const MemberList = () => {
   const handleViewDetails = (member: MemberDetail) => {
     // setShowForm(true)
     // setFormType('update')
-    navigate(`/members/member-details/${member.code}`)
+    navigate(`/members/details/${member.code}`)
   }
 
   const columns = useMemo<DataTableColumnDef<MemberDetail>[]>(

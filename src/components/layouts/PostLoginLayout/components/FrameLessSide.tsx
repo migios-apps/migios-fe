@@ -51,8 +51,8 @@ const FrameLessSide = ({ children }: CommonProps) => {
               className={classNames(
                 pageContainerDefaultClass,
                 pageContainerType !== 'gutterless' && pageContainerGutterClass,
-                pageContainerType === 'contained' && 'container mx-auto',
-                !footer && 'pb-0 sm:pb-0 md:pb-0'
+                pageContainerType === 'contained' && 'container mx-auto'
+                // !footer && 'pb-0 sm:pb-0 md:pb-0'
               )}
             >
               <PageContainerHeader

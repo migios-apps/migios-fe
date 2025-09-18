@@ -1,17 +1,17 @@
-import { Suspense } from 'react'
+import type { CommonProps } from '@/@types/common'
+import type { Meta, PageHeaderProps } from '@/@types/routes'
 import Container from '@/components/shared/Container'
+import type { FooterPageContainerType } from '@/components/template/Footer'
 import Footer from '@/components/template/Footer'
-import useLayout from '@/utils/hooks/useLayout'
-import { useThemeStore } from '@/store/themeStore'
-import classNames from '@/utils/classNames'
 import {
   PAGE_CONTAINER_GUTTER_X,
   PAGE_CONTAINER_GUTTER_Y,
 } from '@/constants/theme.constant'
-import type { CommonProps } from '@/@types/common'
-import type { Meta, PageHeaderProps } from '@/@types/routes'
-import type { FooterPageContainerType } from '@/components/template/Footer'
-import type { ReactNode, ElementType, ComponentPropsWithRef } from 'react'
+import { useThemeStore } from '@/store/themeStore'
+import classNames from '@/utils/classNames'
+import useLayout from '@/utils/hooks/useLayout'
+import type { ComponentPropsWithRef, ElementType, ReactNode } from 'react'
+import { Suspense } from 'react'
 
 export interface PageContainerProps extends CommonProps, Meta {
   contained?: boolean
@@ -160,8 +160,8 @@ const PageContainer = (props: PageContainerProps) => {
               className={classNames(
                 pageContainerDefaultClass,
                 pageContainerType !== 'gutterless' && pageContainerGutterClass,
-                pageContainerType === 'contained' && 'container mx-auto',
-                !footer && 'pb-0 sm:pb-0 md:pb-0'
+                pageContainerType === 'contained' && 'container mx-auto'
+                // !footer && 'pb-0 sm:pb-0 md:pb-0'
               )}
             >
               <PageContainerHeader

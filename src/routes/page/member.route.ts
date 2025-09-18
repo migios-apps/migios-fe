@@ -1,5 +1,5 @@
-import { lazy } from 'react'
 import type { Routes } from '@/@types/routes'
+import { lazy } from 'react'
 
 export const memberRoute: Routes = [
   {
@@ -9,15 +9,15 @@ export const memberRoute: Routes = [
     authority: [],
   },
   {
-    key: 'member-details',
-    path: '/members/member-details/:id',
-    component: lazy(() => import('@/pages/members/MemberDetails')),
-    authority: [],
-  },
-  {
     key: 'member-create',
     path: '/members/member-create',
     component: lazy(() => import('@/pages/members/MemberCreate')),
+    authority: [],
+  },
+  {
+    key: 'memberDetails',
+    path: '/members/details/:id',
+    component: lazy(() => import('@/pages/members/detail')),
     authority: [],
   },
 ]
