@@ -5,7 +5,7 @@ import AuthorityCheck from '@/components/shared/AuthorityCheck'
 import Dropdown from '@/components/ui/Dropdown'
 import Menu from '@/components/ui/Menu'
 import Tooltip from '@/components/ui/Tooltip'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import VerticalMenuIcon from './VerticalMenuIcon'
 
 const { MenuItem } = Menu
@@ -50,6 +50,11 @@ const CollapsedItem = ({
   t,
   currentKey,
 }: CollapsedItemProps) => {
+  const location = useLocation()
+  const currentPath = location.pathname
+  const isActive =
+    currentKey === nav.key ||
+    Boolean(nav.path && currentPath.startsWith(nav.path))
   return (
     <AuthorityCheck userAuthority={userAuthority} authority={nav.authority}>
       {renderAsIcon ? (
@@ -60,7 +65,7 @@ const CollapsedItem = ({
           {children}
         </Tooltip>
       ) : (
-        <Dropdown.Item active={currentKey === nav.key}>
+        <Dropdown.Item active={isActive}>
           {nav.path ? (
             <Link
               className="h-full w-full flex items-center outline-hidden"
@@ -74,10 +79,14 @@ const CollapsedItem = ({
                 })
               }
             >
-              <span>{t(nav.translateKey, nav.title)}</span>
+              <span className={isActive ? 'text-primary' : ''}>
+                {t(nav.translateKey, nav.title)}
+              </span>
             </Link>
           ) : (
-            <span>{t(nav.translateKey, nav.title)}</span>
+            <span className={isActive ? 'text-primary' : ''}>
+              {t(nav.translateKey, nav.title)}
+            </span>
           )}
         </Dropdown.Item>
       )}
@@ -85,7 +94,7 @@ const CollapsedItem = ({
   )
 }
 
-const DefaultItem = (props: DefaultItemProps) => {
+const DefaultItem = (props: DefaultItemProps & { currentKey?: string }) => {
   const {
     nav,
     onLinkClick,
@@ -94,11 +103,25 @@ const DefaultItem = (props: DefaultItemProps) => {
     showIcon = true,
     userAuthority,
     t,
+    currentKey,
   } = props
+
+  const location = useLocation()
+  const currentPath = location.pathname
+
+  // Check if this menu item should be active based on prefix matching
+  const isActive =
+    currentKey === nav.key || // Exact match by key
+    (nav.path && currentPath.startsWith(nav.path)) // Prefix match by path
 
   return (
     <AuthorityCheck userAuthority={userAuthority} authority={nav.authority}>
-      <MenuItem key={nav.key} eventKey={nav.key} dotIndent={indent}>
+      <MenuItem
+        key={nav.key}
+        eventKey={nav.key}
+        dotIndent={indent}
+        isActive={Boolean(isActive)}
+      >
         <Link
           to={nav.path}
           className="flex items-center gap-2 h-full w-full"
@@ -109,7 +132,11 @@ const DefaultItem = (props: DefaultItemProps) => {
         >
           <div className="flex items-center gap-2">
             {showIcon && <VerticalMenuIcon icon={nav.icon} />}
-            {showTitle && <span>{t(nav.translateKey, nav.title)}</span>}
+            {showTitle && (
+              <span className={isActive ? 'text-primary' : ''}>
+                {t(nav.translateKey, nav.title)}
+              </span>
+            )}
           </div>
         </Link>
       </MenuItem>
@@ -151,6 +178,7 @@ const VerticalSingleMenuItem = ({
             showIcon={showIcon}
             showTitle={showTitle}
             t={t}
+            currentKey={currentKey}
             onLinkClick={onLinkClick}
           />
         </CollapsedItem>
@@ -163,6 +191,7 @@ const VerticalSingleMenuItem = ({
           showTitle={showTitle}
           indent={indent}
           t={t}
+          currentKey={currentKey}
           onLinkClick={onLinkClick}
         />
       )}

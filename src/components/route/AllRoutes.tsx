@@ -33,7 +33,11 @@ const AllRoutes = (props: AllRoutesProps) => {
             key={route.key + index}
             path={route.path}
             element={
-              <Layout layout={route.meta?.layout} routeKey={route.key}>
+              <Layout
+                layout={route.meta?.layout}
+                routeKey={route.key}
+                activeMenuKey={route.activeMenuKey}
+              >
                 <AuthorityGuard
                   userAuthority={
                     user?.role_permission?.permissions?.map(
@@ -71,7 +75,11 @@ const AllRoutes = (props: AllRoutesProps) => {
             key={route.path}
             path={route.path}
             element={
-              <Layout layout={route.meta?.layout} routeKey={route.key}>
+              <Layout
+                layout={route.meta?.layout}
+                routeKey={route.key}
+                activeMenuKey={route.activeMenuKey}
+              >
                 <AppRoute component={route.component} {...route.meta} />
               </Layout>
             }

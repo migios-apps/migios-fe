@@ -13,7 +13,8 @@ const Layout = ({
   children,
   layout,
   routeKey,
-}: CommonProps & { layout?: LayoutType; routeKey: string }) => {
+  activeMenuKey,
+}: CommonProps & { layout?: LayoutType; routeKey: string; activeMenuKey?: string }) => {
   const location = useLocation()
   // const layoutType = useThemeStore((state) => state.layout.type)
 
@@ -32,7 +33,8 @@ const Layout = ({
   )
 
   const handleLayoutChange = useCallback(() => {
-    setCurrentRouteKey(routeKey)
+    const overriddenKey = activeMenuKey?.split('.')?.pop()
+    setCurrentRouteKey(overriddenKey || routeKey)
 
     if (layout && layout !== layoutType) {
       setPreviousLayout(layoutType)
@@ -44,7 +46,7 @@ const Layout = ({
       setPreviousLayout('')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [layout, routeKey])
+  }, [layout, routeKey, activeMenuKey])
 
   useEffect(() => {
     handleLayoutChange()

@@ -47,10 +47,43 @@ const VerticalMenuContent = (props: VerticalMenuContentProps) => {
   const { activedRoute } = useMenuActive(navigationTree, routeKey)
 
   useEffect(() => {
+    // Jika ada parentKey, set sebagai defaultExpandKey
     if (activedRoute?.parentKey) {
       setDefaulExpandKey([activedRoute?.parentKey])
+    } else if (activedRoute?.key) {
+      // Jika tidak ada parentKey tapi ada key, cari parent berdasarkan key
+      // Ini membantu untuk prefix matching
+      const findParentKey = (
+        navTree: NavigationTree[],
+        key: string
+      ): string | null => {
+        for (const nav of navTree) {
+          if (nav.subMenu && nav.subMenu.length > 0) {
+            for (const subItem of nav.subMenu) {
+              if (
+                subItem.key === key ||
+                (subItem.path && activedRoute.path?.startsWith(subItem.path))
+              ) {
+                return nav.key
+              }
+            }
+            const found = findParentKey(nav.subMenu, key)
+            if (found) return found
+          }
+        }
+        return null
+      }
+      const parentKey = findParentKey(navigationTree, activedRoute.key)
+      if (parentKey) {
+        setDefaulExpandKey([parentKey])
+      }
     }
-  }, [activedRoute?.parentKey])
+  }, [
+    activedRoute?.parentKey,
+    activedRoute?.key,
+    activedRoute?.path,
+    navigationTree,
+  ])
 
   const handleLinkClick = () => {
     onMenuItemClick?.()

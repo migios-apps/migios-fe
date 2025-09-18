@@ -7,6 +7,7 @@ export const othersSettingsRoute: Routes = [
     path: '/settings/others/taxes',
     component: lazy(() => import('@/pages/master/setting/others/taxes')),
     authority: [],
+    activeMenuKey: 'masters.settings.othersSetting',
     meta: {
       pageContainerType: 'gutterless',
     },
@@ -18,6 +19,7 @@ export const othersSettingsRoute: Routes = [
       () => import('@/pages/master/setting/others/invoices/invoice')
     ),
     authority: [],
+    activeMenuKey: 'masters.settings.othersSetting',
     meta: {
       pageContainerType: 'gutterless',
     },
@@ -27,6 +29,7 @@ export const othersSettingsRoute: Routes = [
     path: '/settings/others/commission',
     component: lazy(() => import('@/pages/master/setting/others/commission')),
     authority: [],
+    activeMenuKey: 'masters.settings.othersSetting',
     meta: {
       pageContainerType: 'gutterless',
     },
@@ -36,6 +39,7 @@ export const othersSettingsRoute: Routes = [
     path: '/settings/others/loyalty-point',
     component: lazy(() => import('@/pages/master/setting/others/loyaltyPoint')),
     authority: [],
+    activeMenuKey: 'masters.settings.othersSetting',
     meta: {
       pageContainerType: 'gutterless',
     },
@@ -45,6 +49,7 @@ export const othersSettingsRoute: Routes = [
     path: '/settings/others/membership',
     component: lazy(() => import('@/pages/master/setting/others/membership')),
     authority: [],
+    activeMenuKey: 'masters.settings.othersSetting',
     meta: {
       pageContainerType: 'gutterless',
     },

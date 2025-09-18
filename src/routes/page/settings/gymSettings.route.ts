@@ -7,6 +7,7 @@ export const gymSettingsRoute: Routes = [
     path: '/settings/gym/about',
     component: lazy(() => import('@/pages/master/setting/gym/AboutGym')),
     authority: [],
+    activeMenuKey: 'masters.settings.gymSetting',
     meta: {
       pageContainerType: 'gutterless',
     },
@@ -16,6 +17,7 @@ export const gymSettingsRoute: Routes = [
     path: '/settings/gym/location',
     component: lazy(() => import('@/pages/master/setting/gym/GymLocation')),
     authority: [],
+    activeMenuKey: 'masters.settings.gymSetting',
     meta: {
       pageContainerType: 'gutterless',
     },
@@ -25,6 +27,7 @@ export const gymSettingsRoute: Routes = [
     path: '/settings/gym/plan',
     component: lazy(() => import('@/pages/master/setting/gym/GymPlan')),
     authority: [],
+    activeMenuKey: 'masters.settings.gymSetting',
     meta: {
       pageContainerType: 'gutterless',
     },
@@ -34,6 +37,7 @@ export const gymSettingsRoute: Routes = [
     path: '/settings/gym/payments',
     component: lazy(() => import('@/pages/master/setting/gym/GymPayments')),
     authority: [],
+    activeMenuKey: 'masters.settings.gymSetting',
     meta: {
       pageContainerType: 'gutterless',
     },

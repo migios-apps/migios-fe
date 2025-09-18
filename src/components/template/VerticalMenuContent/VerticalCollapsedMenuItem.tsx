@@ -4,6 +4,7 @@ import type { Direction } from '@/@types/theme'
 import AuthorityCheck from '@/components/shared/AuthorityCheck'
 import Dropdown from '@/components/ui/Dropdown'
 import Menu from '@/components/ui/Menu'
+import { useLocation } from 'react-router-dom'
 import VerticalMenuIcon from './VerticalMenuIcon'
 
 interface DefaultItemProps extends CommonProps {
@@ -35,7 +36,22 @@ const DefaultItem = ({
   children,
   userAuthority,
   t,
-}: DefaultItemProps) => {
+  currentKey,
+  parentKeys,
+}: DefaultItemProps & { currentKey?: string; parentKeys?: string[] }) => {
+  const location = useLocation()
+  const currentPath = location.pathname
+
+  // Check if any submenu item matches current path (prefix matching)
+  const isActive =
+    nav.subMenu?.some(
+      (subItem: NavigationTree) =>
+        subItem.key === currentKey ||
+        (subItem.path && currentPath.startsWith(subItem.path))
+    ) ||
+    parentKeys?.includes(nav.key) ||
+    (nav.path && currentPath.startsWith(nav.path))
+
   return (
     <AuthorityCheck userAuthority={userAuthority} authority={nav.authority}>
       <MenuCollapse
@@ -47,7 +63,8 @@ const DefaultItem = ({
           </>
         }
         eventKey={nav.key}
-        expanded={false}
+        expanded={Boolean(isActive)}
+        active={Boolean(isActive)}
         dotIndent={dotIndent}
         indent={indent}
       >
@@ -65,11 +82,25 @@ const CollapsedItem = ({
   renderAsIcon,
   userAuthority,
   parentKeys,
+  currentKey,
 }: CollapsedItemProps) => {
+  const location = useLocation()
+  const currentPath = location.pathname
+
+  // Check if any submenu item matches current path (prefix matching)
+  const isDropdownActive =
+    (nav.path && currentPath.startsWith(nav.path)) || // Dropdown aktif jika path sesuai
+    nav.subMenu?.some(
+      (subItem: NavigationTree) =>
+        subItem.key === currentKey ||
+        (subItem.path && currentPath.startsWith(subItem.path))
+    ) ||
+    parentKeys?.includes(nav.key)
+
   const menuItem = (
     <MenuItem
       key={nav.key}
-      isActive={parentKeys?.includes(nav.key)}
+      isActive={isDropdownActive}
       eventKey={nav.key}
       className="mb-2"
     >
@@ -77,7 +108,14 @@ const CollapsedItem = ({
     </MenuItem>
   )
 
-  const dropdownItem = <div key={nav.key}>{t(nav.translateKey, nav.title)}</div>
+  const dropdownItem = (
+    <div
+      key={nav.key}
+      className={isDropdownActive ? 'text-primary font-bold' : ''}
+    >
+      {t(nav.translateKey, nav.title)}
+    </div>
+  )
 
   return (
     <AuthorityCheck userAuthority={userAuthority} authority={nav.authority}>

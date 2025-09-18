@@ -1,18 +1,18 @@
-import { useState } from 'react'
+import type { CommonProps, TraslationFn } from '@/@types/common'
+import type { HorizontalMenuMeta, NavigationTree } from '@/@types/navigation'
+import AuthorityCheck from '@/components/shared/AuthorityCheck'
 import Avatar from '@/components/ui/Avatar'
 import Dropdown from '@/components/ui/Dropdown'
-import HorizontalMenuNavLink from './HorizontalMenuNavLink'
-import AuthorityCheck from '@/components/shared/AuthorityCheck'
-import classNames from '@/utils/classNames'
+import navigationIcon from '@/configs/navigation-icon.config'
 import {
   NAV_ITEM_TYPE_COLLAPSE,
   NAV_ITEM_TYPE_ITEM,
 } from '@/constants/navigation.constant'
-import navigationIcon from '@/configs/navigation-icon.config'
+import classNames from '@/utils/classNames'
+import type { HTMLProps, ReactNode } from 'react'
+import { useState } from 'react'
 import { TbCircle } from 'react-icons/tb'
-import type { CommonProps, TraslationFn } from '@/@types/common'
-import type { NavigationTree, HorizontalMenuMeta } from '@/@types/navigation'
-import type { ReactNode, HTMLProps } from 'react'
+import HorizontalMenuNavLink from './HorizontalMenuNavLink'
 
 interface LayoutProps extends CommonProps {
   navigationTree: NavigationTree[]
@@ -60,7 +60,7 @@ const MenuItem = ({
     <div
       className={classNames(
         'cursor-pointer font-semibold px-3 rounded-lg flex items-center w-full whitespace-nowrap gap-x-2 transition-colors duration-150 hover:text-gray-900 hover:bg-gray-100 dark:hover:text-gray-100 dark:hover:bg-gray-800',
-        active && 'bg-gray-100 dark:bg-gray-800',
+        active && 'bg-gray-100 dark:bg-gray-800 text-primary',
         className
       )}
       role="menuitem"
@@ -184,7 +184,12 @@ const ColumnsLayout = (
                             subNav.meta?.description?.translateKey || '',
                             subNav.meta?.description?.label || ''
                           )}
-                          active={subNav.key === routeKey}
+                          active={
+                            subNav.key === routeKey ||
+                            Boolean(
+                              subNav.path && routeKey.startsWith(subNav.path)
+                            )
+                          }
                           onClick={onDropdownClose}
                         />
                       </div>
@@ -221,7 +226,10 @@ const ColumnsLayout = (
                       nav.meta?.description?.translateKey || '',
                       nav.meta?.description?.label || ''
                     )}
-                    active={nav.key === routeKey}
+                    active={
+                      nav.key === routeKey ||
+                      Boolean(nav.path && routeKey.startsWith(nav.path))
+                    }
                     onClick={onDropdownClose}
                   />
                 </AuthorityCheck>
@@ -242,6 +250,19 @@ const DefaultLayout = ({
   routeKey,
   userAuthority,
 }: LayoutProps) => {
+  const hasDescendantWithKey = (
+    nav: NavigationTree,
+    targetKey: string
+  ): boolean => {
+    if (!nav.subMenu || nav.subMenu.length === 0) return false
+    for (const item of nav.subMenu) {
+      if (item.key === targetKey) return true
+      if (item.subMenu && item.subMenu.length > 0) {
+        if (hasDescendantWithKey(item, targetKey)) return true
+      }
+    }
+    return false
+  }
   const renderNavigation = (navTree: NavigationTree[], cascade: number) => {
     const nextCascade = cascade + 1
 
@@ -255,7 +276,12 @@ const DefaultLayout = ({
           >
             <ul>
               {nav.type === NAV_ITEM_TYPE_ITEM && (
-                <Dropdown.Item active={routeKey === nav.key}>
+                <Dropdown.Item
+                  active={
+                    routeKey === nav.key ||
+                    Boolean(nav.path && routeKey.startsWith(nav.path))
+                  }
+                >
                   <HorizontalMenuNavLink
                     path={nav.path}
                     isExternalLink={nav.isExternalLink}
@@ -263,7 +289,16 @@ const DefaultLayout = ({
                     onClick={onDropdownClose}
                   >
                     <MenuIcon icon={nav.icon} />
-                    <span>{t(nav.translateKey, nav.title)}</span>
+                    <span
+                      className={classNames(
+                        routeKey === nav.key ||
+                          Boolean(nav.path && routeKey.startsWith(nav.path))
+                          ? 'text-primary'
+                          : ''
+                      )}
+                    >
+                      {t(nav.translateKey, nav.title)}
+                    </span>
                   </HorizontalMenuNavLink>
                 </Dropdown.Item>
               )}
@@ -272,7 +307,16 @@ const DefaultLayout = ({
                   renderTitle={
                     <span className="flex items-center gap-2">
                       <MenuIcon icon={nav.icon} />
-                      <span>{t(nav.translateKey, nav.title)}</span>
+                      <span
+                        className={classNames(
+                          routeKey === nav.key ||
+                            hasDescendantWithKey(nav, routeKey)
+                            ? 'text-primary'
+                            : ''
+                        )}
+                      >
+                        {t(nav.translateKey, nav.title)}
+                      </span>
                     </span>
                   }
                 >
@@ -385,7 +429,9 @@ const TabLayout = ({
                     <div
                       className={classNames(
                         'flex items-center gap-2 h-[42px] heading-text group-hover:text-primary',
-                        routeKey === nav.key && 'text-primary'
+                        (routeKey === nav.key ||
+                          Boolean(nav.path && routeKey.startsWith(nav.path))) &&
+                          'text-primary'
                       )}
                     >
                       <span className="text-xl">

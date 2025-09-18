@@ -88,8 +88,8 @@ const Class = () => {
           const classes = row.original.classes
           return (
             <ul className="relative">
-              {classes?.map((cls) => (
-                <li key={cls.id} className="flex items-center gap-1">
+              {classes?.map((cls, index) => (
+                <li key={index} className="flex items-center gap-1">
                   <div className="h-2 w-2 rounded-full bg-primary"></div>
                   <div>{cls.name}</div>
                 </li>

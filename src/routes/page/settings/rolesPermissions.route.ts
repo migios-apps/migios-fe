@@ -7,6 +7,7 @@ export const rolesPermissionsRoute: Routes = [
     path: '/settings/roles-permissions',
     component: lazy(() => import('@/pages/master/setting/roles-permissions')),
     authority: [],
+    activeMenuKey: 'masters.settings.rolesPermissions',
   },
   {
     key: 'createRole',
@@ -15,6 +16,7 @@ export const rolesPermissionsRoute: Routes = [
       () => import('@/pages/master/setting/roles-permissions/create')
     ),
     authority: [],
+    activeMenuKey: 'masters.settings.rolesPermissions',
     meta: {
       header: {
         title: 'Create Role',
@@ -30,6 +32,7 @@ export const rolesPermissionsRoute: Routes = [
       () => import('@/pages/master/setting/roles-permissions/edit')
     ),
     authority: [],
+    activeMenuKey: 'masters.settings.rolesPermissions',
     meta: {
       header: {
         title: 'Edit Role',

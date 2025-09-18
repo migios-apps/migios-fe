@@ -21,6 +21,8 @@ export type Route = {
   path: string
   component: LazyExoticComponent<<T extends Meta>(props: T) => JSX.Element>
   authority: string[]
+  // Jika diisi, override penentuan menu aktif menggunakan key bertingkat dipisah titik, contoh: 'masters.settings.othersSetting'
+  activeMenuKey?: string
   meta?: Meta
 }
 

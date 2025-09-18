@@ -1,6 +1,6 @@
 import type { NavigationTree } from '@/@types/navigation'
-import isPlainObject from 'lodash/isPlainObject'
 import { useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 
 interface NavInfo extends NavigationTree {
   parentKey?: string
@@ -8,62 +8,83 @@ interface NavInfo extends NavigationTree {
 
 const getRouteInfo = (
   navTree: NavInfo | NavInfo[],
-  key: string
+  key: string,
+  currentPath?: string
 ): NavInfo | undefined => {
-  if (!Array.isArray(navTree) && navTree?.key === key) {
+  // Jika array, telusuri setiap node
+  if (Array.isArray(navTree)) {
+    for (const node of navTree) {
+      const found = getRouteInfo(node, key, currentPath)
+      if (found) return found
+    }
+    return undefined
+  }
+
+  // 1) Cocokkan key pada node saat ini
+  if (navTree?.key === key) {
     return navTree
   }
-  let activedRoute: NavInfo | undefined
-  let isIncludeActivedRoute = false
-  for (const p in navTree) {
-    if (
-      p !== 'icon' &&
-      // eslint-disable-next-line no-prototype-builtins
-      navTree.hasOwnProperty(p) &&
-      typeof (navTree as any)[p] === 'object'
-    ) {
-      if (
-        isPlainObject((navTree as any)[p]) &&
-        (navTree as any)[p].subMenu?.length > 0
-      ) {
-        if (
-          (navTree as any)[p].subMenu.some((el: NavInfo) => el?.key === key)
-        ) {
-          isIncludeActivedRoute = true
+
+  // 2) Prioritaskan pencarian ke anak (berdasarkan key), agar activeMenuKey menang atas prefix path parent
+  if (navTree?.subMenu?.length) {
+    for (const child of navTree.subMenu) {
+      const foundByKey = getRouteInfo(child, key, currentPath)
+      if (foundByKey && foundByKey.key === key) {
+        if (!foundByKey.parentKey) {
+          foundByKey.parentKey = navTree.key
         }
-      }
-
-      activedRoute = getRouteInfo((navTree as any)[p], key)
-
-      if (activedRoute) {
-        if (isIncludeActivedRoute) {
-          activedRoute.parentKey = (navTree as any)[p]?.key
-        }
-
-        return activedRoute
+        return foundByKey
       }
     }
   }
-  return activedRoute
+
+  // 3) Jika belum ketemu berdasarkan key, cari ke anak dengan fallback path
+  if (navTree?.subMenu?.length) {
+    for (const child of navTree.subMenu) {
+      const found = getRouteInfo(child, key, currentPath)
+      if (found) {
+        // Tetapkan parent langsung
+        if (!found.parentKey) {
+          found.parentKey = navTree.key
+        }
+        return found
+      }
+    }
+  }
+
+  // 4) Terakhir, fallback ke prefix path pada node saat ini
+  if (navTree?.path && currentPath && currentPath.startsWith(navTree.path)) {
+    return navTree
+  }
+
+  return undefined
 }
 
-const findNestedRoute = (navTree: NavigationTree[], key: string): boolean => {
+const findNestedRoute = (
+  navTree: NavigationTree[],
+  key: string,
+  currentPath?: string
+): boolean => {
   const found = navTree?.find((node) => {
-    return node?.key === key
+    return (
+      node?.key === key ||
+      (node?.path && currentPath && currentPath.startsWith(node.path))
+    )
   })
   if (found) {
     return true
   }
-  return navTree.some((c) => findNestedRoute(c.subMenu, key))
+  return navTree.some((c) => findNestedRoute(c.subMenu, key, currentPath))
 }
 
 const getTopRouteKey = (
   navTree: NavigationTree[],
-  key: string
+  key: string,
+  currentPath?: string
 ): NavigationTree => {
   let foundNav = {} as NavigationTree
   navTree?.forEach((nav) => {
-    if (findNestedRoute([nav], key)) {
+    if (findNestedRoute([nav], key, currentPath)) {
       foundNav = nav
     }
   })
@@ -71,15 +92,18 @@ const getTopRouteKey = (
 }
 
 function useMenuActive(navTree: NavigationTree[], key: string) {
+  const location = useLocation()
+  const currentPath = location.pathname
+
   const activedRoute = useMemo(() => {
-    const route = getRouteInfo(navTree, key)
+    const route = getRouteInfo(navTree, key, currentPath)
     return route
-  }, [navTree, key])
+  }, [navTree, key, currentPath])
 
   const includedRouteTree = useMemo(() => {
-    const included = getTopRouteKey(navTree, key)
+    const included = getTopRouteKey(navTree, key, currentPath)
     return included
-  }, [navTree, key])
+  }, [navTree, key, currentPath])
 
   return { activedRoute, includedRouteTree }
 }

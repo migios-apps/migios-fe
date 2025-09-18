@@ -157,11 +157,7 @@ const PTtrainer = () => {
                 omittedAvatarProps={{ shape: 'circle' }}
               >
                 {row.original.trainers.map((elm, index) => (
-                  <Tooltip
-                    key={elm.id + index}
-                    wrapperClass="flex"
-                    title={elm.name}
-                  >
+                  <Tooltip key={index} wrapperClass="flex" title={elm.name}>
                     <Avatar src={elm.photo || ''} />
                   </Tooltip>
                 ))}
