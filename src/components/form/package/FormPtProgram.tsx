@@ -21,17 +21,15 @@ import SelectAsyncPaginate, {
   ReturnAsyncSelect,
 } from '@/components/ui/Select/SelectAsync'
 import { QUERY_KEY } from '@/constants/queryKeys.constant'
-import {
-  CreatePackageDto,
-  TrainerPackageTypes,
-} from '@/services/api/@types/package'
+import { EmployeeDetail } from '@/services/api/@types/employee'
+import { CreatePackageDto } from '@/services/api/@types/package'
+import { apiGetEmployeeList } from '@/services/api/EmployeeService'
 import {
   apiCreatePackage,
   apiDeletePackage,
   apiGetAllTrainerByPackage,
   apiUpdatePackage,
 } from '@/services/api/PackageService'
-import { apiGetTrainerList } from '@/services/api/TrainerService'
 import { useSessionUser } from '@/store/authStore'
 import calculateDiscountAmount from '@/utils/calculateDiscountAmount'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -85,10 +83,10 @@ const FormPtProgram: React.FC<FormProps> = ({
   const getTrainerList = React.useCallback(
     async (
       inputValue: string,
-      _: OptionsOrGroups<TrainerPackageTypes, GroupBase<TrainerPackageTypes>>,
+      _: OptionsOrGroups<EmployeeDetail, GroupBase<EmployeeDetail>>,
       additional?: { page: number }
     ) => {
-      const response = await apiGetTrainerList({
+      const response = await apiGetEmployeeList({
         page: additional?.page,
         per_page: 10,
         sort_column: 'id',
@@ -106,6 +104,12 @@ const FormPtProgram: React.FC<FormProps> = ({
             search_column: 'enabled',
             search_condition: '=',
             search_text: 'true',
+          },
+          {
+            search_operator: 'and',
+            search_column: 'type',
+            search_condition: '=',
+            search_text: 'trainer',
           },
         ],
       })

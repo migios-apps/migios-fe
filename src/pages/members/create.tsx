@@ -5,19 +5,14 @@ import { useNavigate } from 'react-router-dom'
 const CreateMember = () => {
   const formProps = useMemberValidation()
   const navigate = useNavigate()
-  
+
   const onClose = () => {
     navigate('/members')
   }
 
   return (
-    <FormPageMember
-      type="create"
-      formProps={formProps}
-      onSuccess={onClose}
-    />
+    <FormPageMember type="create" formProps={formProps} onSuccess={onClose} />
   )
 }
 
 export default CreateMember
-

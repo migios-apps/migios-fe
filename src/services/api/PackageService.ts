@@ -1,12 +1,12 @@
 import ApiService from '@/services/ApiService'
 import { ParamsFilter } from './@types/api'
 import { ClassesType } from './@types/class'
+import { EmployeeListTypeResponse } from './@types/employee'
 import {
   CreatePackageDto,
   PackageDetail,
   PackageDetailResponse,
 } from './@types/package'
-import { TrainerDetailListResponse } from './@types/trainer'
 
 export async function apiGetPackageList(params?: ParamsFilter) {
   return ApiService.fetchDataWithAxios<PackageDetailResponse>({
@@ -50,7 +50,7 @@ export async function apiGetAllTrainerByPackage(
   id: number,
   params?: ParamsFilter
 ) {
-  return ApiService.fetchDataWithAxios<TrainerDetailListResponse>({
+  return ApiService.fetchDataWithAxios<EmployeeListTypeResponse>({
     url: `/package/${id}/trainers`,
     method: 'get',
     params,

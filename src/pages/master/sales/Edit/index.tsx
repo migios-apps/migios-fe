@@ -8,12 +8,13 @@ import { categoryPackage } from '@/constants'
 import { QUERY_KEY } from '@/constants/queryKeys.constant'
 import { paymentStatusColor } from '@/constants/utils'
 import { Filter } from '@/services/api/@types/api'
+import { EmployeeDetail } from '@/services/api/@types/employee'
 import { TrainerPackageTypes } from '@/services/api/@types/package'
 import { PaymentStatus } from '@/services/api/@types/sales'
+import { apiGetEmployeeList } from '@/services/api/EmployeeService'
 import { apiGetPackageList } from '@/services/api/PackageService'
 import { apiGetProductList } from '@/services/api/ProductService'
 import { apiGetSales } from '@/services/api/SalesService'
-import { apiGetTrainerList } from '@/services/api/TrainerService'
 import { apiGetSettings } from '@/services/api/settings/settings'
 import { useSessionUser } from '@/store/authStore'
 import useInfiniteScroll from '@/utils/hooks/useInfiniteScroll'
@@ -337,10 +338,10 @@ const EditSales = () => {
   const getTrainerList = React.useCallback(
     async (
       inputValue: string,
-      _: OptionsOrGroups<TrainerPackageTypes, GroupBase<TrainerPackageTypes>>,
+      _: OptionsOrGroups<EmployeeDetail, GroupBase<EmployeeDetail>>,
       additional?: { page: number }
     ) => {
-      const response = await apiGetTrainerList({
+      const response = await apiGetEmployeeList({
         page: additional?.page,
         per_page: 10,
         sort_column: 'id',
@@ -358,6 +359,12 @@ const EditSales = () => {
             search_column: 'enabled',
             search_condition: '=',
             search_text: 'true',
+          },
+          {
+            search_operator: 'and',
+            search_column: 'type',
+            search_condition: '=',
+            search_text: 'trainer',
           },
         ],
       })

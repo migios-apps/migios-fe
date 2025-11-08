@@ -7,7 +7,7 @@ import {
   CreateClassCategoryPage,
   CreateClassPage,
 } from './@types/class'
-import { TrainerDetail } from './@types/trainer'
+import { EmployeeDetail } from './@types/employee'
 
 export async function apiGetClassList(params?: ParamsFilter) {
   return ApiService.fetchDataWithAxios<ClassDetailResponse>({
@@ -48,7 +48,7 @@ export async function apiDeleteClass(id: number) {
 }
 
 export async function apiGetAllInstructorByClass(id: number) {
-  return ApiService.fetchDataWithAxios<{ data: TrainerDetail[] }>({
+  return ApiService.fetchDataWithAxios<{ data: EmployeeDetail[] }>({
     url: `/class/${id}/instructors`,
     method: 'get',
   })
