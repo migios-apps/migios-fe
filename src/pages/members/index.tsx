@@ -1,9 +1,9 @@
 import { TableQueries } from '@/@types/common'
-import FormMember from '@/components/form/member/FormMember'
-import {
-  resetMemberForm,
-  useMemberValidation,
-} from '@/components/form/member/memberValidation'
+// import FormMember from '@/components/form/member/FormMember'
+// import {
+//   resetMemberForm,
+//   useMemberValidation,
+// } from '@/components/form/member/memberValidation'
 import { DebounceInput } from '@/components/shared'
 import AdaptiveCard from '@/components/shared/AdaptiveCard'
 import Container from '@/components/shared/Container'
@@ -13,11 +13,10 @@ import { QUERY_KEY } from '@/constants/queryKeys.constant'
 import { statusColor } from '@/constants/utils'
 import { MemberDetail } from '@/services/api/@types/member'
 import { apiGetMemberList } from '@/services/api/MembeService'
-import { useSessionUser } from '@/store/authStore'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import dayjs from 'dayjs'
 import { useMemo, useState } from 'react'
-import { TbEye, TbSearch, TbUserPlus } from 'react-icons/tb'
+import { TbEdit, TbEye, TbSearch, TbUserPlus } from 'react-icons/tb'
 import { useNavigate } from 'react-router-dom'
 
 export const NameColumn = ({ row }: { row: MemberDetail }) => {
@@ -37,7 +36,6 @@ export const NameColumn = ({ row }: { row: MemberDetail }) => {
 
 const MemberList = () => {
   const navigate = useNavigate()
-  const club = useSessionUser((state) => state.club)
   const [tableData, setTableData] = useState<TableQueries>({
     pageIndex: 1,
     pageSize: 5,
@@ -47,10 +45,10 @@ const MemberList = () => {
       key: '',
     },
   })
-  const [showForm, setShowForm] = useState<boolean>(false)
-  const [formType, setFormType] = useState<'create' | 'update'>('create')
-
-  const formProps = useMemberValidation()
+  // Dialog form (old version) - Dikomentar karena sekarang menggunakan dedicated pages
+  // const [showForm, setShowForm] = useState<boolean>(false)
+  // const [formType, setFormType] = useState<'create' | 'update'>('create')
+  // const formProps = useMemberValidation()
 
   const { data, isFetchingNextPage, isLoading } = useInfiniteQuery({
     queryKey: [QUERY_KEY.members, tableData],
@@ -95,9 +93,16 @@ const MemberList = () => {
   const total = data?.pages[0]?.data.meta.total
 
   const handleViewDetails = (member: MemberDetail) => {
+    // Navigate ke detail page
+    navigate(`/members/details/${member.code}`)
+    // Old version (dialog form) - Dikomentar
     // setShowForm(true)
     // setFormType('update')
-    navigate(`/members/details/${member.code}`)
+  }
+
+  // Handler untuk navigate ke edit page (dedicated page)
+  const handleEditMember = (member: MemberDetail) => {
+    navigate(`/members/edit/${member.code}`)
   }
 
   const columns = useMemo<DataTableColumnDef<MemberDetail>[]>(
@@ -157,6 +162,15 @@ const MemberList = () => {
         enableColumnActions: false,
         cell: (props) => (
           <div className="flex items-center gap-3">
+            <Tooltip title="Edit">
+              <div
+                className={`text-xl cursor-pointer select-none font-semibold`}
+                role="button"
+                onClick={() => handleEditMember(props.row.original)}
+              >
+                <TbEdit />
+              </div>
+            </Tooltip>
             <Tooltip title="View">
               <div
                 className={`text-xl cursor-pointer select-none font-semibold`}
@@ -198,9 +212,12 @@ const MemberList = () => {
                 variant="solid"
                 icon={<TbUserPlus className="text-xl" />}
                 onClick={() => {
-                  resetMemberForm(formProps)
-                  setShowForm(true)
-                  setFormType('create')
+                  // Navigate ke dedicated create page
+                  navigate('/members/create')
+                  // Old version (dialog form) - Dikomentar
+                  // resetMemberForm(formProps)
+                  // setShowForm(true)
+                  // setFormType('create')
                 }}
               >
                 Add new
@@ -245,12 +262,13 @@ const MemberList = () => {
         </AdaptiveCard>
       </Container>
 
-      <FormMember
+      {/* Old version (dialog form) - Dikomentar karena sekarang menggunakan dedicated pages */}
+      {/* <FormMember
         open={showForm}
         type={formType}
         formProps={formProps}
         onClose={() => setShowForm(false)}
-      />
+      /> */}
     </>
   )
 }

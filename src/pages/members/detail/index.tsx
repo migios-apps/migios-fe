@@ -83,7 +83,9 @@ const MemberDetail = () => {
                       <button
                         className="close-button bg-gray-200/20 text-gray-200 button-press-feedback"
                         type="button"
-                        onClick={() => navigate(`/member/edit/${id}`)}
+                        onClick={() =>
+                          navigate(`/members/edit/${member?.code}`)
+                        }
                       >
                         <HiPencil />
                       </button>
