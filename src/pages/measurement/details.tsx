@@ -114,7 +114,7 @@ const MeasurementDetail = () => {
 
             {/* Basic Information */}
             <Card>
-              <div className="bg-blue-500 text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
+              <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
                 <h4 className="font-semibold">Informasi Dasar</h4>
               </div>
               <div className="grid md:grid-cols-3 gap-4">
@@ -145,7 +145,7 @@ const MeasurementDetail = () => {
 
             {/* Body Composition Measurement */}
             <Card>
-              <div className="bg-blue-500 text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
+              <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
                 <h4 className="font-semibold">Pengukuran Komposisi Tubuh</h4>
               </div>
               <div className="grid md:grid-cols-3 gap-4">
@@ -274,7 +274,7 @@ const MeasurementDetail = () => {
 
             {/* Body Size Measurement */}
             <Card>
-              <div className="bg-blue-500 text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
+              <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
                 <h4 className="font-semibold">Pengukuran Ukuran Tubuh</h4>
               </div>
               <div className="grid md:grid-cols-3 gap-4">
@@ -360,7 +360,7 @@ const MeasurementDetail = () => {
               measurement.delta_body_fat_percent ||
               measurement.delta_abdominal_cm) && (
               <Card>
-                <div className="bg-blue-500 text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
+                <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
                   <h4 className="font-semibold">
                     Perubahan dari Pengukuran Sebelumnya
                   </h4>
@@ -433,7 +433,7 @@ const MeasurementDetail = () => {
             {/* Photos */}
             {measurement.photos && measurement.photos.length > 0 && (
               <Card>
-                <div className="bg-blue-500 text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
+                <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
                   <h4 className="font-semibold">Foto Pengukuran</h4>
                 </div>
                 <div className="grid md:grid-cols-2 gap-4">
@@ -461,7 +461,7 @@ const MeasurementDetail = () => {
 
             {/* Result of Measurement */}
             <Card>
-              <div className="bg-blue-500 text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
+              <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
                 <h4 className="font-semibold">Hasil Pengukuran</h4>
               </div>
               <div className="flex flex-col gap-4">
@@ -500,7 +500,7 @@ const MeasurementDetail = () => {
               measurement.adherence_score ||
               measurement.activity_factor) && (
               <Card>
-                <div className="bg-blue-500 text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
+                <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
                   <h4 className="font-semibold">Target Nutrisi</h4>
                 </div>
                 <div className="grid md:grid-cols-3 gap-4">

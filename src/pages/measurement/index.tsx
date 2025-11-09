@@ -28,20 +28,6 @@ export const MemberColumn = ({ row }: { row: MemberMeasurement }) => {
   )
 }
 
-export const TrainerColumn = ({ row }: { row: MemberMeasurement }) => {
-  return (
-    <div className="flex items-center gap-2">
-      <Avatar size={32} shape="circle" src={row.trainer?.photo || ''} />
-      <div className="flex flex-col">
-        <span className="font-semibold text-gray-900 dark:text-gray-100 capitalize">
-          {row.trainer?.name}
-        </span>
-        <span className="text-sm text-gray-500">{row.trainer?.code}</span>
-      </div>
-    </div>
-  )
-}
-
 const Measurement = () => {
   const navigate = useNavigate()
   const [tableData, setTableData] = useState<TableQueries>({
@@ -112,14 +98,6 @@ const Measurement = () => {
         cell: (props) => {
           const row = props.row.original
           return <MemberColumn row={row} />
-        },
-      },
-      {
-        header: 'Trainer',
-        accessorKey: 'trainer',
-        cell: (props) => {
-          const row = props.row.original
-          return <TrainerColumn row={row} />
         },
       },
       {
