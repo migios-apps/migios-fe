@@ -36,6 +36,20 @@ export const MemberColumn = ({ row }: { row: CuttingSessionLists }) => {
   )
 }
 
+export const TrainerColumn = ({ row }: { row: CuttingSessionLists }) => {
+  return (
+    <div className="flex items-center gap-2">
+      <Avatar size={32} shape="circle" src={row.trainer?.photo || ''} />
+      <div className="flex flex-col">
+        <span className="font-semibold text-gray-900 dark:text-gray-100 capitalize">
+          {row.trainer?.name}
+        </span>
+        <span className="text-sm text-gray-500">{row.trainer?.code}</span>
+      </div>
+    </div>
+  )
+}
+
 const CuttingSessions = () => {
   const [tableData, setTableData] = useState<TableQueries>({
     pageIndex: 1,
@@ -149,6 +163,14 @@ const CuttingSessions = () => {
         },
       },
       {
+        header: 'Trainer',
+        accessorKey: 'trainer',
+        cell: (props) => {
+          const row = props.row.original
+          return <TrainerColumn row={row} />
+        },
+      },
+      {
         header: 'Package',
         accessorKey: 'package',
         cell: (props) => {
@@ -175,7 +197,11 @@ const CuttingSessions = () => {
         accessorKey: 'session_cut',
         cell: (props) => {
           const row = props.row.original
-          return <span>{row.session_cut || '0'} Session</span>
+          return (
+            <span>
+              {row.session_cut || '-'} {row.session_cut ? 'Session' : ''}
+            </span>
+          )
         },
       },
       {
