@@ -9,7 +9,11 @@ import Container from '@/components/shared/Container'
 import DataTable, { DataTableColumnDef } from '@/components/shared/DataTable'
 import { Avatar, Button, Tag, Tooltip } from '@/components/ui'
 import { QUERY_KEY } from '@/constants/queryKeys.constant'
-import { statusColor } from '@/constants/utils'
+import {
+  cuttingSessionStatusColor,
+  cuttingSessionStatusText,
+  statusColor,
+} from '@/constants/utils'
 import { CuttingSessionLists } from '@/services/api/@types/cutting-session'
 import { apiGetCuttingSessionLists } from '@/services/api/CuttingSessionService'
 import { useInfiniteQuery } from '@tanstack/react-query'
@@ -27,20 +31,6 @@ export const MemberColumn = ({ row }: { row: CuttingSessionLists }) => {
           {row.member?.name}
         </span>
         <span className="text-sm text-gray-500">{row.member?.code}</span>
-      </div>
-    </div>
-  )
-}
-
-export const TrainerColumn = ({ row }: { row: CuttingSessionLists }) => {
-  return (
-    <div className="flex items-center gap-2">
-      <Avatar size={32} shape="circle" src={row.trainer?.photo || ''} />
-      <div className="flex flex-col">
-        <span className="font-semibold text-gray-900 dark:text-gray-100 capitalize">
-          {row.trainer?.name}
-        </span>
-        <span className="text-sm text-gray-500">{row.trainer?.code}</span>
       </div>
     </div>
   )
@@ -131,19 +121,31 @@ const CuttingSessions = () => {
   const columns = useMemo<DataTableColumnDef<CuttingSessionLists>[]>(
     () => [
       {
+        header: 'Status',
+        accessorKey: 'status',
+        cell: (props) => {
+          const row = props.row.original
+          const statusCode = row.status_code ?? 0
+          return (
+            <Tag
+              className={
+                cuttingSessionStatusColor[statusCode] ||
+                cuttingSessionStatusColor[0]
+              }
+            >
+              <span className="capitalize">
+                {cuttingSessionStatusText[statusCode] || 'Pending'}
+              </span>
+            </Tag>
+          )
+        },
+      },
+      {
         header: 'Member',
         accessorKey: 'member',
         cell: (props) => {
           const row = props.row.original
           return <MemberColumn row={row} />
-        },
-      },
-      {
-        header: 'Trainer',
-        accessorKey: 'trainer',
-        cell: (props) => {
-          const row = props.row.original
-          return <TrainerColumn row={row} />
         },
       },
       {
@@ -169,23 +171,11 @@ const CuttingSessions = () => {
         },
       },
       {
-        header: 'Status',
-        accessorKey: 'status',
-        cell: (props) => {
-          const row = props.row.original
-          return (
-            <Tag className={statusColor[row.status] || statusColor.active}>
-              <span className="capitalize">{row.status}</span>
-            </Tag>
-          )
-        },
-      },
-      {
         header: 'Session Cut',
         accessorKey: 'session_cut',
         cell: (props) => {
           const row = props.row.original
-          return <span>{row.session_cut || '-'}</span>
+          return <span>{row.session_cut || '0'} Session</span>
         },
       },
       {

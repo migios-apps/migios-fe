@@ -37,3 +37,15 @@ export const paymentStatusColorText: Record<string, string> = {
   pending: 'text-gray-900 dark:text-gray-900',
   completed: 'text-gray-900 dark:text-gray-900',
 }
+
+export const cuttingSessionStatusColor: Record<number, string> = {
+  0: 'w-fit bg-yellow-200 dark:bg-yellow-200 text-gray-900 dark:text-gray-900', // pending
+  1: 'w-fit bg-emerald-200 dark:bg-emerald-200 text-gray-900 dark:text-gray-900', // approved
+  2: 'w-fit bg-red-500 dark:bg-red-500 text-white dark:text-white', // rejected
+}
+
+export const cuttingSessionStatusText: Record<number, string> = {
+  0: 'Pending',
+  1: 'Approved',
+  2: 'Rejected',
+}
