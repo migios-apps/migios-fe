@@ -29,9 +29,9 @@ import {
 import { useSessionUser } from '@/store/authStore'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import dayjs from 'dayjs'
-import { Trash } from 'iconsax-react'
+import { Add, Trash } from 'iconsax-react'
 import React from 'react'
-import { Controller, SubmitHandler } from 'react-hook-form'
+import { Controller, SubmitHandler, useFieldArray } from 'react-hook-form'
 import { HiOutlineUser } from 'react-icons/hi'
 import type { GroupBase, OptionsOrGroups } from 'react-select'
 import {
@@ -65,6 +65,15 @@ const FormCuttingSession: React.FC<FormProps> = ({
   } = formProps
   const watchData = watch()
   const [confirmDelete, setConfirmDelete] = React.useState(false)
+
+  const {
+    fields: exerciseFields,
+    append: appendExercise,
+    remove: removeExercise,
+  } = useFieldArray({
+    control,
+    name: 'exercises',
+  })
 
   const { data: memberPackages } = useQuery({
     queryKey: [QUERY_KEY.memberPackages, watchData.member?.code],
@@ -227,6 +236,7 @@ const FormCuttingSession: React.FC<FormProps> = ({
       due_date: dayjs(data.due_date).format('YYYY-MM-DD'),
       start_date: dayjs(data.start_date).format('YYYY-MM-DD HH:mm'),
       end_date: dayjs(data.end_date).format('YYYY-MM-DD HH:mm'),
+      exercises: data.exercises || [],
     }
 
     if (type === 'update') {
@@ -528,6 +538,199 @@ const FormCuttingSession: React.FC<FormProps> = ({
                   )}
                 />
               </FormItem>
+
+              {/* Exercises Section */}
+              <div className="w-full mb-2">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-semibold">Exercises</label>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="plain"
+                    icon={<Add size={16} />}
+                    onClick={() =>
+                      appendExercise({
+                        name: '',
+                        sets: 1,
+                        reps: 1,
+                        weight_kg: 0,
+                        rpe: 1,
+                      })
+                    }
+                  >
+                    Add Exercise
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+                  Tambahkan daftar latihan yang dilakukan dalam sesi ini. Setiap
+                  latihan mencakup nama, jumlah set, repetisi per set, beban
+                  (kg), dan tingkat effort (RPE 1-10).
+                </p>
+                {exerciseFields.length === 0 && (
+                  <p className="text-sm text-gray-500 mb-3">
+                    No exercises added. Click &quot;Add Exercise&quot; to add
+                    one.
+                  </p>
+                )}
+                {exerciseFields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="mb-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <h6 className="font-semibold text-sm">
+                        Exercise {index + 1}
+                      </h6>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="plain"
+                        className="text-red-500 hover:text-red-600"
+                        icon={<Trash size={16} />}
+                        onClick={() => removeExercise(index)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <FormItem
+                        asterisk
+                        label="Exercise Name"
+                        invalid={Boolean(errors.exercises?.[index]?.name)}
+                        errorMessage={errors.exercises?.[index]?.name?.message}
+                      >
+                        <Controller
+                          name={`exercises.${index}.name`}
+                          control={control}
+                          render={({ field }) => (
+                            <Input
+                              type="text"
+                              autoComplete="off"
+                              placeholder="Exercise Name"
+                              {...field}
+                            />
+                          )}
+                        />
+                      </FormItem>
+                      <FormItem
+                        asterisk
+                        label="Sets"
+                        invalid={Boolean(errors.exercises?.[index]?.sets)}
+                        errorMessage={errors.exercises?.[index]?.sets?.message}
+                      >
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-2">
+                          Jumlah set yang dilakukan (minimal 1)
+                        </p>
+                        <Controller
+                          name={`exercises.${index}.sets`}
+                          control={control}
+                          render={({ field }) => (
+                            <Input
+                              type="number"
+                              autoComplete="off"
+                              placeholder="Sets"
+                              {...field}
+                              value={field.value || ''}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value) || 0
+                                field.onChange(value)
+                              }}
+                            />
+                          )}
+                        />
+                      </FormItem>
+                      <FormItem
+                        asterisk
+                        label="Reps"
+                        invalid={Boolean(errors.exercises?.[index]?.reps)}
+                        errorMessage={errors.exercises?.[index]?.reps?.message}
+                      >
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-2">
+                          Jumlah repetisi per set (minimal 1)
+                        </p>
+                        <Controller
+                          name={`exercises.${index}.reps`}
+                          control={control}
+                          render={({ field }) => (
+                            <Input
+                              type="number"
+                              autoComplete="off"
+                              placeholder="Reps"
+                              {...field}
+                              value={field.value || ''}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value) || 0
+                                field.onChange(value)
+                              }}
+                            />
+                          )}
+                        />
+                      </FormItem>
+                      <FormItem
+                        asterisk
+                        label="Weight (Kg)"
+                        invalid={Boolean(errors.exercises?.[index]?.weight_kg)}
+                        errorMessage={
+                          errors.exercises?.[index]?.weight_kg?.message
+                        }
+                      >
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-2">
+                          Beban yang digunakan dalam kilogram (minimal 0)
+                        </p>
+                        <Controller
+                          name={`exercises.${index}.weight_kg`}
+                          control={control}
+                          render={({ field }) => (
+                            <Input
+                              type="number"
+                              autoComplete="off"
+                              placeholder="Weight (Kg)"
+                              {...field}
+                              value={field.value || ''}
+                              onChange={(e) => {
+                                const value = parseFloat(e.target.value) || 0
+                                field.onChange(value)
+                              }}
+                            />
+                          )}
+                        />
+                      </FormItem>
+                      <FormItem
+                        asterisk
+                        label="RPE (1-10)"
+                        invalid={Boolean(errors.exercises?.[index]?.rpe)}
+                        errorMessage={errors.exercises?.[index]?.rpe?.message}
+                      >
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 mb-2">
+                          Rating of Perceived Exertion - tingkat effort yang
+                          dirasakan (skala 1-10, minimal 1, maksimal 10)
+                        </p>
+                        <Controller
+                          name={`exercises.${index}.rpe`}
+                          control={control}
+                          render={({ field }) => (
+                            <Input
+                              type="number"
+                              autoComplete="off"
+                              placeholder="RPE (1-10)"
+                              min={1}
+                              max={10}
+                              {...field}
+                              value={field.value || ''}
+                              onChange={(e) => {
+                                const value = parseInt(e.target.value) || 1
+                                field.onChange(
+                                  value > 10 ? 10 : value < 1 ? 1 : value
+                                )
+                              }}
+                            />
+                          )}
+                        />
+                      </FormItem>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="text-right mt-6 flex justify-between items-center gap-2">
               {type === 'update' ? (

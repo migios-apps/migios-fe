@@ -90,6 +90,32 @@ export const validationSchemaCuttingSession = yup.object().shape({
         )
       }
     ),
+  exercises: yup
+    .array()
+    .of(
+      yup.object().shape({
+        name: yup.string().required('Exercise name is required'),
+        sets: yup
+          .number()
+          .required('Sets is required')
+          .min(1, 'Sets must be at least 1'),
+        reps: yup
+          .number()
+          .required('Reps is required')
+          .min(1, 'Reps must be at least 1'),
+        weight_kg: yup
+          .number()
+          .required('Weight is required')
+          .min(0, 'Weight must be at least 0'),
+        rpe: yup
+          .number()
+          .required('RPE is required')
+          .min(1, 'RPE must be at least 1')
+          .max(10, 'RPE must be at most 10'),
+      })
+    )
+    .optional()
+    .nullable(),
 })
 
 export type CuttingSessionFormSchema = yup.InferType<
@@ -113,6 +139,7 @@ const defaultValues = {
   due_date: '',
   start_date: '',
   end_date: '',
+  exercises: [],
 }
 
 export const useCuttingSessionForm = () => {

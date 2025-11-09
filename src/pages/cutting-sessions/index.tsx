@@ -130,6 +130,7 @@ const CuttingSessions = () => {
     formProps.setValue('due_date', item.due_date)
     formProps.setValue('start_date', item.start_date)
     formProps.setValue('end_date', item.end_date)
+    formProps.setValue('exercises', item.exercises || [])
   }
 
   const columns = useMemo<DataTableColumnDef<CuttingSessionLists>[]>(

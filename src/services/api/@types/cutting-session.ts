@@ -59,6 +59,14 @@ export interface CuttingSessionLists {
     name: string
     photo: string
   }
+  exercises: {
+    id: number
+    name: string
+    sets: number
+    reps: number
+    weight_kg: number
+    rpe: number
+  }[]
 }
 
 export type CuttingSessionListsResponse = Omit<ApiTypes, 'data'> & {
@@ -76,6 +84,14 @@ export interface CreateCuttingSession {
   due_date: string
   start_date: string
   end_date: string
+  exercises: {
+    // optional: array latihan yang dilakukan dalam sesi ini
+    name: string // required: nama latihan
+    sets: number // optional: jumlah set (min: 1)
+    reps: number // optional: repetisi per set (min: 1)
+    weight_kg: number // optional: beban dalam kg (min: 0)
+    rpe: number // optional: effort 1-10 (min: 1, max: 10)
+  }[]
 }
 
 export interface ChangeStatusCuttingSession {
