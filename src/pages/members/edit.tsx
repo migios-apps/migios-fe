@@ -37,6 +37,7 @@ const EditMember = () => {
         formProps.setValue('photo', data.photo)
         formProps.setValue('goals', data.goals)
         formProps.setValue('notes', data.notes)
+        formProps.setValue('height_cm', data.height_cm)
 
         if (data.join_date) {
           formProps.setValue('join_date', dayjs(data.join_date).toDate())

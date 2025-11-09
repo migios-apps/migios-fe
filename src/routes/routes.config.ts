@@ -7,6 +7,7 @@ import { classRoute } from './page/class.route'
 import { clubSetupRoute } from './page/club-setup.route'
 import { employeeRoute } from './page/employee.route'
 import { financeRoute } from './page/finance.route'
+import { measurementRoute } from './page/measurement.route'
 import { memberRoute } from './page/member.route'
 import { packageRoute } from './page/package.route'
 import { salesRoute } from './page/sales.route'
@@ -25,6 +26,7 @@ export const protectedRoutes: Routes = [
   ...clubSetupRoute,
   ...settingsRoute,
   ...employeeRoute,
+  ...measurementRoute,
   {
     key: 'clubs',
     path: '/clubs',

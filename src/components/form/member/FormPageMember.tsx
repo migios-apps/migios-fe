@@ -109,6 +109,7 @@ const FormPageMember: React.FC<FormProps> = ({
       email: data.email,
       notes: data.notes as string | null,
       goals: data.goals as string | null,
+      height_cm: data.height_cm || null,
       join_date: dayjs(data.join_date).format('YYYY-MM-DD'),
       enabled: data.enabled,
     }
@@ -338,6 +339,30 @@ const FormPageMember: React.FC<FormProps> = ({
                       placeholder="Diet, Exercise, etc"
                       {...field}
                       value={field.value ?? ''}
+                    />
+                  )}
+                />
+              </FormItem>
+              <FormItem
+                label="Tinggi Badan (Cm)"
+                className="w-full"
+                invalid={Boolean(errors.height_cm)}
+                errorMessage={errors.height_cm?.message}
+              >
+                <Controller
+                  name="height_cm"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      type="number"
+                      autoComplete="off"
+                      placeholder="Tinggi Badan (Cm)"
+                      {...field}
+                      value={field.value ?? ''}
+                      onChange={(e) => {
+                        const value = parseFloat(e.target.value) || null
+                        field.onChange(value)
+                      }}
                     />
                   )}
                 />

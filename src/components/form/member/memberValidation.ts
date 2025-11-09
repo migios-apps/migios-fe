@@ -30,6 +30,7 @@ export const validationSchemaMember = yup.object().shape({
     .typeError('Join Date must be a valid date'),
   notes: yup.string().optional().nullable(),
   goals: yup.string().optional().nullable(),
+  height_cm: yup.number().optional().nullable(),
   enabled: yup.boolean().default(true),
 })
 
@@ -73,5 +74,6 @@ export const setMemberForm = (
   formProps.setValue('notes', data.notes)
   // formProps.setValue('private_notes', data.private_notes)
   formProps.setValue('goals', data.goals)
+  formProps.setValue('height_cm', data.height_cm)
   formProps.setValue('enabled', data.enabled)
 }

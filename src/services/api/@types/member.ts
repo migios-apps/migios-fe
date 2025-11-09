@@ -16,6 +16,7 @@ export interface MemberDetail {
   email: string
   notes: string
   goals: string
+  height_cm: number
   join_date: string
   enabled: boolean
   created_at: string
@@ -59,6 +60,7 @@ export interface CreateMemberTypes {
   notes?: string | null
   // private_notes?: string | null
   goals?: string | null
+  height_cm?: number | null
   join_date: string
   enabled: boolean
 }
@@ -136,6 +138,7 @@ export interface FreezeProgramDetail {
   start_date: string
   end_date: string
   notes: string
+  height_cm: number
   created_at: string
   updated_at: string
   status: 'active' | 'inactive' | 'pending' | 'cancelled'

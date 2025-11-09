@@ -39,4 +39,5 @@ export const QUERY_KEY = {
   settings: 'settings',
   loyaltyList: 'loyaltyList',
   cuttingSessions: 'cuttingSessions',
+  measurements: 'measurements',
 }
