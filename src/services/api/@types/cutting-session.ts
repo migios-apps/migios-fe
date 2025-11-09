@@ -79,6 +79,7 @@ export interface CreateCuttingSession {
 }
 
 export interface ChangeStatusCuttingSession {
+  id?: number
   status: number
   notes?: string | null
 }

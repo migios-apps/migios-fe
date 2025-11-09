@@ -38,4 +38,5 @@ export const QUERY_KEY = {
   taxDefaultSaleItem: 'taxDefaultSaleItem',
   settings: 'settings',
   loyaltyList: 'loyaltyList',
+  cuttingSessions: 'cuttingSessions',
 }

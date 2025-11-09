@@ -80,6 +80,15 @@ const HistorySession = ({
   const columns: ColumnDef<EmployeeCommissionType>[] = useMemo(
     () => [
       {
+        header: 'Amount',
+        accessorKey: 'famount',
+        enableColumnActions: false,
+        cell: (props) => {
+          const row = props.row.original
+          return <span>{row.famount}</span>
+        },
+      },
+      {
         header: 'Type',
         accessorKey: 'type',
         enableColumnActions: false,
@@ -95,15 +104,6 @@ const HistorySession = ({
         cell: (props) => {
           const row = props.row.original
           return dayjs(row.due_date).format('DD MMM YYYY')
-        },
-      },
-      {
-        header: 'Amount',
-        accessorKey: 'famount',
-        enableColumnActions: false,
-        cell: (props) => {
-          const row = props.row.original
-          return <span>{row.famount}</span>
         },
       },
     ],

@@ -57,7 +57,12 @@ const EmployeeDetail = () => {
     error: errorEmployeeHead,
   } = useQuery({
     queryKey: [QUERY_KEY.employeeHead, id],
-    queryFn: () => apiGetEmployeeHead(id as string, '2025-04-01', '2025-04-30'),
+    queryFn: () =>
+      apiGetEmployeeHead(
+        id as string,
+        dayjs().startOf('month').format('YYYY-MM-DD'),
+        dayjs().endOf('month').format('YYYY-MM-DD')
+      ),
     select: (res: { data: EmployeeHeadType }) => res.data,
     enabled: !!id,
   })
