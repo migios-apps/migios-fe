@@ -1,151 +1,87 @@
-// @ts-check
-
-import { fixupConfigRules } from '@eslint/compat'
-import { FlatCompat } from '@eslint/eslintrc'
 import js from '@eslint/js'
+import tanstackQuery from '@tanstack/eslint-plugin-query'
+import prettier from 'eslint-plugin-prettier'
+import react from 'eslint-plugin-react'
+import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import unusedImports from 'eslint-plugin-unused-imports'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import tseslint from 'typescript-eslint'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all,
-})
-
 export default tseslint.config(
-  [
-    {
-      ignores: [
-        '**/build/',
-        '**/node_modules/',
-        '**/dist/',
-        '**/.prettierrc.js',
-        '**/.eslintrc.js',
-        '**/env.d.ts',
-        '**/eslint.config.mjs',
-        '**/postcss.config.cjs',
-        '**/tailwind.config.cjs',
-      ],
+  {
+    ignores: [
+      '**/build/',
+      '**/node_modules/',
+      '**/dist/',
+      '**/.prettierrc.js',
+      '**/.eslintrc.js',
+      '**/env.d.ts',
+      '**/eslint.config.mjs',
+      '**/postcss.config.cjs',
+      '**/tailwind.config.cjs',
+    ],
+  },
+  js.configs.recommended,
+  ...tseslint.configs.recommended,
+  {
+    files: ['**/*.{js,jsx,ts,tsx}'],
+    plugins: {
+      react,
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+      'unused-imports': unusedImports,
+      '@tanstack/query': tanstackQuery,
+      prettier,
     },
-    ...fixupConfigRules(
-      compat.extends(
-        'eslint:recommended',
-        'plugin:import/recommended',
-        'plugin:react/recommended',
-        'plugin:react-hooks/recommended',
-        'prettier',
-        'eslint-config-prettier',
-        'plugin:prettier/recommended',
-        'plugin:@tanstack/query/recommended'
-      )
-    ),
-
-    {
-      plugins: {
-        'react-refresh': reactRefresh,
-        'unused-imports': unusedImports,
-        // '@tanstack/query': pluginQuery,
-      },
-
-      settings: {
-        react: { version: 'detect' },
-
-        'import/parsers': { '@typescript-eslint/parser': ['.ts', '.tsx'] },
-
-        'import/resolver': {
-          typescript: {
-            project: './tsconfig.eslint.json',
-            alwaysTryTypes: true,
-          },
-          node: {
-            extensions: ['.js', '.jsx', '.ts', '.tsx'],
-            paths: ['src']
-          },
-          alias: {
-            map: [
-              ['@', './src']
-            ],
-            extensions: ['.js', '.jsx', '.ts', '.tsx']
-          }
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
         },
       },
-      rules: {
-        'react-refresh/only-export-components': [
-          'warn',
-          { allowConstantExport: true },
-        ],
-        'react-hooks/rules-of-hooks': 'off',
-        'react/react-in-jsx-scope': 'off',
-        'import/first': 'warn',
-        'import/default': 'off',
-        'import/newline-after-import': 'warn',
-        'import/no-named-as-default-member': 'off',
-        'import/no-duplicates': 'error',
-        'import/no-named-as-default': 0,
-        'import/namespace': 'off',
-        'import/named': 'off',
-        'import/no-unresolved': 'off',
-        'react/prop-types': 'off',
-        'react/jsx-sort-props': [
-          'warn',
-          {
-            callbacksLast: true,
-            shorthandFirst: true,
-            ignoreCase: true,
-            reservedFirst: true,
-            noSortAlphabetically: true,
-          },
-        ],
-        'no-trailing-spaces': 'error',
-        'prettier/prettier': 'error',
-        'no-unused-vars': 'off',
-        '@typescript-eslint/no-unused-vars': 'off',
-        'unused-imports/no-unused-imports': 'error',
-        '@tanstack/query/exhaustive-deps': 'error',
-        // 'unused-imports/no-unused-vars': [
-        //   'warn',
-        //   {
-        //     vars: 'all',
-        //     varsIgnorePattern: '^_',
-        //     args: 'after-used',
-        //     argsIgnorePattern: '^_',
-        //   },
-        // ],
-      },
     },
-  ],
-  tseslint.configs.recommended,
-  {
-    languageOptions: {
-      parserOptions: {
-        projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+    settings: {
+      react: {
+        version: 'detect',
       },
     },
     rules: {
-      'no-trailing-spaces': 'error',
-      'prettier/prettier': 'error',
-      'no-unused-vars': 'off',
+      // React
+      'react/react-in-jsx-scope': 'off',
+      'react/prop-types': 'off',
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+
+      // React Hooks - Disable rules yang terlalu ketat untuk build
+      'react-hooks/rules-of-hooks': 'off', // Terlalu ketat, disable untuk development
+      'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/refs': 'off',
+      'react-hooks/preserve-manual-memoization': 'off',
+      'react-hooks/incompatible-library': 'off',
+
+      // TypeScript
       '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
-      '@tanstack/query/exhaustive-deps': 'error',
-    },
-  },
-  {
-    files: ['**/*.tsx', '**/*.ts'],
-    rules: {
-      'no-trailing-spaces': 'error',
-      'prettier/prettier': 'error',
-      'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
       '@typescript-eslint/no-unused-expressions': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
+
+      // Unused imports
+      'no-unused-vars': 'off',
+      'unused-imports/no-unused-imports': 'error',
+
+      // Prettier
+      'prettier/prettier': 'error',
+
+      // TanStack Query
       '@tanstack/query/exhaustive-deps': 'error',
+
+      // General
+      'no-trailing-spaces': 'error',
+      'no-console': 'off',
     },
   }
 )

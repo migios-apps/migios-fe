@@ -1,5 +1,5 @@
-import { useEffect, useCallback, useRef } from 'react'
-import type { RefObject, ReactEventHandler } from 'react'
+import type { ReactEventHandler, RefObject } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 type Options = {
   disabled: boolean

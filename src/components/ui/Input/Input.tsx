@@ -1,19 +1,19 @@
-import { useState, useEffect, useRef } from 'react'
 import classNames from 'classnames'
+import isNil from 'lodash/isNil'
+import type {
+  ClassAttributes,
+  ElementType,
+  HTMLInputTypeAttribute,
+  InputHTMLAttributes,
+  ReactNode,
+  Ref,
+} from 'react'
+import { useEffect, useRef, useState } from 'react'
+import type { CommonProps, TypeAttributes } from '../@types/common'
 import { useConfig } from '../ConfigProvider'
 import { useForm, useFormItem } from '../Form/context'
 import { useInputGroup } from '../InputGroup/context'
 import { CONTROL_SIZES } from '../utils/constants'
-import isNil from 'lodash/isNil'
-import type { CommonProps, TypeAttributes } from '../@types/common'
-import type {
-  InputHTMLAttributes,
-  ElementType,
-  ReactNode,
-  HTMLInputTypeAttribute,
-  ClassAttributes,
-  Ref,
-} from 'react'
 
 export interface InputProps
   extends CommonProps,

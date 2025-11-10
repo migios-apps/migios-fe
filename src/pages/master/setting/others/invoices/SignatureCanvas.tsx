@@ -27,9 +27,9 @@ const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
       const img = new Image()
       img.onload = () => {
         ctx?.drawImage(img, 0, 0)
+        setHasSignature(true)
       }
       img.src = existingSignature
-      setHasSignature(true)
     }
   }, [existingSignature])
 

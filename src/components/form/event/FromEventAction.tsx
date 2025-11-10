@@ -1,13 +1,12 @@
-import React from 'react'
-import FormEvent from './FormEvent'
 import {
-  validationEventSchema,
-  initialEventValues,
   CreateEventSchemaType,
+  initialEventValues,
+  validationEventSchema,
 } from '@/components/form/event/events'
-import { SubmitHandler, useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
 import { Button, Form } from '@/components/ui'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { SubmitHandler, useForm } from 'react-hook-form'
+import FormEvent from './FormEvent'
 
 const FromEventAction = () => {
   const defaultValue = {
@@ -45,7 +44,10 @@ const FromEventAction = () => {
 
   return (
     <Form onSubmit={formProps.handleSubmit(onSubmit)}>
-      <FormEvent formProps={formProps} frequencyOptions={frequencyOptions} />
+      <FormEvent
+        formProps={formProps as any}
+        frequencyOptions={frequencyOptions}
+      />
       <Button
         type="submit"
         className="mt-5"

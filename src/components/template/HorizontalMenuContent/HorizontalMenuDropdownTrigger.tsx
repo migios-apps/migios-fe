@@ -51,13 +51,8 @@ const HorizontalMenuDropdownTrigger = (
   }
 
   if (asElement === 'button') {
-    return (
-      <button
-        ref={(rest as ButtonProps).ref}
-        {...commonProps}
-        {...(rest as ButtonProps)}
-      />
-    )
+    const { ref, ...buttonRest } = rest as ButtonProps
+    return <button ref={ref} {...commonProps} {...buttonRest} />
   }
 
   return <></>

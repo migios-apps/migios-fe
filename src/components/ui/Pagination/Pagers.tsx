@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
 import classNames from 'classnames'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
+  HiChevronDoubleRight,
   HiOutlineChevronDoubleLeft,
   HiOutlineDotsHorizontal,
-  HiChevronDoubleRight,
 } from 'react-icons/hi'
 
 const PAGER_COUNT = 7

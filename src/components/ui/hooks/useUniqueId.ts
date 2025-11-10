@@ -1,5 +1,5 @@
-import { useRef } from 'react'
 import uniqueId from 'lodash/uniqueId'
+import { useRef } from 'react'
 import createUID from '../utils/createUid'
 
 export default function useUniqueId(prefix = '', len = 10) {

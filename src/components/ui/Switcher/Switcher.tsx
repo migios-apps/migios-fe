@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
 import classNames from 'classnames'
-import { Spinner } from '../Spinner'
+import type { ChangeEvent, ReactNode, Ref } from 'react'
+import { useEffect, useState } from 'react'
 import type { CommonProps } from '../@types/common'
-import type { ReactNode, ChangeEvent, Ref } from 'react'
+import { Spinner } from '../Spinner'
 
 export interface SwitcherProps extends CommonProps {
   checked?: boolean

@@ -1,4 +1,3 @@
-import { useEffect, useState, useRef, useContext, createContext } from 'react'
 import {
   autoUpdate,
   flip,
@@ -22,16 +21,17 @@ import {
   useListNavigation,
   useMergeRefs,
   useRole,
-  useTypeahead,
   useTransitionStyles,
+  useTypeahead,
 } from '@floating-ui/react'
 import type {
   CSSProperties,
-  HTMLProps,
   Dispatch,
-  SetStateAction,
+  HTMLProps,
   ReactNode,
+  SetStateAction,
 } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 
 interface HorizontalMenuDropdownProps {
   dropdownLean?: boolean

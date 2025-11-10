@@ -15,7 +15,7 @@ import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import dayjs from 'dayjs'
 import { motion } from 'framer-motion'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md'
 import Loading from './Loading'
 
@@ -61,6 +61,29 @@ const CalendarView = (props: CalendarViewProps) => {
   const [calendarTitle, setCalendarTitle] = useState<string>('')
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [modalEvents, setModalEvents] = useState<MoreLinkArg['allSegs']>([])
+
+  const isCurrentRange = useMemo(() => {
+    const today = dayjs()
+    const calendarDate = dayjs(currentDate)
+
+    if (currentView === 'timeGridDay') {
+      return today.format('YYYY-MM-DD') === calendarDate.format('YYYY-MM-DD')
+    } else if (currentView === 'timeGridWeek') {
+      const startOfWeek = calendarDate.startOf('week')
+      const endOfWeek = calendarDate.endOf('week')
+      return (
+        (today.isAfter(startOfWeek) || today.isSame(startOfWeek, 'day')) &&
+        (today.isBefore(endOfWeek) || today.isSame(endOfWeek, 'day'))
+      )
+    } else {
+      const startOfMonth = calendarDate.startOf('month')
+      const endOfMonth = calendarDate.endOf('month')
+      return (
+        (today.isAfter(startOfMonth) || today.isSame(startOfMonth, 'day')) &&
+        (today.isBefore(endOfMonth) || today.isSame(endOfMonth, 'day'))
+      )
+    }
+  }, [currentDate, currentView])
 
   const formatCalendarTitle = (date: string, view: string) => {
     const dateObj = dayjs(date)
@@ -165,23 +188,6 @@ const CalendarView = (props: CalendarViewProps) => {
     setCalendarTitle(
       formatCalendarTitle(newDate.format('YYYY-MM-DD'), currentView)
     )
-  }
-
-  const isCurrentRange = () => {
-    const today = dayjs()
-    const currentDate = dayjs(calendarRef.current?.getApi()?.getDate())
-
-    if (currentView === 'timeGridDay') {
-      return today.format('YYYY-MM-DD') === currentDate.format('YYYY-MM-DD')
-    } else if (currentView === 'timeGridWeek') {
-      const startOfWeek = currentDate.startOf('week')
-      const endOfWeek = currentDate.endOf('week')
-      return today.isAfter(startOfWeek) && today.isBefore(endOfWeek)
-    } else {
-      const startOfMonth = currentDate.startOf('month')
-      const endOfMonth = currentDate.endOf('month')
-      return today.isAfter(startOfMonth) && today.isBefore(endOfMonth)
-    }
   }
 
   const itemVariants = {
@@ -310,7 +316,7 @@ const CalendarView = (props: CalendarViewProps) => {
                     size="xs"
                     className={classNames(
                       'rounded-none z-0',
-                      isCurrentRange() &&
+                      isCurrentRange &&
                         'border-primary text-primary hover:border-primary-dark dark:border-primary-dark'
                     )}
                     onClick={() => handleNavigation('today')}
