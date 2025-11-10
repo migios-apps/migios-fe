@@ -118,10 +118,7 @@ const AnalyticsTab = ({ memberId, startDate, endDate }: AnalyticsTabProps) => {
     <div className="flex flex-col gap-6">
       {/* Overall Progress Summary */}
       {overallProgress?.summary && (
-        <Card>
-          <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-            <h4 className="font-semibold">Ringkasan Progress Keseluruhan</h4>
-          </div>
+        <Card header={{ content: 'Ringkasan Progress Keseluruhan' }}>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="flex flex-col">
               <span className="text-sm text-gray-500">Total Pengukuran</span>
@@ -166,10 +163,7 @@ const AnalyticsTab = ({ memberId, startDate, endDate }: AnalyticsTabProps) => {
 
       {/* Weight Trend */}
       {weightTrend && weightTrend.data.length > 0 && (
-        <Card>
-          <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-            <h4 className="font-semibold">Trend Berat Badan</h4>
-          </div>
+        <Card header={{ content: 'Trend Berat Badan' }}>
           <Chart
             type="line"
             series={[
@@ -263,10 +257,7 @@ const AnalyticsTab = ({ memberId, startDate, endDate }: AnalyticsTabProps) => {
 
       {/* BMI Trend */}
       {bmiTrend && bmiTrend.data.length > 0 && (
-        <Card>
-          <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-            <h4 className="font-semibold">Trend BMI</h4>
-          </div>
+        <Card header={{ content: 'Trend BMI' }}>
           <Chart
             type="line"
             series={[
@@ -386,10 +377,7 @@ const AnalyticsTab = ({ memberId, startDate, endDate }: AnalyticsTabProps) => {
 
       {/* Body Composition Trend */}
       {bodyComposition && bodyComposition.data.length > 0 && (
-        <Card>
-          <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-            <h4 className="font-semibold">Trend Komposisi Tubuh</h4>
-          </div>
+        <Card header={{ content: 'Trend Komposisi Tubuh' }}>
           <Chart
             type="line"
             series={[
@@ -502,10 +490,7 @@ const AnalyticsTab = ({ memberId, startDate, endDate }: AnalyticsTabProps) => {
 
       {/* Body Size Trend */}
       {bodySize && bodySize.data.length > 0 && (
-        <Card>
-          <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-            <h4 className="font-semibold">Trend Ukuran Tubuh</h4>
-          </div>
+        <Card header={{ content: 'Trend Ukuran Tubuh' }}>
           <Chart
             type="line"
             series={[
@@ -605,10 +590,7 @@ const AnalyticsTab = ({ memberId, startDate, endDate }: AnalyticsTabProps) => {
 
       {/* Result Trend */}
       {resultTrend && resultTrend.data.length > 0 && (
-        <Card>
-          <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-            <h4 className="font-semibold">Trend Hasil Penilaian</h4>
-          </div>
+        <Card header={{ content: 'Trend Hasil Penilaian' }}>
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <Chart
@@ -697,10 +679,7 @@ const AnalyticsTab = ({ memberId, startDate, endDate }: AnalyticsTabProps) => {
 
       {/* Nutrition Progress */}
       {nutritionProgress && nutritionProgress.history.length > 0 && (
-        <Card>
-          <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-            <h4 className="font-semibold">Progress Target Nutrisi</h4>
-          </div>
+        <Card header={{ content: 'Progress Target Nutrisi' }}>
           {nutritionProgress.latest_targets && (
             <div className="grid md:grid-cols-5 gap-4 mb-6">
               <div className="flex flex-col">
@@ -823,10 +802,7 @@ const AnalyticsTab = ({ memberId, startDate, endDate }: AnalyticsTabProps) => {
 
       {/* Recommendation */}
       {recommendation && !recommendation.message && (
-        <Card>
-          <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-            <h4 className="font-semibold">Rekomendasi & Rencana</h4>
-          </div>
+        <Card header={{ content: 'Rekomendasi & Rencana' }}>
           <div className="flex flex-col gap-6">
             {/* Summary */}
             {recommendation.summary && (

@@ -140,10 +140,7 @@ const MeasurementDetail = () => {
               <TabContent value="detail">
                 <div className="flex flex-col gap-6 mt-6">
                   {/* Basic Information */}
-                  <Card>
-                    <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-                      <h4 className="font-semibold">Informasi Dasar</h4>
-                    </div>
+                  <Card header={{ content: 'Informasi Dasar' }}>
                     <div className="grid md:grid-cols-3 gap-4">
                       <div className="flex flex-col">
                         <span className="text-sm text-gray-500">
@@ -179,12 +176,7 @@ const MeasurementDetail = () => {
                   </Card>
 
                   {/* Body Composition Measurement */}
-                  <Card>
-                    <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-                      <h4 className="font-semibold">
-                        Pengukuran Komposisi Tubuh
-                      </h4>
-                    </div>
+                  <Card header={{ content: 'Pengukuran Komposisi Tubuh' }}>
                     <div className="grid md:grid-cols-3 gap-4">
                       <div className="flex flex-col">
                         <span className="text-sm text-gray-500">
@@ -322,10 +314,7 @@ const MeasurementDetail = () => {
                   </Card>
 
                   {/* Body Size Measurement */}
-                  <Card>
-                    <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-                      <h4 className="font-semibold">Pengukuran Ukuran Tubuh</h4>
-                    </div>
+                  <Card header={{ content: 'Pengukuran Ukuran Tubuh' }}>
                     <div className="grid md:grid-cols-3 gap-4">
                       <div className="flex flex-col">
                         <span className="text-sm text-gray-500">
@@ -432,12 +421,11 @@ const MeasurementDetail = () => {
                   {(measurement.delta_weight_kg ||
                     measurement.delta_body_fat_percent ||
                     measurement.delta_abdominal_cm) && (
-                    <Card>
-                      <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-                        <h4 className="font-semibold">
-                          Perubahan dari Pengukuran Sebelumnya
-                        </h4>
-                      </div>
+                    <Card
+                      header={{
+                        content: 'Perubahan dari Pengukuran Sebelumnya',
+                      }}
+                    >
                       <div className="grid md:grid-cols-3 gap-4">
                         {measurement.delta_weight_kg !== null &&
                           measurement.delta_weight_kg !== undefined && (
@@ -507,10 +495,7 @@ const MeasurementDetail = () => {
 
                   {/* Photos */}
                   {measurement.photos && measurement.photos.length > 0 && (
-                    <Card>
-                      <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-                        <h4 className="font-semibold">Foto Pengukuran</h4>
-                      </div>
+                    <Card header={{ content: 'Foto Pengukuran' }}>
                       <div className="grid md:grid-cols-2 gap-4">
                         {measurement.photos.map((photo) => (
                           <div key={photo.id} className="flex flex-col gap-2">
@@ -535,10 +520,7 @@ const MeasurementDetail = () => {
                   )}
 
                   {/* Result of Measurement */}
-                  <Card>
-                    <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-                      <h4 className="font-semibold">Hasil Pengukuran</h4>
-                    </div>
+                  <Card header={{ content: 'Hasil Pengukuran' }}>
                     <div className="flex flex-col gap-4">
                       <div className="flex flex-col">
                         <span className="text-sm text-gray-500 mb-2">
@@ -579,10 +561,7 @@ const MeasurementDetail = () => {
                     measurement.fat_target_grams ||
                     measurement.adherence_score ||
                     measurement.activity_factor) && (
-                    <Card>
-                      <div className="bg-primary text-white p-3 rounded-t-lg -mx-6 -mt-6 mb-6">
-                        <h4 className="font-semibold">Target Nutrisi</h4>
-                      </div>
+                    <Card header={{ content: 'Target Nutrisi' }}>
                       <div className="grid md:grid-cols-3 gap-4">
                         {measurement.calorie_target_kcal && (
                           <div className="flex flex-col">
