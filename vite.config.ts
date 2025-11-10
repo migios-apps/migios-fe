@@ -115,7 +115,6 @@ export default defineConfig(({ mode }) => {
       allowedHosts: true, // Allow all hosts
     },
     build: {
-      outDir: 'build',
       chunkSizeWarningLimit: 10000,
       // build jadi 1 file
       rollupOptions: {
