@@ -100,6 +100,7 @@ export default defineConfig(({ mode }) => {
     server: {
       host: true,
       port: 5123,
+      allowedHosts: true, // Allow all hosts
       // proxy: {
       //   '/api': {
       //     target: 'http://localhost:3000',
@@ -107,6 +108,11 @@ export default defineConfig(({ mode }) => {
       //     secure: false,
       //   }
       // }
+    },
+    preview: {
+      host: true,
+      port: 5123,
+      allowedHosts: true, // Allow all hosts
     },
     build: {
       outDir: 'build',
