@@ -144,3 +144,236 @@ export interface MemberMeasurementPayload {
   //    - Create hanya Body Size: kirim member_id + chest_cm + abdominal_cm
   //    - Create hanya Photos: kirim member_id + photos array
 }
+
+// ========== ANALYTICS TYPES ==========
+
+export interface GetMeasurementAnalyticParams {
+  member_id: number
+  start_date?: string
+  end_date?: string
+}
+
+export interface WeightTrendData {
+  date: string
+  weight: number | null
+}
+
+export interface WeightTrendSummary {
+  first_weight: number | null
+  last_weight: number | null
+  change: number
+  change_percent: number
+  total_measurements: number
+}
+
+export interface WeightTrendResponse {
+  data: WeightTrendData[]
+  summary: WeightTrendSummary
+}
+
+export interface BodyCompositionData {
+  date: string
+  body_fat_percent: number | null
+  muscle_mass_kg: number | null
+  bone_mass_kg: number | null
+  total_body_water_percent: number | null
+  visceral_fat_level: number | null
+  lean_body_mass_kg: number | null
+  protein_percent: number | null
+}
+
+export interface BodyCompositionSummary {
+  body_fat: {
+    first: number | null
+    last: number | null
+    change: number | null
+  }
+  muscle_mass: {
+    first: number | null
+    last: number | null
+    change: number | null
+  }
+  lean_body_mass: {
+    first: number | null
+    last: number | null
+    change: number | null
+  }
+}
+
+export interface BodyCompositionResponse {
+  data: BodyCompositionData[]
+  summary: BodyCompositionSummary
+}
+
+export interface BodySizeData {
+  date: string
+  neck: number | null
+  right_arm: number | null
+  left_arm: number | null
+  chest: number | null
+  abdominal: number | null
+  hip: number | null
+  right_thigh: number | null
+  left_thigh: number | null
+  right_calf: number | null
+  left_calf: number | null
+}
+
+export interface BodySizeSummary {
+  chest: {
+    first: number | null
+    last: number | null
+    change: number | null
+  }
+  abdominal: {
+    first: number | null
+    last: number | null
+    change: number | null
+  }
+  hip: {
+    first: number | null
+    last: number | null
+    change: number | null
+  }
+  right_arm: {
+    first: number | null
+    last: number | null
+    change: number | null
+  }
+  left_arm: {
+    first: number | null
+    last: number | null
+    change: number | null
+  }
+}
+
+export interface BodySizeResponse {
+  data: BodySizeData[]
+  summary: BodySizeSummary
+}
+
+export interface BMITrendData {
+  date: string
+  bmi: number | null
+  weight: number | null
+}
+
+export interface BMITrendSummary {
+  first_bmi: number | null
+  last_bmi: number | null
+  first_category: string | null
+  last_category: string | null
+  change: number | null
+}
+
+export interface BMITrendResponse {
+  data: BMITrendData[]
+  summary: BMITrendSummary
+}
+
+export interface ResultTrendData {
+  date: string
+  result: string | null
+  notes: string | null
+}
+
+export interface ResultTrendSummary {
+  first_result: string | null
+  last_result: string | null
+  result_counts: Record<string, number>
+  total_measurements: number
+}
+
+export interface ResultTrendResponse {
+  data: ResultTrendData[]
+  summary: ResultTrendSummary
+}
+
+export interface NutritionProgressLatest {
+  calories: number | null
+  protein: number | null
+  carbs: number | null
+  fat: number | null
+  adherence_score: number | null
+}
+
+export interface NutritionProgressHistory {
+  date: string
+  calories: number | null
+  protein: number | null
+  carbs: number | null
+  fat: number | null
+  adherence_score: number | null
+}
+
+export interface NutritionProgressResponse {
+  latest_targets: NutritionProgressLatest | null
+  history: NutritionProgressHistory[]
+}
+
+export interface OverallProgressSummary {
+  total_measurements: number
+  first_measurement_date: string
+  last_measurement_date: string
+  weight: {
+    first: number | null
+    last: number | null
+    change: number
+  }
+  bmi: {
+    first: number | null
+    last: number | null
+    change: number | null
+  }
+  body_fat: {
+    first: number | null
+    last: number | null
+    change: number | null
+  }
+  muscle_mass: {
+    first: number | null
+    last: number | null
+    change: number | null
+  }
+  result: {
+    first: string | null
+    last: string | null
+  }
+}
+
+export interface OverallProgressResponse {
+  summary: OverallProgressSummary | null
+  message?: string
+}
+
+export type FatLossStatus = 'GOOD' | 'SLOW' | 'TOO_FAST' | 'REVERSE' | 'UNKNOWN'
+export type TrainingStatus = 'HIGH' | 'OK' | 'LOW' | 'NONE'
+export type AdherenceStatus = 'HIGH' | 'MEDIUM' | 'LOW' | 'UNKNOWN'
+
+export interface RecommendationMeta {
+  period_weeks: number
+  weight_change: number
+  body_fat_change: number
+  abdominal_change: number
+  weight_per_week: number
+  workout_count: number
+  workout_per_week: number
+  avg_adherence: number
+  avg_calorie: number
+  status: {
+    progress_fat_loss: FatLossStatus
+    training: TrainingStatus
+    adherence: AdherenceStatus
+  }
+}
+
+export interface RecommendationResponse {
+  summary: string
+  body_composition: string
+  training: string
+  nutrition: string
+  next_4_weeks_plan: string
+  meta: RecommendationMeta
+  message?: string
+  data?: null
+}
