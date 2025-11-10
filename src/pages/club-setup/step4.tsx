@@ -16,15 +16,15 @@ const customFaker = new Faker({
 
 function createRandomUser() {
   return {
-    name: customFaker.name.fullName(),
+    name: customFaker.person.fullName(),
     email: customFaker.internet.email()?.toLowerCase(),
     photo: customFaker.image.avatar(),
-    address: customFaker.address.streetAddress(),
+    address: customFaker.location.streetAddress(),
     identity_number: '123456789',
     identity_type: customFaker.helpers.arrayElement(['ktp', 'sim', 'passport']),
     birth_date: customFaker.date.birthdate(),
     gender: customFaker.helpers.arrayElement(['m', 'f']),
-    phone: customFaker.phone.number({ style: 'international' }),
+    phone: customFaker.phone.number(),
     notes: 'dummy notes',
     goals: 'dummy goals',
     join_date: new Date(),
