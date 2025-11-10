@@ -81,7 +81,7 @@ export type ReturnPaymentFormSchema = ReturnType<
 // Hook untuk form payment
 export const usePaymentForm = () => {
   return useForm<ValidationPaymentSchema>({
-    resolver: yupResolver(validationPaymentSchema),
+    resolver: yupResolver(validationPaymentSchema) as any,
     defaultValues: defaultPaymentValues,
   })
 }

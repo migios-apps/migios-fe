@@ -25,7 +25,7 @@ const defaultValuesRekening = {
 
 export const useRekeningForm = () => {
   return useForm<CreateRekeningSchema>({
-    resolver: yupResolver(validationSchemaRekening),
+    resolver: yupResolver(validationSchemaRekening) as any,
     defaultValues: {
       ...defaultValuesRekening,
     },
@@ -53,7 +53,7 @@ export type ReturnCategoryFormSchema = ReturnType<
 
 export const useCategoryForm = () => {
   return useForm<CreateCategorySchema>({
-    resolver: yupResolver(validationSchemaCategory),
+    resolver: yupResolver(validationSchemaCategory) as any,
     defaultValues: {},
   })
 }
@@ -99,7 +99,7 @@ export type ReturnFinancialRecordFormSchema = ReturnType<
 
 export const useFinancialRecordForm = () => {
   return useForm<CreateFinancialRecordSchema>({
-    resolver: yupResolver(validationSchemaFinancialRecord),
+    resolver: yupResolver(validationSchemaFinancialRecord) as any,
     defaultValues: {},
   })
 }

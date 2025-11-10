@@ -7,6 +7,16 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
+
+  // Filter hanya environment variables yang aman untuk di-expose ke client
+  // Hanya expose variabel yang dimulai dengan PUBLIC_ atau VITE_ atau variabel khusus
+  const publicEnv: Record<string, string> = {}
+  Object.keys(env).forEach((key) => {
+    if (key.startsWith('PUBLIC_') || key.startsWith('VITE_') || key === 'MIGIOS_NAME') {
+      publicEnv[key] = env[key]
+    }
+  })
+
   return {
     plugins: [
       react(),
@@ -25,8 +35,8 @@ export default defineConfig(({ mode }) => {
         },
         includeAssets: ['favicon.ico', 'apple-touch-icon.png'],
         manifest: {
-          name: process.env.MIGIOS_NAME || 'Migios',
-          short_name: process.env.MIGIOS_NAME || 'Migios',
+          name: env.MIGIOS_NAME || 'Migios',
+          short_name: env.MIGIOS_NAME || 'Migios',
           description: 'Aplikasi Migios',
           theme_color: '#3951c6',
           icons: [
@@ -87,7 +97,7 @@ export default defineConfig(({ mode }) => {
       setupFiles: ['src/__tests__/setup.ts'],
     },
     define: {
-      'process.env': env,
+      'process.env': publicEnv,
       global: {},
     },
     assetsInclude: ['**/*.md'],

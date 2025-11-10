@@ -21,7 +21,7 @@ export type ReturnProductFormSchema = ReturnType<
 
 export function useProductForm() {
   return useForm<CreateProductSchema>({
-    resolver: yupResolver(validationSchemaProduct),
+    resolver: yupResolver(validationSchemaProduct) as any,
     defaultValues: {},
   })
 }

@@ -58,7 +58,7 @@ export type ReturnCreateInvoiceFormSchema = ReturnType<
 
 export function useInvoiceForm(defaultValues?: CreateInvoiceFormSchema) {
   return useForm<CreateInvoiceFormSchema>({
-    resolver: yupResolver(validationSchemaInvoice),
+    resolver: yupResolver(validationSchemaInvoice) as any,
     defaultValues: defaultValues,
   })
 }

@@ -39,7 +39,7 @@ export type ReturnMemberSchema = ReturnType<typeof useForm<CreateMemberSchema>>
 
 export const useMemberValidation = () => {
   return useForm<CreateMemberSchema>({
-    resolver: yupResolver(validationSchemaMember),
+    resolver: yupResolver(validationSchemaMember) as any,
     defaultValues: {
       identity_type: 'ktp',
       join_date: dayjs().toDate(),

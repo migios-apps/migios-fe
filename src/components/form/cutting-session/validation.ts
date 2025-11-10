@@ -144,7 +144,7 @@ const defaultValues = {
 
 export const useCuttingSessionForm = () => {
   return useForm<CuttingSessionFormSchema>({
-    resolver: yupResolver(validationSchemaCuttingSession),
+    resolver: yupResolver(validationSchemaCuttingSession) as any,
     defaultValues,
   })
 }

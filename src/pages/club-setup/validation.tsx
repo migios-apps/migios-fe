@@ -113,7 +113,7 @@ export type ReturnClubFormSchema = ReturnType<typeof useForm<FormValues>>
 
 // export const useProfileClubForm = () => {
 //   return useForm<ProfileClubSchema>({
-//     resolver: yupResolver(profileClubSchema),
+//     resolver: yupResolver(profileClubSchema) as any,
 //     defaultValues: {},
 //   })
 // }

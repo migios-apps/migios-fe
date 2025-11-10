@@ -60,7 +60,7 @@ export type ReturnEmployeeSchema = ReturnType<
 
 export const useEmployeeValidation = (defaultValues?: CreateEmployeeSchema) => {
   return useForm<CreateEmployeeSchema>({
-    resolver: yupResolver(validationSchemaEmployee),
+    resolver: yupResolver(validationSchemaEmployee) as any,
     defaultValues: {
       identity_type: 'ktp',
       join_date: dayjs().toDate(),

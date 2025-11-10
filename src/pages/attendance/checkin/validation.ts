@@ -13,7 +13,7 @@ export type ReturnCheckInFormSchema = ReturnType<
 
 export const useCheckInValidation = () => {
   return useForm<CheckInFormSchema>({
-    resolver: yupResolver(validationSchemaCheckIn),
+    resolver: yupResolver(validationSchemaCheckIn) as any,
   })
 }
 

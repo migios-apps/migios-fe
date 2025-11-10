@@ -19,7 +19,7 @@ export type ReturnTaxFormSchema = ReturnType<typeof useForm<CreateTaxSchema>>
 
 export function useTaxForm(defaultValues?: CreateTaxSchema) {
   return useForm<CreateTaxSchema>({
-    resolver: yupResolver(taxFormSchema),
+    resolver: yupResolver(taxFormSchema) as any,
     defaultValues: defaultValues || {},
   })
 }
@@ -57,7 +57,7 @@ export type ReturnStandardRateFormSchema = ReturnType<
 
 export function useStandardRateForm(defaultValues?: CreateStandardRateSchema) {
   return useForm<CreateStandardRateSchema>({
-    resolver: yupResolver(standardRateSchema),
+    resolver: yupResolver(standardRateSchema) as any,
     defaultValues: defaultValues || {
       standardRates: [],
     },

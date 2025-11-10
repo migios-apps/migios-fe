@@ -18,7 +18,7 @@ export type ReturnRolePermissionFormSchema = ReturnType<
 
 export function useRolePermissionForm() {
   return useForm<CreateRolePermissionFormSchema>({
-    resolver: yupResolver(validationSchemaRolePermission),
+    resolver: yupResolver(validationSchemaRolePermission) as any,
     defaultValues: {
       display_name: '',
       description: '',

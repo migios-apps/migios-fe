@@ -64,7 +64,7 @@ export type ReturnLoyaltyFormSchema = ReturnType<
 
 export function useLoyaltyForm(defaultValues?: CreateLoyaltySchema) {
   return useForm<CreateLoyaltySchema>({
-    resolver: yupResolver(loyaltyFormSchema),
+    resolver: yupResolver(loyaltyFormSchema) as any,
     defaultValues: defaultValues || {},
   })
 }

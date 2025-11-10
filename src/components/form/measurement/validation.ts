@@ -122,7 +122,7 @@ const defaultValues = {
 
 export const useMeasurementForm = () => {
   return useForm<MeasurementFormSchema>({
-    resolver: yupResolver(validationSchemaMeasurement),
+    resolver: yupResolver(validationSchemaMeasurement) as any,
     defaultValues,
   })
 }

@@ -21,7 +21,7 @@ const defaultValues = {
 
 export const useChangeStatusForm = () => {
   return useForm<ChangeStatusFormSchema>({
-    resolver: yupResolver(validationSchemaChangeStatus),
+    resolver: yupResolver(validationSchemaChangeStatus) as any,
     defaultValues,
   })
 }

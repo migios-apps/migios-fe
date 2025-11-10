@@ -75,7 +75,7 @@ export type ReturnTransactionFreezeFormSchema = ReturnType<
 
 export const useTransactionFreezeForm = () => {
   return useForm<ValidationTransactionFreezeSchema>({
-    resolver: yupResolver(validationTransactionFreezeSchema),
+    resolver: yupResolver(validationTransactionFreezeSchema) as any,
     defaultValues: {
       ...defaultValueTransactionFreeze,
     },

@@ -58,7 +58,7 @@ const defaultValues = {
 
 export const useClassPageForm = () => {
   return useForm<ClassPageFormSchema>({
-    resolver: yupResolver(validationSchemaClassPage),
+    resolver: yupResolver(validationSchemaClassPage) as any,
     defaultValues,
   })
 }
@@ -85,7 +85,7 @@ export type ReturnClassCategoryPageFormSchema = ReturnType<
 
 export const useClassCategoryPageForm = () => {
   return useForm<ClassCategoryPageFormSchema>({
-    resolver: yupResolver(validationSchemaClassCategoryPage),
+    resolver: yupResolver(validationSchemaClassCategoryPage) as any,
     defaultValues: {},
   })
 }

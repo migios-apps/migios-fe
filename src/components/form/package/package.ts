@@ -56,7 +56,7 @@ export type ReturnMembershipFormSchema = ReturnType<
 
 export const usePackageMembershipForm = () => {
   return useForm<MembershipFormSchema>({
-    resolver: yupResolver(validationSchemaMembership),
+    resolver: yupResolver(validationSchemaMembership) as any,
     defaultValues,
   })
 }
@@ -132,7 +132,7 @@ export type ReturnPtTrainerFormSchema = ReturnType<
 
 export const usePackagePtTrainerForm = () => {
   return useForm<PtTrainerFormSchema>({
-    resolver: yupResolver(validationSchemaPtTrainer),
+    resolver: yupResolver(validationSchemaPtTrainer) as any,
     defaultValues: {
       ...defaultValues,
     },
@@ -193,7 +193,7 @@ export type ReturnClassFormSchema = ReturnType<typeof useForm<ClassFormSchema>>
 
 export const usePackageClassForm = () => {
   return useForm<ClassFormSchema>({
-    resolver: yupResolver(validationSchemaClass),
+    resolver: yupResolver(validationSchemaClass) as any,
     defaultValues,
   })
 }

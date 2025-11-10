@@ -153,7 +153,7 @@ const defaultValueCartItem = {
 
 export const useTransactionItemForm = () => {
   return useForm<TransactionItemSchema>({
-    resolver: yupResolver(transactionItemSchema),
+    resolver: yupResolver(transactionItemSchema) as any,
     defaultValues: {
       ...defaultValueCartItem,
     },
@@ -294,7 +294,7 @@ export type ReturnTransactionFormSchema = ReturnType<
 
 export const useTransactionForm = () => {
   return useForm<ValidationTransactionSchema>({
-    resolver: yupResolver(validationTransactionSchema),
+    resolver: yupResolver(validationTransactionSchema) as any,
     defaultValues: {},
   })
 }
