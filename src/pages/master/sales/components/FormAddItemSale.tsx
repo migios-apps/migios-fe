@@ -59,10 +59,10 @@ const FormAddItemSale: React.FC<FormProps> = ({
   const watchData = watch()
   const [confirmDelete, setConfirmDelete] = React.useState(false)
 
-  // console.log('form', {
-  //   watchData,
-  //   errors,
-  // })
+  console.log('form', {
+    watchData,
+    errors,
+  })
 
   const trainers = React.useMemo(() => {
     const instructorNames =

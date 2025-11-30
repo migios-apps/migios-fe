@@ -38,6 +38,7 @@ export interface SalesItem {
   // custom fields
   is_promo?: number
   loyalty_point?: number
+  loyalty_point_value?: number
   package_type?: PackageType | null
 }
 

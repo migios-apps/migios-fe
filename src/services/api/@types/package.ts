@@ -9,6 +9,7 @@ export interface PackageType {
   description: string
   price: number
   loyalty_point: number
+  loyalty_point_value: number
   sell_price: number
   is_promo: number
   discount_type: 'percent' | 'nominal'

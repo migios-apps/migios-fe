@@ -334,7 +334,7 @@ const FormPayment: React.FC<FormPaymentProps> = ({
         (data.items.map((item) => {
           const {
             package_type,
-            loyalty_point,
+            loyalty_point_value,
             classes,
             instructors,
             trainers,

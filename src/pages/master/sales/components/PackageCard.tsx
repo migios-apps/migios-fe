@@ -72,7 +72,7 @@ const PackageCard = ({
           formProps.setValue('quantity', 1)
           formProps.setValue('price', item.price)
           formProps.setValue('sell_price', item.sell_price)
-          formProps.setValue('loyalty_point', item.loyalty_point)
+          formProps.setValue('loyalty_point_value', item.loyalty_point_value)
           formProps.setValue('duration', item.duration)
           formProps.setValue('duration_type', item.duration_type)
           formProps.setValue('session_duration', item.session_duration)

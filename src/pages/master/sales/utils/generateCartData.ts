@@ -322,7 +322,7 @@ export function generateCartData(
         extra_day: item.extra_day || 0,
         name: item.name,
         is_promo: item.is_promo || 0,
-        loyalty_point: item.loyalty_point || 0,
+        loyalty_point_value: item.loyalty_point_value || 0,
         duration: item.duration || 0,
         duration_type: item.duration_type || undefined,
         session_duration: item.session_duration || 0,

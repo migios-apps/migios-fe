@@ -85,7 +85,7 @@ export const transactionItemSchema = Yup.object().shape({
 
   //   custom
   is_promo: Yup.number().default(0),
-  loyalty_point: Yup.number().default(0),
+  loyalty_point_value: Yup.number().default(0),
   allow_all_trainer: Yup.boolean().default(false),
   package_type: Yup.string().when('item_type', {
     is: 'package',

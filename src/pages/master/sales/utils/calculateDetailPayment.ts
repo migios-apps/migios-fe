@@ -12,7 +12,7 @@ type ReturnCalculateDetailPayment = {
   totalDiscount: number
   taxAmount: number
   totalAmount: number
-  loyalty_point: number
+  loyalty_point_value: number
 }
 
 export function calculateDetailPayment(
@@ -22,8 +22,8 @@ export function calculateDetailPayment(
     (total, item) => total + item.sell_price,
     0
   )
-  const loyalty_point = data.items?.reduce(
-    (total, item) => total + item.loyalty_point,
+  const loyalty_point_value = data.items?.reduce(
+    (total, item) => total + item.loyalty_point_value,
     0
   )
   let totalDiscount = 0
@@ -47,6 +47,6 @@ export function calculateDetailPayment(
     totalDiscount,
     taxAmount,
     totalAmount,
-    loyalty_point,
+    loyalty_point_value,
   }
 }

@@ -52,7 +52,7 @@ const CartDetail: React.FC<CartDetailProps> = ({
 
   const cartDataGenerated = generateCartData(watchTransaction)
   const loyalty_point = cartDataGenerated.items.reduce(
-    (acc: any, cur: any) => acc + cur.loyalty_point,
+    (acc: any, cur: any) => acc + cur.loyalty_point_value,
     0
   )
 
